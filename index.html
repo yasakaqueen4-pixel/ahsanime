@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AHSANIME - Watch Anime</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#100d19;color:#fff;font-family:Arial,sans-serif}
+header{background:#191326;padding:17px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5;border-bottom:1px solid #342747}
+.logo{font-size:25px;font-weight:900;color:#bd79ff}
+.logo span{color:white}
+nav{display:flex;gap:18px}
+nav a{color:#ddd;text-decoration:none;font-size:14px}
+nav a:hover{color:#c58aff}
+.search{background:#292137;border:1px solid #49365f;color:white;padding:11px;border-radius:9px;width:180px}
+.hero{margin:22px 5%;padding:38px 25px;border-radius:17px;background:linear-gradient(110deg,#42216b,#171329 75%);min-height:210px;display:flex;flex-direction:column;justify-content:center}
+.hero small{color:#dfbaff}
+.hero h1{font-size:36px;margin:12px 0}
+.hero p{color:#ddd;max-width:430px;line-height:1.5}
+.btn{background:#a64ff0;color:white;border:0;padding:12px 20px;border-radius:8px;font-weight:bold;margin-top:17px;cursor:pointer;width:max-content}
+main{padding:0 5% 90px}
+.filters{display:flex;gap:9px;overflow-x:auto;padding:17px 0}
+.filters button{background:#211a30;color:#ddd;border:1px solid #453453;border-radius:20px;padding:9px 16px;white-space:nowrap;cursor:pointer}
+.filters button.active{background:#9b4bdf;color:white}
+.heading{display:flex;justify-content:space-between;align-items:center;margin:22px 0 15px}
+.heading h2{font-size:21px}
+.heading span{color:#b879ef;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px}
+.card{min-width:0;cursor:pointer}
+.poster{height:190px;border-radius:10px;display:flex;align-items:end;padding:12px;position:relative;overflow:hidden;background:linear-gradient(145deg,var(--a),var(--b));box-shadow:0 5px 18px #0008}
+.poster:before{content:"";position:absolute;width:150px;height:150px;border:2px solid #ffffff35;border-radius:50%;top:-45px;right:-35px;box-shadow:0 0 35px #ffffff30}
+.poster strong{font-size:21px;text-shadow:0 2px 8px #000;position:relative;z-index:1}
+.tag{position:absolute;top:9px;left:9px;background:#9b4bdf;padding:5px 7px;border-radius:5px;font-size:10px}
+.card h3{font-size:13px;margin:9px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:11px;color:#aaa}
+.empty{color:#aaa;padding:30px 0;display:none}
+footer{background:#191326;text-align:center;padding:25px;color:#aaa;font-size:12px}
+nav a,button{transition:.2s}
+#modal{display:none;position:fixed;inset:0;background:#000d;z-index:10;align-items:center;justify-content:center;padding:20px}
+.modalbox{background:#21182f;border:1px solid #604079;border-radius:15px;padding:25px;max-width:400px;width:100%}
+.modalbox h2{color:#d39aff;margin-bottom:12px}
+.modalbox p{color:#ddd;line-height:1.6}
+.close{float:right;background:none;border:0;color:white;font-size:25px;cursor:pointer}
+@media(max-width:650px){
+ header{flex-wrap:wrap;padding:14px 4%}
+ nav{order:3;width:100%;overflow-x:auto;padding-top:8px}
+ nav a{white-space:nowrap}
+ .search{width:135px}
+ .hero{margin:15px 4%;padding:27px 20px}
+ .hero h1{font-size:29px}
+ main{padding-left:4%;padding-right:4%}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+ .poster{height:155px}
+ .poster strong{font-size:17px}
+}
+@media(max-width:370px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">AHS<span>ANIME</span></div>
+ <input class="search" id="search" placeholder="Search anime...">
+ <nav>
+  <a href="#home">Home</a>
+  <a href="#popular">Popular</a>
+  <a href="#latest">Latest</a>
+  <a href="#library">Library</a>
+ </nav>
+</header>
+
+<section class="hero" id="home">
+ <small>WELCOME TO AHSANIME</small>
+ <h1>Explore the Anime World</h1>
+ <p>Discover anime, explore new adventures and find your next favourite series.</p>
+ <button class="btn" onclick="document.getElementById('popular').scrollIntoView({behavior:'smooth'})">Explore Anime →</button>
+</section>
+
+<main>
+ <div class="filters" id="filters">
+  <button class="active" data-filter="All">All Anime</button>
+  <button data-filter="Hindi Dub">Hindi Dub</button>
+  <button data-filter="Hindi Sub">Hindi Sub</button>
+  <button data-filter="Action">Action</button>
+  <button data-filter="Romance">Romance</button>
+  <button data-filter="Adventure">Adventure</button>
+ </div>
+
+ <section id="popular">
+  <div class="heading"><h2>🔥 Popular Anime</h2><span>VIEW ALL</span></div>
+  <div class="grid" id="animeGrid"></div>
+  <p class="empty" id="empty">No anime found. Try another search.</p>
+ </section>
+
+ <section id="latest">
+  <div class="heading"><h2>✨ Latest Updates</h2><span>NEW RELEASES</span></div>
+  <p style="color:#aaa;font-size:13px;line-height:1.6">New anime information and episodes can be added here when an authorized source is connected.</p>
+ </section>
+</main>
+
+<footer id="library">
+ <div class="logo">AHS<span>ANIME</span></div>
+ <p style="margin-top:10px">Your Anime World • Made for Anime Fans</p>
+ <p style="margin-top:8px">Only authorized anime streams will be linked here.</p>
+</footer>
+
+<div id="modal">
+ <div class="modalbox">
+  <button class="close" onclick="closeModal()">×</button>
+  <h2 id="modalTitle"></h2>
+  <p id="modalInfo"></p>
+  <p style="margin-top:15px;color:#c58aff">Watch availability depends on licensed providers.</p>
+  <button class="btn" onclick="closeModal()">Close</button>
+ </div>
+</div>
+
+<script>
+const anime=[
+ {name:"Naruto",type:"Hindi Dub",genre:"Action",year:"2002",a:"#ed702d",b:"#48202d"},
+ {name:"One Piece",type:"Hindi Sub",genre:"Adventure",year:"1999",a:"#277d9d",b:"#18294d"},
+ {name:"Demon Slayer",type:"Hindi Dub",genre:"Action",year:"2019",a:"#a82d45",b:"#30182f"},
+ {name:"Jujutsu Kaisen",type:"Hindi Sub",genre:"Action",year:"2020",a:"#5d4b9f",b:"#18152e"},
+ {name:"Your Name",type:"Hindi Sub",genre:"Romance",year:"2016",a:"#e58b9e",b:"#443e8e"},
+ {name:"Solo Leveling",type:"Hindi Dub",genre:"Action",year:"2024",a:"#3a478d",b:"#11152c"},
+ {name:"Dragon Ball",type:"Hindi Dub",genre:"Adventure",year:"1986",a:"#e9a02d",b:"#a53d25"},
+ {name:"Spy x Family",type:"Hindi Sub",genre:"Romance",year:"2022",a:"#599a83",b:"#263b50"},
+ {name:"Death Note",type:"Hindi Sub",genre:"Action",year:"2006",a:"#5b536b",b:"#17131f"},
+ {name:"Haikyuu",type:"Hindi Dub",genre:"Adventure",year:"2014",a:"#e47b35",b:"#472c26"}
+];
+let filter="All";
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const items=anime.filter(x=>(filter==="All"||x.type===filter||x.genre===filter)&&x.name.toLowerCase().includes(q));
+ document.getElementById("animeGrid").innerHTML=items.map(x=>`
+ <article class="card" onclick="showAnime('${x.name}')">
+ <div class="poster" style="--a:${x.a};--b:${x.b}">
+ <span class="tag">${x.type}</span><strong>${x.name}</strong>
+ </div>
+ <h3>${x.name}</h3><p class="meta">${x.year} • ${x.genre}</p>
+ </article>`).join("");
+ document.getElementById("empty").style.display=items.length?"none":"block";
+}
+document.getElementById("filters").addEventListener("click",e=>{
+ if(e.target.tagName!=="BUTTON")return;
+ filter=e.target.dataset.filter;
+ document.querySelectorAll(".filters button").forEach(b=>b.classList.toggle("active",b===e.target));
+ render();
+});
+document.getElementById("search").addEventListener("input",render);
+function showAnime(name){
+ const x=anime.find(a=>a.name===name);
+ document.getElementById("modalTitle").textContent=x.name;
+ document.getElementById("modalInfo").textContent=x.year+" • "+x.genre+" • "+x.type;
+ document.getElementById("modal").style.display="flex";
+}
+function closeModal(){document.getElementById("modal").style.display="none"}
+render();
+</script>
+</body>
+</html>
