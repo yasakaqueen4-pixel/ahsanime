@@ -158,3 +158,143 @@ render();
 </script>
 </body>
 </html>
+const anime=[
+{
+ name:"One Piece",
+ type:"Hindi Sub",
+ genre:"Adventure",
+ year:"1999",
+ a:"#277d9d",
+ b:"#18294d",
+ subtitles:[
+  "Hindi (Roman)",
+  "English",
+  "Japanese",
+  "Hindi (Devanagari)"
+ ]
+},<p id="modalInfo"></p>
+<label for="subtitleLanguage">
+ Select Subtitle Language:
+</label>
+
+<select id="subtitleLanguage">
+ <option>Hindi (Roman)</option>
+ <option>English</option>
+ <option>Japanese</option>
+ <option>Hindi (Devanagari)</option>
+</select>
+document.getElementById("modalInfo").textContent=
+const select=document.getElementById("subtitleLanguage");
+
+select.innerHTML=x.subtitles.map(lang =>
+ `<option value="${lang}">${lang}</option>`
+).join("");
+<div class="language-filter">
+  <label for="subtitleLanguage">Subtitle Language:</label>
+  <select id="subtitleLanguage">
+    <option value="All">All Languages</option>
+    <option value="Hindi Roman">Hindi (Hinglish)</option>
+    <option value="English">English</option>
+    <option value="Japanese">Japanese</option>
+    <option value="Hindi Devanagari">Hindi (देवनागरी)</option>
+  </select>
+</div>
+.language-filter{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:15px 0;
+  flex-wrap:wrap;
+}
+
+.language-filter label{
+  color:#dfbaff;
+  font-size:14px;
+}
+
+.language-filter select{
+  background:#292137;
+  color:white;
+  border:1px solid #604079;
+  border-radius:9px;
+  padding:11px;
+  font-size:14px;
+}
+const anime=[
+ {
+  name:"Naruto",
+  type:"Hindi Dub",
+  genre:"Action",
+  year:"2002",
+  a:"#ed702d",
+  b:"#48202d",
+  subs:[
+   "Hindi Roman",
+   "English",
+   "Japanese",
+   "Hindi Devanagari"
+  ]
+ },
+ {
+  name:"One Piece",
+  type:"Hindi Sub",
+  genre:"Adventure",
+  year:"1999",
+  a:"#277d9d",
+  b:"#18294d",
+  subs:[
+   "Hindi Roman",
+   "English",
+   "Japanese",
+   "Hindi Devanagari"
+  ]
+ }
+];
+let selectedLanguage = "All";
+
+function render(){
+
+ const q=document.getElementById("search").value.toLowerCase();
+
+ const items=anime.filter(x=>
+  (filter==="All" ||
+   x.type===filter ||
+   x.genre===filter) &&
+
+  (selectedLanguage==="All" ||
+   (x.subs || []).includes(selectedLanguage)) &&
+
+  x.name.toLowerCase().includes(q)
+ );
+
+ document.getElementById("animeGrid").innerHTML=
+ items.map(x=>`
+ <article class="card" onclick="showAnime('${x.name}')">
+
+ <div class="poster" style="--a:${x.a};--b:${x.b}">
+ <span class="tag">${x.type}</span>
+ <strong>${x.name}</strong>
+ </div>
+
+ <h3>${x.name}</h3>
+
+ <p class="meta">
+ ${x.year} • ${x.genre}
+ </p>
+
+ <p class="meta">
+ Subtitles: ${(x.subs || []).length} Languages
+ </p>
+
+ </article>
+ `).join("");
+
+ document.getElementById("empty").style.display=
+ items.length ? "none" : "block";
+}
+
+document.getElementById("subtitleLanguage")
+.addEventListener("change",e=>{
+ selectedLanguage=e.target.value;
+ render();
+});
