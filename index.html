@@ -225,14 +225,192 @@ footer{
   <button class="btn" onclick="closeModal()">Close</button>
  </div>
 </div>
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
-<script>
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAJ5KAZvolz5jYwZtQFf7WZp6f6WrsPtvc",
+  authDomain: "ahsanime.firebaseapp.com",
+  projectId: "ahsanime",
+  storageBucket: "ahsanime.firebasestorage.app",
+  messagingSenderId: "708478416786",
+  appId: "1:708478416786:web:6920488d83f1a684acf34b"
+};
+
+// Connect Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const languages = [
- "Hindi Roman",
- "Hindi Devanagari",
- "English",
- "Japanese"
+  "Hindi Roman",
+  "Hindi Devanagari",
+  "English",
+  "Japanese"
 ];
+
+let anime = [];
+let filter = "All";
+let selectedLanguage = "All";
+
+const grid = document.getElementById("animeGrid");
+const empty = document.getElementById("empty");
+
+// Safe text for HTML
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+// Load anime from Firestore in real time
+grid.innerHTML = '<p style="color:#c58aff">Loading anime...</p>';
+
+onSnapshot(
+  collection(db, "Anime_data"),
+
+  snapshot => {
+    anime = snapshot.docs.map(doc => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        name: data.title || doc.id,
+        type: data.language || "Hindi Sub",
+        genre: data.category || "Anime",
+        year: data.year || "",
+        description: data.description || "No description available.",
+        imageUrl: data.imageUrl || "",
+        subs: Array.isArray(data.subtitles)
+          ? data.subtitles
+          : languages
+      };
+    });
+
+    render();
+  },
+
+  error => {
+    console.error("Firebase Error:", error);
+    grid.innerHTML =
+      '<p style="color:#ff7777">Firebase data load nahi hua. Firestore Rules check karo.</p>';
+  }
+);
+
+// Display anime cards
+function render() {
+  const q = document.getElementById("search").value.toLowerCase();
+
+  const items = anime.filter(x =>
+    (filter === "All" ||
+      x.type.toLowerCase() === filter.toLowerCase() ||
+      x.genre.toLowerCase() === filter.toLowerCase()) &&
+    (selectedLanguage === "All" ||
+      x.subs.includes(selectedLanguage)) &&
+    x.name.toLowerCase().includes(q)
+  );
+
+  grid.innerHTML = items.map(x => {
+    const image = /^https?:\/\//i.test(x.imageUrl)
+      ? `<img src="${safe(x.imageUrl)}" alt="${safe(x.name)}"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
+      : "";
+
+    return `
+      <article class="card" data-id="${safe(x.id)}">
+        <div class="poster"
+          style="--a:#5d347d;--b:#171329">
+          ${image}
+          <span class="tag">${safe(x.type)}</span>
+          <strong>${safe(x.name)}</strong>
+        </div>
+        <h3>${safe(x.name)}</h3>
+        <p class="meta">${safe(x.year)} • ${safe(x.genre)}</p>
+        <p class="meta">Subtitles: ${x.subs.length} Languages</p>
+      </article>
+    `;
+  }).join("");
+
+  empty.style.display = items.length ? "none" : "block";
+}
+
+// Filter buttons
+document.getElementById("filters").addEventListener("click", e => {
+  if (!e.target.matches("button")) return;
+
+  filter = e.target.dataset.filter;
+
+  document.querySelectorAll(".filters button").forEach(b =>
+    b.classList.toggle("active", b === e.target)
+  );
+
+  render();
+});
+
+// Search
+document.getElementById("search").addEventListener("input", render);
+
+// Subtitle language filter
+document.getElementById("subtitleLanguage").addEventListener("change", e => {
+  selectedLanguage = e.target.value;
+  render();
+});
+
+// Open anime details
+grid.addEventListener("click", e => {
+  const card = e.target.closest(".card");
+  if (card) showAnime(card.dataset.id);
+});
+
+function showAnime(id) {
+  const x = anime.find(a => a.id === id);
+  if (!x) return;
+
+  document.getElementById("modalTitle").textContent = x.name;
+
+  document.getElementById("modalInfo").textContent =
+    [x.year, x.genre, x.type, x.description]
+      .filter(Boolean)
+      .join(" • ");
+
+  const select = document.getElementById("modalLanguage");
+  select.innerHTML = "";
+
+  x.subs.forEach(lang => {
+    const option = document.createElement("option");
+    option.value = lang;
+    option.textContent = lang;
+    select.appendChild(option);
+  });
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+// Close modal
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+window.closeModal = closeModal;
+
+document.getElementById("modal").addEventListener("click", e => {
+  if (e.target.id === "modal") closeModal();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+   </script>
 
 const anime = [
  {name:"Naruto",type:"Hindi Dub",genre:"Action",year:"2002",a:"#ed702d",b:"#48202d",subs:languages},
