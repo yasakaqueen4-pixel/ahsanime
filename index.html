@@ -3,139 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AHSANIME - Watch Anime</title>
+<meta name="theme-color" content="#100d19">
+<title>AHSANIME - Anime World</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{
- background:#100d19;color:#fff;
- font-family:Arial,sans-serif;
+  background:#100d19;
+  color:#fff;
+  font-family:Arial,sans-serif;
 }
 header{
- background:#191326;padding:16px 5%;
- display:flex;align-items:center;justify-content:space-between;
- gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:5;
- border-bottom:1px solid #342747;
+  background:#191326;
+  padding:16px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  position:sticky;
+  top:0;
+  z-index:5;
+  border-bottom:1px solid #342747;
 }
-.logo{font-size:25px;font-weight:900;color:#bd79ff}
+.logo{
+  font-size:26px;
+  font-weight:900;
+  color:#bd79ff;
+}
 .logo span{color:white}
 .search{
- background:#292137;border:1px solid #49365f;color:white;
- padding:12px;border-radius:9px;width:190px;min-width:0;
+  background:#292137;
+  border:1px solid #49365f;
+  color:white;
+  padding:12px;
+  border-radius:9px;
+  width:220px;
 }
 nav{display:flex;gap:17px}
-nav a{color:#ddd;text-decoration:none;font-size:14px}
+nav a{
+  color:#ddd;
+  text-decoration:none;
+  font-size:14px;
+}
 nav a:hover{color:#c58aff}
 .hero{
- margin:22px 5%;padding:38px 25px;border-radius:17px;
- background:linear-gradient(110deg,#42216b,#171329 75%);
- min-height:210px;display:flex;flex-direction:column;
- justify-content:center;
+  margin:22px 5%;
+  padding:40px 25px;
+  border-radius:18px;
+  background:linear-gradient(110deg,#492477,#171329 80%);
+  min-height:230px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 .hero small{color:#dfbaff}
-.hero h1{font-size:36px;margin:12px 0}
-.hero p{color:#ddd;line-height:1.5;max-width:450px}
-.btn{
- background:#a64ff0;color:white;border:0;padding:12px 20px;
- border-radius:8px;font-weight:bold;margin-top:15px;
- cursor:pointer;width:max-content;
+.hero h1{
+  font-size:36px;
+  margin:13px 0;
 }
-main{padding:0 5% 80px}
+.hero p{
+  color:#ddd;
+  line-height:1.6;
+  max-width:480px;
+}
+.btn{
+  background:#a64ff0;
+  color:white;
+  border:0;
+  padding:13px 22px;
+  border-radius:9px;
+  font-weight:bold;
+  margin-top:17px;
+  cursor:pointer;
+  width:max-content;
+}
+.btn:hover{background:#bd72ff}
+main{padding:0 5% 70px}
 .filters{
- display:flex;gap:9px;overflow-x:auto;padding:17px 0;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:17px 0;
 }
 .filters button{
- background:#211a30;color:#ddd;border:1px solid #453453;
- border-radius:20px;padding:10px 16px;white-space:nowrap;
- cursor:pointer;
+  background:#211a30;
+  color:#ddd;
+  border:1px solid #453453;
+  border-radius:22px;
+  padding:11px 18px;
+  white-space:nowrap;
+  cursor:pointer;
 }
-.filters button.active{background:#9b4bdf;color:white}
+.filters button.active{
+  background:#9b4bdf;
+  color:white;
+}
 .language-filter{
- display:flex;align-items:center;gap:12px;
- margin:12px 0 20px;flex-wrap:wrap;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:15px 0 25px;
 }
-.language-filter label{color:#dfbaff;font-size:14px}
-.language-filter select{
- background:#292137;color:white;border:1px solid #604079;
- border-radius:9px;padding:11px;font-size:14px;
+.language-filter label{color:#dfbaff}
+select{
+  background:#292137;
+  color:white;
+  border:1px solid #604079;
+  border-radius:9px;
+  padding:12px;
 }
 .heading{
- display:flex;justify-content:space-between;
- align-items:center;margin:22px 0 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:25px 0 17px;
 }
-.heading h2{font-size:21px}
-.heading span{color:#b879ef;font-size:12px}
+.heading h2{font-size:23px}
+.heading span{color:#bd79ff;font-size:13px}
 .grid{
- display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
- gap:15px;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:16px;
 }
-.card{min-width:0;cursor:pointer}
+.card{
+  min-width:0;
+  cursor:pointer;
+}
 .poster{
- height:190px;border-radius:10px;display:flex;
- align-items:end;padding:12px;position:relative;
- overflow:hidden;background:linear-gradient(145deg,var(--a),var(--b));
- box-shadow:0 5px 18px #0008;
+  height:210px;
+  border-radius:11px;
+  display:flex;
+  align-items:end;
+  padding:12px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,#603b83,#171329);
+  box-shadow:0 5px 18px #0008;
 }
-.poster:before{
- content:"";position:absolute;width:150px;height:150px;
- border:2px solid #ffffff35;border-radius:50%;
- top:-45px;right:-35px;box-shadow:0 0 35px #ffffff30;
+.poster img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.poster:after{
+  content:"";
+  position:absolute;
+  inset:40% 0 0;
+  background:linear-gradient(transparent,#000c);
 }
 .poster strong{
- font-size:20px;text-shadow:0 2px 8px #000;
- position:relative;z-index:1;
+  font-size:17px;
+  text-shadow:0 2px 8px #000;
+  position:relative;
+  z-index:1;
 }
 .tag{
- position:absolute;top:9px;left:9px;background:#9b4bdf;
- padding:5px 7px;border-radius:5px;font-size:10px;
+  position:absolute;
+  top:9px;
+  left:9px;
+  z-index:2;
+  background:#9b4bdf;
+  padding:6px 8px;
+  border-radius:5px;
+  font-size:10px;
 }
 .card h3{
- font-size:13px;margin:9px 0 5px;
- white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:14px;
+  margin:10px 0 5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
-.meta{font-size:11px;color:#aaa;margin-top:4px}
-.empty{color:#aaa;padding:30px 0;display:none}
+.meta{
+  font-size:12px;
+  color:#aaa;
+  margin-top:5px;
+}
+.empty{
+  color:#aaa;
+  padding:30px 0;
+  display:none;
+}
+.status{
+  color:#c58aff;
+  margin:12px 0;
+  font-size:13px;
+  line-height:1.5;
+}
 footer{
- background:#191326;text-align:center;padding:25px;
- color:#aaa;font-size:12px;
+  background:#191326;
+  text-align:center;
+  padding:35px 15px;
+  color:#aaa;
+  line-height:1.8;
 }
 #modal{
- display:none;position:fixed;inset:0;background:#000d;
- z-index:10;align-items:center;justify-content:center;padding:18px;
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000d;
+  z-index:10;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
 }
 .modalbox{
- background:#21182f;border:1px solid #604079;
- border-radius:15px;padding:24px;max-width:420px;width:100%;
- max-height:90vh;overflow-y:auto;
+  background:#21182f;
+  border:1px solid #604079;
+  border-radius:15px;
+  padding:24px;
+  max-width:420px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
 }
 .modalbox h2{color:#d39aff;margin-bottom:12px}
 .modalbox p{color:#ddd;line-height:1.6;margin-bottom:12px}
 .close{
- float:right;background:none;border:0;color:white;
- font-size:26px;cursor:pointer;
+  float:right;
+  background:none;
+  border:0;
+  color:white;
+  font-size:27px;
+  cursor:pointer;
 }
-.modalbox label{display:block;color:#dfbaff;margin:15px 0 8px}
-.modalbox select{
- width:100%;background:#292137;color:white;
- border:1px solid #604079;border-radius:9px;
- padding:12px;font-size:14px;
+.modalbox label{
+  display:block;
+  color:#dfbaff;
+  margin:15px 0 8px;
 }
+.modalbox select{width:100%}
 .note{font-size:12px;color:#aaa;margin-top:12px}
-@media(max-width:800px){
- .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
- .poster{height:160px}
+@media(max-width:850px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .poster{height:180px}
 }
 @media(max-width:500px){
- header{padding:14px 4%}
- nav{order:3;width:100%;overflow-x:auto;padding:7px 0}
- nav a{white-space:nowrap}
- .search{width:145px}
- .hero{margin:15px 4%;padding:27px 20px}
- .hero h1{font-size:28px}
- main{padding-left:4%;padding-right:4%}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .poster{height:175px}
- .poster strong{font-size:17px}
+  header{padding:13px 4%}
+  nav{
+    order:3;
+    width:100%;
+    overflow-x:auto;
+    padding:7px 0;
+  }
+  nav a{white-space:nowrap}
+  .search{width:155px}
+  .hero{margin:15px 4%;padding:28px 20px}
+  .hero h1{font-size:28px}
+  main{padding-left:4%;padding-right:4%}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .poster{height:180px}
 }
 </style>
 </head>
@@ -143,98 +264,97 @@ footer{
 <body>
 
 <header>
- <div class="logo">AHS<span>ANIME</span></div>
- <input class="search" id="search" placeholder="Search anime...">
- <nav>
-  <a href="#home">Home</a>
-  <a href="#popular">Popular</a>
-  <a href="#latest">Latest</a>
-  <a href="#library">Library</a>
- </nav>
+  <div class="logo">AHS<span>ANIME</span></div>
+  <input class="search" id="search" placeholder="Search anime...">
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#popular">Popular</a>
+    <a href="#latest">Latest</a>
+    <a href="#library">Library</a>
+  </nav>
 </header>
 
 <section class="hero" id="home">
- <small>WELCOME TO AHSANIME</small>
- <h1>Explore the Anime World</h1>
- <p>Discover anime, explore new adventures and find your next favourite series.</p>
- <button class="btn" onclick="document.getElementById('popular').scrollIntoView({behavior:'smooth'})">
-  Explore Anime →
- </button>
+  <small>WELCOME TO AHSANIME</small>
+  <h1>Explore the Anime World</h1>
+  <p>Discover anime, explore new adventures and find your next favourite series.</p>
+  <button class="btn" id="exploreBtn">Explore Anime →</button>
 </section>
 
 <main>
- <div class="filters" id="filters">
-  <button class="active" data-filter="All">All Anime</button>
-  <button data-filter="Hindi Dub">Hindi Dub</button>
-  <button data-filter="Hindi Sub">Hindi Sub</button>
-  <button data-filter="Action">Action</button>
-  <button data-filter="Romance">Romance</button>
-  <button data-filter="Adventure">Adventure</button>
- </div>
-
- <div class="language-filter">
-  <label for="subtitleLanguage">Subtitle Language:</label>
-  <select id="subtitleLanguage">
-   <option value="All">All Languages</option>
-   <option value="Hindi Roman">Hindi (Hinglish)</option>
-   <option value="Hindi Devanagari">Hindi (देवनागरी)</option>
-   <option value="English">English</option>
-   <option value="Japanese">Japanese</option>
-  </select>
- </div>
-
- <section id="popular">
-  <div class="heading">
-   <h2>🔥 Popular Anime</h2>
-   <span>VIEW ALL</span>
+  <div class="filters" id="filters">
+    <button class="active" data-filter="All">All Anime</button>
+    <button data-filter="Hindi Dub">Hindi Dub</button>
+    <button data-filter="Hindi Sub">Hindi Sub</button>
+    <button data-filter="Action">Action</button>
+    <button data-filter="Romance">Romance</button>
+    <button data-filter="Adventure">Adventure</button>
   </div>
-  <div class="grid" id="animeGrid"></div>
-  <p class="empty" id="empty">No anime found. Try another search.</p>
- </section>
 
- <section id="latest">
-  <div class="heading">
-   <h2>✨ Latest Updates</h2>
-   <span>NEW RELEASES</span>
+  <div class="language-filter">
+    <label for="subtitleLanguage">Subtitle Language:</label>
+    <select id="subtitleLanguage">
+      <option value="All">All Languages</option>
+      <option value="Hindi Roman">Hindi (Hinglish)</option>
+      <option value="Hindi Devanagari">Hindi (देवनागरी)</option>
+      <option value="English">English</option>
+      <option value="Japanese">Japanese</option>
+    </select>
   </div>
-  <p style="color:#aaa;font-size:13px;line-height:1.6">
-   New anime information and episodes can be added here.
-  </p>
- </section>
+
+  <section id="popular">
+    <div class="heading">
+      <h2>🔥 Popular Anime</h2>
+      <span>VIEW ALL</span>
+    </div>
+    <p class="status" id="status">Connecting to anime database...</p>
+    <div class="grid" id="animeGrid"></div>
+    <p class="empty" id="empty">No anime found. Try another search.</p>
+  </section>
+
+  <section id="latest">
+    <div class="heading">
+      <h2>✨ Latest Updates</h2>
+      <span>NEW RELEASES</span>
+    </div>
+    <p style="color:#aaa;font-size:14px;line-height:1.7">
+      Latest anime information and episodes will appear here when added to the database.
+    </p>
+  </section>
 </main>
 
 <footer id="library">
- <div class="logo">AHS<span>ANIME</span></div>
- <p style="margin-top:10px">Your Anime World • Made for Anime Fans</p>
- <p style="margin-top:8px">Only authorized anime streams will be linked here.</p>
+  <div class="logo">AHS<span>ANIME</span></div>
+  <p>Your Anime World • Made for Anime Fans</p>
+  <p>Only authorized anime streams will be linked here.</p>
 </footer>
 
 <div id="modal">
- <div class="modalbox">
-  <button class="close" onclick="closeModal()">×</button>
-  <h2 id="modalTitle"></h2>
-  <p id="modalInfo"></p>
-
-  <label for="modalLanguage">Select Subtitle Language:</label>
-  <select id="modalLanguage"></select>
-
-  <p class="note">
-   Subtitle choices are display options only. Actual subtitle tracks
-   require a compatible authorized video source.
-  </p>
-  <button class="btn" onclick="closeModal()">Close</button>
- </div>
+  <div class="modalbox">
+    <button class="close" id="closeBtn">×</button>
+    <h2 id="modalTitle"></h2>
+    <p id="modalInfo"></p>
+    <label for="modalLanguage">Select Subtitle Language:</label>
+    <select id="modalLanguage"></select>
+    <p class="note">
+      Subtitle choices are display options only. Actual subtitles require a compatible authorized video source.
+    </p>
+    <button class="btn" id="modalClose">Close</button>
+  </div>
 </div>
- <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
 import {
   getFirestore,
   collection,
   onSnapshot
-} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+} from
+"https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-// Firebase Configuration
+// FIREBASE CONFIGURATION
 const firebaseConfig = {
   apiKey: "AIzaSyAJ5KAZvolz5jYwZtQFf7WZp6f6WrsPtvc",
   authDomain: "ahsanime.firebaseapp.com",
@@ -244,7 +364,6 @@ const firebaseConfig = {
   appId: "1:708478416786:web:6920488d83f1a684acf34b"
 };
 
-// Connect Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -255,59 +374,43 @@ const languages = [
   "Japanese"
 ];
 
+// DEMO ANIME: displayed if database is empty or unavailable
+const demoAnime = [
+  {id:"naruto",name:"Naruto",type:"Hindi Dub",genre:"Action",year:"2002",a:"#ed702d",b:"#48202d"},
+  {id:"one-piece",name:"One Piece",type:"Hindi Sub",genre:"Adventure",year:"1999",a:"#277d9d",b:"#18294d"},
+  {id:"demon-slayer",name:"Demon Slayer",type:"Hindi Dub",genre:"Action",year:"2019",a:"#a82d45",b:"#30182f"},
+  {id:"jujutsu-kaisen",name:"Jujutsu Kaisen",type:"Hindi Sub",genre:"Action",year:"2020",a:"#5d4b9f",b:"#18152e"},
+  {id:"your-name",name:"Your Name",type:"Hindi Sub",genre:"Romance",year:"2016",a:"#e58b9e",b:"#443e8e"},
+  {id:"solo-leveling",name:"Solo Leveling",type:"Hindi Dub",genre:"Action",year:"2024",a:"#3a478d",b:"#11152c"},
+  {id:"dragon-ball",name:"Dragon Ball",type:"Hindi Dub",genre:"Adventure",year:"1986",a:"#e9a02d",b:"#a53d25"},
+  {id:"spy-family",name:"Spy x Family",type:"Hindi Sub",genre:"Romance",year:"2022",a:"#599a83",b:"#263b50"},
+  {id:"death-note",name:"Death Note",type:"Hindi Sub",genre:"Action",year:"2006",a:"#5b536b",b:"#17131f"},
+  {id:"haikyuu",name:"Haikyuu",type:"Hindi Dub",genre:"Adventure",year:"2014",a:"#e47b35",b:"#472c26"}
+].map(x => ({
+  ...x,
+  description:"Anime information coming soon.",
+  imageUrl:"",
+  subs:languages
+}));
+
 let anime = [];
 let filter = "All";
 let selectedLanguage = "All";
 
 const grid = document.getElementById("animeGrid");
 const empty = document.getElementById("empty");
+const status = document.getElementById("status");
 
-// Safe text for HTML
 function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[c]);
 }
 
-// Load anime from Firestore in real time
-grid.innerHTML = '<p style="color:#c58aff">Loading anime...</p>';
-
-onSnapshot(
-  collection(db, "Anime_data"),
-
-  snapshot => {
-    anime = snapshot.docs.map(doc => {
-      const data = doc.data();
-
-      return {
-        id: doc.id,
-        name: data.title || doc.id,
-        type: data.language || "Hindi Sub",
-        genre: data.category || "Anime",
-        year: data.year || "",
-        description: data.description || "No description available.",
-        imageUrl: data.imageUrl || "",
-        subs: Array.isArray(data.subtitles)
-          ? data.subtitles
-          : languages
-      };
-    });
-
-    render();
-  },
-
-  error => {
-    console.error("Firebase Error:", error);
-    grid.innerHTML =
-      '<p style="color:#ff7777">Firebase data load nahi hua. Firestore Rules check karo.</p>';
-  }
-);
-
-// Display anime cards
 function render() {
   const q = document.getElementById("search").value.toLowerCase();
 
@@ -322,14 +425,13 @@ function render() {
 
   grid.innerHTML = items.map(x => {
     const image = /^https?:\/\//i.test(x.imageUrl)
-      ? `<img src="${safe(x.imageUrl)}" alt="${safe(x.name)}"
-           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`
+      ? `<img src="${safe(x.imageUrl)}" alt="${safe(x.name)}">`
       : "";
 
     return `
       <article class="card" data-id="${safe(x.id)}">
         <div class="poster"
-          style="--a:#5d347d;--b:#171329">
+          style="background:linear-gradient(145deg,${safe(x.a || "#603b83")},${safe(x.b || "#171329")})">
           ${image}
           <span class="tag">${safe(x.type)}</span>
           <strong>${safe(x.name)}</strong>
@@ -344,44 +446,13 @@ function render() {
   empty.style.display = items.length ? "none" : "block";
 }
 
-// Filter buttons
-document.getElementById("filters").addEventListener("click", e => {
-  if (!e.target.matches("button")) return;
-
-  filter = e.target.dataset.filter;
-
-  document.querySelectorAll(".filters button").forEach(b =>
-    b.classList.toggle("active", b === e.target)
-  );
-
-  render();
-});
-
-// Search
-document.getElementById("search").addEventListener("input", render);
-
-// Subtitle language filter
-document.getElementById("subtitleLanguage").addEventListener("change", e => {
-  selectedLanguage = e.target.value;
-  render();
-});
-
-// Open anime details
-grid.addEventListener("click", e => {
-  const card = e.target.closest(".card");
-  if (card) showAnime(card.dataset.id);
-});
-
 function showAnime(id) {
   const x = anime.find(a => a.id === id);
   if (!x) return;
 
   document.getElementById("modalTitle").textContent = x.name;
-
   document.getElementById("modalInfo").textContent =
-    [x.year, x.genre, x.type, x.description]
-      .filter(Boolean)
-      .join(" • ");
+    [x.year,x.genre,x.type,x.description].filter(Boolean).join(" • ");
 
   const select = document.getElementById("modalLanguage");
   select.innerHTML = "";
@@ -396,12 +467,40 @@ function showAnime(id) {
   document.getElementById("modal").style.display = "flex";
 }
 
-// Close modal
 function closeModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-window.closeModal = closeModal;
+document.getElementById("exploreBtn").addEventListener("click", () => {
+  document.getElementById("popular").scrollIntoView({behavior:"smooth"});
+});
+
+document.getElementById("filters").addEventListener("click", e => {
+  if (!e.target.matches("button")) return;
+
+  filter = e.target.dataset.filter;
+
+  document.querySelectorAll(".filters button").forEach(b => {
+    b.classList.toggle("active", b === e.target);
+  });
+
+  render();
+});
+
+document.getElementById("search").addEventListener("input", render);
+
+document.getElementById("subtitleLanguage").addEventListener("change", e => {
+  selectedLanguage = e.target.value;
+  render();
+});
+
+grid.addEventListener("click", e => {
+  const card = e.target.closest(".card");
+  if (card) showAnime(card.dataset.id);
+});
+
+document.getElementById("closeBtn").addEventListener("click", closeModal);
+document.getElementById("modalClose").addEventListener("click", closeModal);
 
 document.getElementById("modal").addEventListener("click", e => {
   if (e.target.id === "modal") closeModal();
@@ -410,108 +509,62 @@ document.getElementById("modal").addEventListener("click", e => {
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeModal();
 });
-   </script>
 
-const anime = [
- {name:"Naruto",type:"Hindi Dub",genre:"Action",year:"2002",a:"#ed702d",b:"#48202d",subs:languages},
- {name:"One Piece",type:"Hindi Sub",genre:"Adventure",year:"1999",a:"#277d9d",b:"#18294d",subs:languages},
- {name:"Demon Slayer",type:"Hindi Dub",genre:"Action",year:"2019",a:"#a82d45",b:"#30182f",subs:languages},
- {name:"Jujutsu Kaisen",type:"Hindi Sub",genre:"Action",year:"2020",a:"#5d4b9f",b:"#18152e",subs:languages},
- {name:"Your Name",type:"Hindi Sub",genre:"Romance",year:"2016",a:"#e58b9e",b:"#443e8e",subs:languages},
- {name:"Solo Leveling",type:"Hindi Dub",genre:"Action",year:"2024",a:"#3a478d",b:"#11152c",subs:languages},
- {name:"Dragon Ball",type:"Hindi Dub",genre:"Adventure",year:"1986",a:"#e9a02d",b:"#a53d25",subs:languages},
- {name:"Spy x Family",type:"Hindi Sub",genre:"Romance",year:"2022",a:"#599a83",b:"#263b50",subs:languages},
- {name:"Death Note",type:"Hindi Sub",genre:"Action",year:"2006",a:"#5b536b",b:"#17131f",subs:languages},
- {name:"Haikyuu",type:"Hindi Dub",genre:"Adventure",year:"2014",a:"#e47b35",b:"#472c26",subs:languages}
-];
-
-let filter = "All";
-let selectedLanguage = "All";
-
-function render(){
- const q = document.getElementById("search").value.toLowerCase();
-
- const items = anime.filter(x =>
-  (filter === "All" || x.type === filter || x.genre === filter) &&
-  (selectedLanguage === "All" || x.subs.includes(selectedLanguage)) &&
-  x.name.toLowerCase().includes(q)
- );
-
- document.getElementById("animeGrid").innerHTML = items.map(x => `
-  <article class="card" data-name="${x.name}">
-   <div class="poster" style="--a:${x.a};--b:${x.b}">
-    <span class="tag">${x.type}</span>
-    <strong>${x.name}</strong>
-   </div>
-   <h3>${x.name}</h3>
-   <p class="meta">${x.year} • ${x.genre}</p>
-   <p class="meta">Subtitles: ${x.subs.length} Languages</p>
-  </article>
- `).join("");
-
- document.getElementById("empty").style.display =
-  items.length ? "none" : "block";
-}
-
-document.getElementById("filters").addEventListener("click",e=>{
- if(!e.target.matches("button")) return;
-
- filter = e.target.dataset.filter;
-
- document.querySelectorAll(".filters button").forEach(b =>
-  b.classList.toggle("active",b === e.target)
- );
-
- render();
-});
-
-document.getElementById("search").addEventListener("input",render);
-
-document.getElementById("subtitleLanguage").addEventListener("change",e=>{
- selectedLanguage = e.target.value;
- render();
-});
-
-document.getElementById("animeGrid").addEventListener("click",e=>{
- const card = e.target.closest(".card");
- if(card) showAnime(card.dataset.name);
-});
-
-function showAnime(name){
- const x = anime.find(a => a.name === name);
- if(!x) return;
-
- document.getElementById("modalTitle").textContent = x.name;
- document.getElementById("modalInfo").textContent =
-  x.year + " • " + x.genre + " • " + x.type;
-
- const select = document.getElementById("modalLanguage");
- select.innerHTML = "";
-
- x.subs.forEach(lang=>{
-  const option = document.createElement("option");
-  option.value = lang;
-  option.textContent = lang;
-  select.appendChild(option);
- });
-
- document.getElementById("modal").style.display = "flex";
-}
-
-function closeModal(){
- document.getElementById("modal").style.display = "none";
-}
-
-document.getElementById("modal").addEventListener("click",e=>{
- if(e.target.id === "modal") closeModal();
-});
-
-document.addEventListener("keydown",e=>{
- if(e.key === "Escape") closeModal();
-});
-
+// LOAD FIRESTORE DATA
+anime = demoAnime;
 render();
+
+status.textContent = "Loading anime from Firebase...";
+
+try {
+  onSnapshot(
+    collection(db, "Anime_data"),
+
+    snapshot => {
+      if (snapshot.empty) {
+        anime = demoAnime;
+        status.textContent = "Demo anime shown. Add anime to your Firestore Anime_data collection.";
+        render();
+        return;
+      }
+
+      anime = snapshot.docs.map(doc => {
+        const data = doc.data();
+
+        return {
+          id:doc.id,
+          name:data.title || doc.id,
+          type:data.language || "Hindi Sub",
+          genre:data.category || "Anime",
+          year:data.year || "",
+          description:data.description || "No description available.",
+          imageUrl:data.imageUrl || "",
+          a:"#603b83",
+          b:"#171329",
+          subs:Array.isArray(data.subtitles) && data.subtitles.length
+            ? data.subtitles
+            : languages
+        };
+      });
+
+      status.textContent = "Anime database connected successfully!";
+      render();
+    },
+
+    error => {
+      console.error("Firestore error:",error);
+      anime = demoAnime;
+      status.textContent = "Firebase error: Check Firestore Rules and database connection. Demo anime shown.";
+      render();
+    }
+  );
+} catch (error) {
+  console.error(error);
+  anime = demoAnime;
+  status.textContent = "Firebase setup error. Demo anime shown.";
+  render();
+}
 </script>
 
 </body>
-</html>
+ </html>
