@@ -2,240 +2,483 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10091f">
 <title>AHSANIME PRO</title>
 <style>
-:root{--bg:#10091f;--panel:#211532;--text:#fff;--muted:#c3b0d3;--accent:#a78bfa;--line:#49355c}
+:root{--bg:#10091f;--panel:#211532;--panel2:#2b1c40;--text:#fff;--muted:#c3b0d3;--accent:#a78bfa;--line:#49355c;--input:#130d20}
+body.light{--bg:#f4effb;--panel:#fff;--panel2:#eee5fa;--text:#241632;--muted:#675875;--accent:#7c3aed;--line:#d8c9e8;--input:#faf7ff}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-header{position:sticky;top:0;z-index:5;background:#170f27;border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{font-size:23px;font-weight:800;letter-spacing:1px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;transition:.2s}
+header{position:sticky;top:0;z-index:10;background:var(--panel);border-bottom:1px solid var(--line);padding:12px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:900;letter-spacing:1px}
 .brand span{color:var(--accent)}
+nav{display:flex;gap:7px;flex-wrap:wrap}
 button,input,select{font:inherit}
-button{border:0;border-radius:10px;padding:11px 15px;background:var(--accent);color:#170f27;font-weight:700;cursor:pointer}
-button.secondary{background:#38264e;color:white;border:1px solid var(--line)}
+button{border:0;border-radius:9px;padding:10px 13px;background:var(--accent);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
 button:disabled{opacity:.45;cursor:not-allowed}
-.wrap{max-width:1050px;margin:auto;padding:20px 15px}
-.hero{padding:25px 20px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(135deg,#2c1b47,#171025)}
-h1{margin:0 0 8px;font-size:28px}
+.wrap{max-width:1100px;margin:auto;padding:18px 14px}
+.hero{padding:26px 20px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(135deg,#39215b,#171025);color:white}
+h1{font-size:28px;margin:0 0 8px}
+h2{font-size:20px;margin:0 0 13px}
 .muted{color:var(--muted);line-height:1.5}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin:14px 0}
-.panel h2{font-size:20px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:13px}
-.field{display:flex;flex-direction:column;gap:7px;margin:10px 0}
-.field label{font-weight:700;font-size:14px}
-.field input,.field select{width:100%;background:#130d20;color:white;border:1px solid var(--line);border-radius:9px;padding:12px}
-.notice{border:1px solid #80612d;background:#382b18;color:#ffe0a2;padding:12px;border-radius:10px;line-height:1.5}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.field label{font-size:14px;font-weight:700}
+input,select{width:100%;padding:11px;border-radius:9px;border:1px solid var(--line);background:var(--input);color:var(--text)}
+.searchbar{display:flex;gap:8px;margin:15px 0}
+.searchbar input{flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px}
+.anime-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.poster{height:125px;border-radius:9px;background:linear-gradient(135deg,#57377a,#211532);display:grid;place-items:center;font-size:36px;margin-bottom:9px}
+.anime-card h3{font-size:16px;margin:5px 0}
+.tag{font-size:12px;color:var(--muted)}
+.badge{display:inline-block;background:var(--panel2);border:1px solid var(--line);padding:4px 7px;border-radius:20px;font-size:11px;margin:3px 3px 3px 0}
 .hidden{display:none!important}
-.small{font-size:13px;color:var(--muted)}
-video{width:100%;max-height:520px;background:#000;border-radius:12px}
+.notice{background:#3b2c17;border:1px solid #80612d;color:#ffe0a2;border-radius:10px;padding:12px;line-height:1.5}
+body.light .notice{background:#fff5dc;color:#694900}
+video{width:100%;max-height:500px;background:#000;border-radius:10px}
+.small{font-size:12px;color:var(--muted)}
+.category-row{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
 footer{text-align:center;color:var(--muted);padding:25px 10px}
-@media(max-width:520px){h1{font-size:23px}.wrap{padding:14px 11px}.panel{padding:13px}}
+@media(max-width:600px){
+header{align-items:flex-start}
+.brand{font-size:19px}
+nav button{padding:8px;font-size:12px}
+.wrap{padding:12px 10px}
+.hero{padding:20px 15px}
+h1{font-size:23px}
+.searchbar{flex-direction:column}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
 
 <header>
  <div class="brand">AHSANIME <span>PRO</span></div>
- <button class="secondary" onclick="showTab('home')">Home</button>
+ <nav>
+  <button class="secondary" onclick="showPage('home')">Home</button>
+  <button class="secondary" onclick="showPage('watch')">Player</button>
+  <button class="secondary" onclick="showPage('watchlist')">Watchlist</button>
+  <button class="secondary" onclick="showPage('history')">History</button>
+  <button class="secondary" onclick="showPage('admin')">Admin</button>
+  <button class="secondary" onclick="toggleTheme()" id="themeBtn">☀️</button>
+  <button onclick="showPage('account')" id="accountBtn">Login</button>
+ </nav>
 </header>
 
 <main class="wrap">
 
 <section id="home">
  <div class="hero">
-  <h1>Anime Hub</h1>
-  <p class="muted">AHSANIME PRO — apne permitted videos manage karo aur subtitles test karo.</p>
+  <h1>Welcome to AHSANIME PRO</h1>
+  <p>Discover anime, browse categories and manage your watchlist.</p>
   <div class="actions">
-   <button onclick="showTab('watch')">Video Player</button>
-   <button class="secondary" onclick="showTab('admin')">Admin Panel</button>
+   <button onclick="showPage('watch')">Open Player</button>
+   <button class="secondary" onclick="showPage('account')">Login / Signup</button>
   </div>
  </div>
 
+ <div class="searchbar">
+  <input id="searchInput" placeholder="Anime search karo..." oninput="renderAnime()">
+  <button onclick="renderAnime()">Search</button>
+ </div>
+
+ <div class="category-row" id="categoryButtons"></div>
+
  <div class="panel">
-  <h2>Important</h2>
-  <p class="muted">Yeh static GitHub Pages prototype hai. Video upload sirf is browser mein local preview ke liye hai. Video ko sab viewers ke liye store karne ke liye alag backend aur storage service chahiye.</p>
+  <h2>Anime Collection</h2>
+  <div class="grid" id="animeGrid"></div>
+ </div>
+
+ <div class="panel">
+  <h2>Hindi Dubbed Anime</h2>
+  <p class="muted">Hindi dubbed titles ko catalog mein Hindi Dubbed tag ke saath mark karo.</p>
+  <div class="grid" id="dubGrid"></div>
  </div>
 </section>
 
 <section id="watch" class="hidden">
  <div class="panel">
-  <h2>Video Player</h2>
-  <p class="muted">Admin se select ki hui video yahan preview hogi.</p>
+  <h2>Anime Player</h2>
+  <p class="muted" id="nowPlaying">Abhi koi video select nahi hai.</p>
   <video id="videoPlayer" controls playsinline></video>
 
   <div class="field">
-   <label for="subtitleSelect">Subtitle</label>
+   <label>Subtitle language</label>
    <select id="subtitleSelect">
     <option value="">Off</option>
    </select>
   </div>
-  <p class="small">Subtitle menu mein wahi VTT files dikhenge jo is browser session mein add ki gayi hain.</p>
+
+  <div class="actions">
+   <button class="secondary" onclick="saveCurrentToWatchlist()">Add to Watchlist</button>
+  </div>
+  <p class="small">Video aur subtitles ke liye apni ya permission wali files hi use karein.</p>
+ </div>
+</section>
+
+<section id="watchlist" class="hidden">
+ <div class="panel">
+  <h2>My Watchlist</h2>
+  <div id="watchlistItems" class="grid"></div>
+ </div>
+</section>
+
+<section id="history" class="hidden">
+ <div class="panel">
+  <h2>Watch History</h2>
+  <div id="historyItems" class="grid"></div>
+  <button class="secondary" onclick="clearHistory()">Clear History</button>
+ </div>
+</section>
+
+<section id="account" class="hidden">
+ <div class="panel">
+  <h2>Login / Signup Demo</h2>
+  <div class="notice">Yeh browser-only demo account hai. Ismein real secure authentication nahi hai. Public website ke liye backend authentication lagana zaroori hai.</div>
+
+  <div class="field">
+   <label>Email</label>
+   <input id="emailInput" type="email" placeholder="you@example.com">
+  </div>
+
+  <div class="field">
+   <label>Password</label>
+   <input id="passwordInput" type="password" placeholder="Password">
+  </div>
+
+  <div class="actions">
+   <button onclick="demoLogin()">Login</button>
+   <button class="secondary" onclick="demoSignup()">Signup</button>
+   <button class="secondary" onclick="demoLogout()">Logout</button>
+  </div>
+
+  <p id="accountStatus" class="small" aria-live="polite">Demo mode: account data sirf isi browser mein rahega.</p>
  </div>
 </section>
 
 <section id="admin" class="hidden">
  <div class="panel">
-  <h2>Admin — Video & Subtitle Setup</h2>
+  <h2>Admin Panel — Local Preview</h2>
 
   <div class="notice">
-   <b>AI backend abhi connect nahi hai.</b>
-   Isliye Generate buttons disabled hain. Sirf HTML code se Japanese audio ko AI se translate karke permanent subtitles banana possible nahi hai.
+   <b>Backend abhi connect nahi hai.</b>
+   Upload ki hui video sirf isi browser mein preview hogi; website ke sab viewers ke liye publish nahi hogi.
   </div>
 
   <div class="field">
-   <label for="videoFile">1. Apni video file select karo</label>
+   <label>Anime title</label>
+   <input id="animeTitle" placeholder="Anime / Episode title">
+  </div>
+
+  <div class="field">
+   <label>Category</label>
+   <select id="animeCategory">
+    <option>Action</option>
+    <option>Fantasy</option>
+    <option>Adventure</option>
+    <option>Comedy</option>
+    <option>Romance</option>
+    <option>Historical</option>
+    <option>Supernatural</option>
+    <option>Isekai</option>
+   </select>
+  </div>
+
+  <div class="field">
+   <label>Language</label>
+   <select id="animeLanguage">
+    <option>Japanese</option>
+    <option>Hindi Dubbed</option>
+    <option>English Dubbed</option>
+   </select>
+  </div>
+
+  <div class="field">
+   <label>Video file</label>
    <input id="videoFile" type="file" accept="video/*">
   </div>
 
-  <div class="field">
-   <label for="videoTitle">Video title</label>
-   <input id="videoTitle" type="text" placeholder="Anime episode title">
-  </div>
-
   <div class="actions">
-   <button id="previewBtn" disabled>Player mein Preview</button>
+   <button onclick="addLocalAnime()">Add to this browser catalog</button>
+   <button class="secondary" onclick="previewAdminVideo()">Preview video</button>
   </div>
 
   <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
 
-  <h2>2. Subtitle files add karo</h2>
-  <p class="muted">Apni .vtt subtitle files yahan add karo. Ye player ke menu mein appear hongi.</p>
+  <h2>Subtitle Files</h2>
+  <p class="muted">English, Hindi aur Hinglish VTT subtitle files add karo.</p>
 
   <div class="grid">
    <div class="field">
-    <label for="enFile">English VTT</label>
+    <label>English VTT</label>
     <input id="enFile" type="file" accept=".vtt,text/vtt">
    </div>
-
    <div class="field">
-    <label for="hiFile">Hindi VTT</label>
+    <label>Hindi VTT</label>
     <input id="hiFile" type="file" accept=".vtt,text/vtt">
    </div>
-
    <div class="field">
-    <label for="hinglishFile">Hinglish VTT</label>
+    <label>Hinglish VTT</label>
     <input id="hinglishFile" type="file" accept=".vtt,text/vtt">
    </div>
   </div>
 
-  <div class="actions">
-   <button id="addSubsBtn" class="secondary">Subtitle files player mein add karo</button>
-  </div>
-
-  <div id="subtitleStatus" class="small" aria-live="polite"></div>
+  <button onclick="addSubtitleFiles()">Add subtitle tracks to player</button>
+  <p id="adminStatus" class="small"></p>
 
   <hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
 
-  <h2>3. AI Subtitle Generation</h2>
-  <p class="muted">Target languages: English, Hindi (देवनागरी), Hinglish (Roman Hindi).</p>
+  <h2>AI Subtitle Generation</h2>
+  <p class="muted">Japanese audio → English → Hindi (देवनागरी) → Hinglish (Roman Hindi).</p>
 
-  <div class="grid">
-   <button disabled title="Backend connection required">Generate English</button>
-   <button disabled title="Backend connection required">Generate Hindi</button>
-   <button disabled title="Backend connection required">Generate Hinglish</button>
+  <div class="notice">
+   AI generation abhi available nahi hai. Iske liye server-side transcription/translation backend, file storage aur secure API connection banana hoga. Neeche ke buttons abhi setup placeholder hain.
   </div>
 
-  <p class="small">Backend connect hone ke baad hi AI generation aur permanent storage enable hoga. API keys kabhi HTML/JavaScript mein mat daalna.</p>
+  <div class="actions">
+   <button disabled>Generate English</button>
+   <button disabled>Generate Hindi</button>
+   <button disabled>Generate Hinglish</button>
+  </div>
  </div>
 </section>
 
 </main>
 
 <footer>
- AHSANIME PRO · Use only videos and subtitles you own or have permission to use.
+ AHSANIME PRO · Demo frontend · Only use content you own or are licensed to distribute.
 </footer>
 
 <script>
-const sections=['home','watch','admin'];
+const pages=['home','watch','watchlist','history','account','admin'];
 
-function showTab(id){
- sections.forEach(s=>{
-  document.getElementById(s).classList.toggle('hidden',s!==id);
+function showPage(id){
+ pages.forEach(p=>{
+  document.getElementById(p).classList.toggle('hidden',p!==id);
  });
+ if(id==='watchlist')renderSaved('watchlistItems','watchlist');
+ if(id==='history')renderSaved('historyItems','history');
  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-const videoInput=document.getElementById('videoFile');
+function toggleTheme(){
+ document.body.classList.toggle('light');
+ localStorage.setItem('ahs-theme',document.body.classList.contains('light')?'light':'dark');
+ document.getElementById('themeBtn').textContent=document.body.classList.contains('light')?'🌙':'☀️';
+}
+
+if(localStorage.getItem('ahs-theme')==='light'){
+ document.body.classList.add('light');
+ document.getElementById('themeBtn').textContent='🌙';
+}
+
+const anime=[
+ {id:1,title:'Sample Action Anime',category:'Action',language:'Hindi Dubbed',episode:'Episode 1'},
+ {id:2,title:'Fantasy Adventure Demo',category:'Fantasy',language:'Japanese',episode:'Episode 1'},
+ {id:3,title:'Historical Anime Demo',category:'Historical',language:'Hindi Dubbed',episode:'Episode 1'},
+ {id:4,title:'Supernatural Demo',category:'Supernatural',language:'Japanese',episode:'Episode 1'},
+ {id:5,title:'Isekai Adventure Demo',category:'Isekai',language:'English Dubbed',episode:'Episode 1'},
+ {id:6,title:'Comedy Anime Demo',category:'Comedy',language:'Hindi Dubbed',episode:'Episode 1'}
+];
+
+let selectedCategory='All';
+let currentAnime=null;
+let videoObjectUrl=null;
+let trackUrls=[];
+
+const categories=['All','Action','Fantasy','Adventure','Comedy','Historical','Romance','Supernatural','Isekai'];
+
+function buildCategories(){
+ document.getElementById('categoryButtons').innerHTML=categories.map(c=>
+  `<button class="secondary" onclick="filterCategory('${c}')">${c}</button>`
+ ).join('');
+}
+
+function filterCategory(c){
+ selectedCategory=c;
+ renderAnime();
+}
+
+function card(a){
+ return `<article class="anime-card">
+ <div class="poster">🎬</div>
+ <h3>${escapeHtml(a.title)}</h3>
+ <span class="badge">${escapeHtml(a.category)}</span>
+ <span class="badge">${escapeHtml(a.language)}</span>
+ <p class="tag">${escapeHtml(a.episode||'')}</p>
+ <div class="actions">
+ <button onclick="playAnime(${a.id})">Open</button>
+ <button class="secondary" onclick="addWatchlist(${a.id})">＋ List</button>
+ </div></article>`;
+}
+
+function escapeHtml(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+ }[c]));
+}
+
+function renderAnime(){
+ const q=document.getElementById('searchInput').value.toLowerCase();
+ const filtered=anime.filter(a=>
+  (selectedCategory==='All'||a.category===selectedCategory)&&
+  a.title.toLowerCase().includes(q)
+ );
+ document.getElementById('animeGrid').innerHTML=filtered.map(card).join('')||'<p class="muted">Koi anime nahi mila.</p>';
+ document.getElementById('dubGrid').innerHTML=anime.filter(a=>a.language==='Hindi Dubbed').map(card).join('')||'<p class="muted">Abhi Hindi dubbed demo title nahi hai.</p>';
+}
+
+function playAnime(id){
+ currentAnime=anime.find(a=>a.id===id);
+ document.getElementById('nowPlaying').textContent=currentAnime?currentAnime.title+' — '+currentAnime.episode:'Selected video';
+ let h=JSON.parse(localStorage.getItem('ahs-history')||'[]');
+ if(currentAnime){
+  h=[currentAnime,...h.filter(x=>x.id!==currentAnime.id)].slice(0,30);
+  localStorage.setItem('ahs-history',JSON.stringify(h));
+ }
+ showPage('watch');
+}
+
+function addWatchlist(id){
+ let a=anime.find(x=>x.id===id);
+ if(!a)return;
+ let w=JSON.parse(localStorage.getItem('ahs-watchlist')||'[]');
+ if(!w.some(x=>x.id===id))w.push(a);
+ localStorage.setItem('ahs-watchlist',JSON.stringify(w));
+ alert('Watchlist mein add ho gaya.');
+}
+
+function saveCurrentToWatchlist(){
+ if(currentAnime)addWatchlist(currentAnime.id);
+ else alert('Pehle catalog se anime select karo.');
+}
+
+function renderSaved(target,key){
+ let arr=JSON.parse(localStorage.getItem(key==='history'?'ahs-history':'ahs-watchlist')||'[]');
+ document.getElementById(target).innerHTML=arr.map(card).join('')||'<p class="muted">Abhi list khaali hai.</p>';
+}
+
+function clearHistory(){
+ localStorage.removeItem('ahs-history');
+ renderSaved('historyItems','history');
+}
+
+function demoSignup(){
+ const e=document.getElementById('emailInput').value.trim();
+ const p=document.getElementById('passwordInput').value;
+ if(!e||!p){accountMsg('Email aur password bharo.');return;}
+ localStorage.setItem('ahs-demo-user',JSON.stringify({email:e,password:p}));
+ accountMsg('Demo signup ho gaya. Yeh secure production account nahi hai.');
+}
+
+function demoLogin(){
+ const e=document.getElementById('emailInput').value.trim();
+ const p=document.getElementById('passwordInput').value;
+ const u=JSON.parse(localStorage.getItem('ahs-demo-user')||'null');
+ if(u&&u.email===e&&u.password===p){
+  sessionStorage.setItem('ahs-demo-login',e);
+  accountMsg('Demo login successful: '+e);
+ }else accountMsg('Demo account nahi mila. Pehle Signup karo.');
+}
+
+function demoLogout(){
+ sessionStorage.removeItem('ahs-demo-login');
+ accountMsg('Demo logout ho gaya.');
+}
+
+function accountMsg(t){
+ document.getElementById('accountStatus').textContent=t;
+ document.getElementById('accountBtn').textContent=sessionStorage.getItem('ahs-demo-login')?'Account':'Login';
+}
+
 const video=document.getElementById('videoPlayer');
-const previewBtn=document.getElementById('previewBtn');
-let videoUrl=null;
+const videoInput=document.getElementById('videoFile');
 
-videoInput.addEventListener('change',()=>{
- previewBtn.disabled=!videoInput.files.length;
-});
+function previewAdminVideo(){
+ if(!videoInput.files[0]){
+  alert('Pehle video file select karo.');
+  return;
+ }
+ if(videoObjectUrl)URL.revokeObjectURL(videoObjectUrl);
+ videoObjectUrl=URL.createObjectURL(videoInput.files[0]);
+ video.src=videoObjectUrl;
+ showPage('watch');
+ document.getElementById('nowPlaying').textContent=document.getElementById('animeTitle').value||videoInput.files[0].name;
+}
 
-previewBtn.addEventListener('click',()=>{
- if(!videoInput.files.length)return;
+function addLocalAnime(){
+ const title=document.getElementById('animeTitle').value.trim();
+ if(!title){alert('Anime title likho.');return;}
+ const a={
+  id:Date.now(),
+  title,
+  category:document.getElementById('animeCategory').value,
+  language:document.getElementById('animeLanguage').value,
+  episode:'Added in this browser'
+ };
+ anime.unshift(a);
+ renderAnime();
+ document.getElementById('adminStatus').textContent='Catalog mein local demo entry add hui. Dusre visitors ko nahi dikhegi.';
+}
 
- if(videoUrl)URL.revokeObjectURL(videoUrl);
-
- videoUrl=URL.createObjectURL(videoInput.files[0]);
- video.src=videoUrl;
- showTab('watch');
-});
-
-const subtitleSelect=document.getElementById('subtitleSelect');
-const subtitleStatus=document.getElementById('subtitleStatus');
-let subtitleUrls=[];
-
-document.getElementById('addSubsBtn').addEventListener('click',()=>{
- const entries=[
-  ['enFile','English'],
-  ['hiFile','Hindi'],
-  ['hinglishFile','Hinglish']
+function addSubtitleFiles(){
+ const files=[
+  ['enFile','English','en'],
+  ['hiFile','Hindi','hi'],
+  ['hinglishFile','Hinglish','hi-Latn']
  ];
+ let count=0;
+ const select=document.getElementById('subtitleSelect');
 
- let added=0;
+ files.forEach(([id,label,lang])=>{
+  const f=document.getElementById(id).files[0];
+  if(!f)return;
+  if(!/\.vtt$/i.test(f.name))return;
 
- entries.forEach(([id,label])=>{
-  const file=document.getElementById(id).files[0];
+  const url=URL.createObjectURL(f);
+  trackUrls.push(url);
 
-  if(!file)return;
-
-  if(!/\.vtt$/i.test(file.name)){
-   subtitleStatus.textContent=label+': .vtt file required.';
-   return;
-  }
-
-  const url=URL.createObjectURL(file);
-  subtitleUrls.push(url);
-
-  const option=document.createElement('option');
-  option.value=url;
-  option.textContent=label;
-  subtitleSelect.appendChild(option);
-  added++;
+  const o=document.createElement('option');
+  o.value=url;
+  o.textContent=label;
+  o.dataset.lang=lang;
+  select.appendChild(o);
+  count++;
  });
 
- subtitleStatus.textContent=added
-  ?added+' subtitle track(s) player menu mein add ho gaye.'
-  :'Koi nayi VTT file select nahi hui.';
+ document.getElementById('adminStatus').textContent=count
+  ?count+' subtitle track(s) player menu mein add ho gaye.'
+  :'Valid VTT file select karo.';
+}
+
+document.getElementById('subtitleSelect').addEventListener('change',()=>{
+ video.querySelectorAll('track').forEach(t=>t.remove());
+ const s=document.getElementById('subtitleSelect');
+ if(!s.value)return;
+
+ const t=document.createElement('track');
+ t.kind='subtitles';
+ t.label=s.options[s.selectedIndex].text;
+ t.srclang=s.options[s.selectedIndex].dataset.lang||'en';
+ t.src=s.value;
+ t.default=true;
+ video.appendChild(t);
+ t.track.mode='showing';
 });
 
-subtitleSelect.addEventListener('change',()=>{
- [...video.querySelectorAll('track')].forEach(t=>t.remove());
-
- if(!subtitleSelect.value)return;
-
- const track=document.createElement('track');
- track.kind='subtitles';
- track.label=subtitleSelect.options[subtitleSelect.selectedIndex].text;
- track.srclang='en';
- track.src=subtitleSelect.value;
- track.default=true;
-
- video.appendChild(track);
- track.track.mode='showing';
-});
+buildCategories();
+renderAnime();
+accountMsg('Login');
 
 window.addEventListener('beforeunload',()=>{
- if(videoUrl)URL.revokeObjectURL(videoUrl);
- subtitleUrls.forEach(URL.revokeObjectURL);
+ if(videoObjectUrl)URL.revokeObjectURL(videoObjectUrl);
+ trackUrls.forEach(URL.revokeObjectURL);
 });
 </script>
-
 </body>
-</html>
+ </html>
