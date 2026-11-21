@@ -2,337 +2,303 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10091f">
-<title>AHSANIME - Watch Anime</title>
+<title>AHSANIME PRO</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
- background:#10091f;color:white;
- font-family:Arial,sans-serif;
-}
-header{
- background:#190d2c;padding:17px 5%;
- display:flex;align-items:center;justify-content:space-between;
- position:sticky;top:0;z-index:10;
- border-bottom:1px solid #382052;
-}
-.logo{font-size:27px;font-weight:900;color:#bd75ff}
-.logo span{color:white}
-nav{display:flex;gap:20px}
-nav a{color:white;text-decoration:none;font-size:14px}
-nav a:hover{color:#c17aff}
-.hero{
- min-height:310px;padding:65px 7%;
- background:linear-gradient(90deg,#160a29,#321052,#170a2c);
- display:flex;flex-direction:column;justify-content:center;
-}
-.hero h1{font-size:42px;margin-bottom:13px}
-.hero h1 span{color:#c17aff}
-.hero p{color:#d1c5df;margin-bottom:23px}
-.search{
- display:flex;max-width:520px;background:#25143a;
- border:1px solid #7544a0;border-radius:10px;overflow:hidden;
-}
-.search input{
- flex:1;min-width:0;padding:15px;background:transparent;
- border:0;outline:0;color:white;font-size:15px;
-}
-.search button{
- background:#9c4ce0;color:white;border:0;
- padding:0 22px;font-weight:bold;
-}
-.container{padding:30px 5%}
-.section-title{
- font-size:23px;margin-bottom:20px;
- border-left:4px solid #b65cff;padding-left:12px;
-}
-.genres{display:flex;gap:10px;overflow-x:auto;padding-bottom:20px}
-.genre{
- white-space:nowrap;background:#28153e;color:white;
- border:1px solid #553078;border-radius:20px;
- padding:9px 17px;cursor:pointer;
-}
-.genre.active,.genre:hover{background:#9c4ce0}
-.grid{
- display:grid;grid-template-columns:repeat(5,1fr);gap:19px;
-}
-.card{
- background:#201331;border-radius:12px;overflow:hidden;
- cursor:pointer;transition:.2s;
- border:1px solid #332044;
-}
-.card:hover{transform:translateY(-5px);border-color:#b65cff}
-.poster{width:100%;height:255px;object-fit:cover;display:block}
-.card-info{padding:12px}
-.card h3{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meta{font-size:12px;color:#bca9ce;margin-top:8px}
-.rating{color:#ffc45c}
-.watch{
- margin-top:10px;width:100%;padding:9px;
- border:0;border-radius:6px;background:#913bd0;
- color:white;font-weight:bold;cursor:pointer;
-}
-.status{text-align:center;padding:35px;color:#c6b2da}
-.more{
- display:block;margin:28px auto;padding:13px 35px;
- border:0;border-radius:8px;background:#913bd0;color:white;
- font-size:15px;cursor:pointer;
-}
-footer{
- background:#190d2c;text-align:center;padding:25px;
- color:#bba8ca;margin-top:30px;
-}
-footer b{color:#bd75ff}
-.modal{
- display:none;position:fixed;inset:0;background:#000d;
- z-index:30;align-items:center;justify-content:center;padding:15px;
-}
-.modal-box{
- background:#211333;border:1px solid #7945a0;
- border-radius:15px;max-width:650px;width:100%;
- max-height:90vh;overflow:auto;padding:20px;
-}
-.modal-content{display:flex;gap:20px}
-.modal-content img{width:155px;max-height:230px;object-fit:cover;border-radius:8px}
-.modal h2{margin-bottom:12px;color:#d39bff}
-.modal p{color:#d4c4e0;line-height:1.6;margin:8px 0}
-.close{float:right;background:#8d3bc6;color:white;border:0;padding:8px 13px;border-radius:6px;cursor:pointer}
-.modal a{display:inline-block;background:#923bd0;color:white;text-decoration:none;padding:11px 15px;border-radius:7px;margin-top:12px}
-@media(max-width:850px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:550px){
- nav{gap:10px}nav a{font-size:12px}
- .logo{font-size:22px}
- .hero{min-height:260px;padding:40px 6%}
- .hero h1{font-size:32px}
- .container{padding:23px 4%}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
- .poster{height:220px}
- .modal-content{gap:12px}
- .modal-content img{width:110px}
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#10091f;color:white;font-family:Arial,sans-serif}
+header{background:#1d1030;padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.logo{font-size:24px;font-weight:bold;color:#c17aff}
+button{cursor:pointer;border:0;border-radius:7px;padding:11px;background:#933ee0;color:white;font-weight:bold}
+input,textarea{width:100%;padding:12px;margin:7px 0 14px;background:#241735;border:1px solid #604078;border-radius:7px;color:white}
+label{font-size:13px;color:#d5b9ed}
+.hero{padding:45px 6%;background:linear-gradient(110deg,#210e38,#552477,#160c29)}
+.hero h1{font-size:34px;margin-bottom:10px}
+.wrap{padding:25px 5%}
+.tools{display:flex;gap:10px;margin:18px 0}
+.tools input{margin:0}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
+.card{background:#211532;border-radius:10px;overflow:hidden;border:1px solid #3b2850}
+.card img{width:100%;height:230px;object-fit:cover}
+.info{padding:11px}
+.info h3{font-size:14px;margin-bottom:10px}
+.info button{width:100%}
+.admin,.player{display:none;position:fixed;inset:0;background:#000e;z-index:10;overflow:auto;padding:18px}
+.panel{max-width:650px;margin:30px auto;background:#211532;border:1px solid #74429a;border-radius:12px;padding:20px}
+.panel h2{margin-bottom:18px;color:#ce9aff}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.close{background:#555}
+video{width:100%;background:black;margin-top:15px;max-height:65vh}
+.muted{color:#c3b0d3;line-height:1.6}
+footer{text-align:center;padding:25px;color:#bda8d0}
+@media(max-width:800px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.card img{height:205px}.hero h1{font-size:27px}.tools{flex-direction:column}}
 </style>
 </head>
 <body>
 
 <header>
- <div class="logo">AHS<span>ANIME</span></div>
- <nav>
-  <a href="#">Home</a>
-  <a href="#anime">Anime</a>
-  <a href="#popular">Popular</a>
- </nav>
+ <div class="logo">AHSANIME PRO</div>
+ <button onclick="openAdmin()">ADMIN</button>
 </header>
 
 <section class="hero">
- <h1>Welcome to <span>AHSANIME</span></h1>
- <p>Discover your next favourite anime.</p>
- <div class="search">
-  <input id="searchInput" placeholder="Search anime name...">
-  <button onclick="searchAnime()">SEARCH</button>
- </div>
+ <h1>Welcome to AHSANIME</h1>
+ <p>Discover and watch your favourite anime.</p>
 </section>
 
-<main class="container" id="anime">
- <h2 class="section-title">Explore Genres</h2>
- <div class="genres" id="genres">
-  <button class="genre active" onclick="genreSelect('All',this)">All</button>
-  <button class="genre" onclick="genreSelect('Action',this)">Action</button>
-  <button class="genre" onclick="genreSelect('Romance',this)">Romance</button>
-  <button class="genre" onclick="genreSelect('Comedy',this)">Comedy</button>
-  <button class="genre" onclick="genreSelect('Fantasy',this)">Fantasy</button>
-  <button class="genre" onclick="genreSelect('Adventure',this)">Adventure</button>
-  <button class="genre" onclick="genreSelect('Drama',this)">Drama</button>
-  <button class="genre" onclick="genreSelect('Horror',this)">Horror</button>
+<main class="wrap">
+ <h2>Anime Collection</h2>
+ <div class="tools">
+  <input id="search" placeholder="Search anime..." oninput="render()">
  </div>
-
- <h2 class="section-title" id="heading">Popular Anime</h2>
- <div class="grid" id="animeGrid">
-  <div class="status">Loading anime...</div>
- </div>
- <button class="more" id="moreBtn" onclick="loadMore()">LOAD MORE</button>
+ <div class="grid" id="grid"></div>
+ <p id="empty" class="muted" style="padding:20px;display:none">No anime added yet.</p>
 </main>
 
-<section class="container" id="popular">
- <h2 class="section-title">About AHSANIME</h2>
- <p style="color:#c9b7d7;line-height:1.8">
- AHSANIME is your anime discovery destination.
- Find anime, explore genres, discover ratings and watch official trailers.
- </p>
-</section>
+<footer>AHSANIME PRO · Anime discovery</footer>
 
-<footer>
- <b>AHSANIME</b><br><br>
- Anime discovery made for fans.<br>
- © 2026 AHSANIME
-</footer>
+<!-- ADMIN -->
+<div class="admin" id="admin">
+ <div class="panel">
+  <button class="close" onclick="closeAdmin()">CLOSE ✕</button>
+  <h2>Admin Dashboard</h2>
+  <div id="login">
+   <p class="muted">Enter demo admin password</p>
+   <input id="password" type="password" placeholder="Admin password">
+   <button onclick="login()">LOGIN</button>
+   <p id="loginError" class="muted"></p>
+  </div>
 
-<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
- <div class="modal-box">
-  <button class="close" onclick="closeModal()">CLOSE ✕</button>
-  <div id="modalContent"></div>
+  <div id="dashboard" style="display:none">
+   <h3 id="formTitle">Add New Anime</h3>
+   <form id="animeForm">
+    <input type="hidden" id="editId">
+    <label>Anime Name</label>
+    <input id="name" required placeholder="Anime name">
+
+    <label>Poster Image URL</label>
+    <input id="poster" type="url" required placeholder="https://image-link.jpg">
+
+    <label>Description</label>
+    <textarea id="description" rows="3" placeholder="Anime story"></textarea>
+
+    <label>Episode Name</label>
+    <input id="episode" placeholder="Episode 1">
+
+    <label>Licensed HLS Stream URL (.m3u8)</label>
+    <input id="stream" type="url" placeholder="https://your-provider.com/video.m3u8">
+
+    <button type="submit">SAVE ANIME</button>
+    <button type="button" class="close" onclick="resetForm()">CLEAR</button>
+   </form>
+   <hr style="margin:20px 0;border-color:#49335c">
+   <h3>Manage Anime</h3>
+   <div id="manage"></div>
+   <button style="margin-top:20px" onclick="logout()">LOG OUT</button>
+  </div>
  </div>
 </div>
 
+<!-- VIDEO PLAYER -->
+<div class="player" id="player">
+ <div class="panel">
+  <button class="close" onclick="closePlayer()">CLOSE ✕</button>
+  <h2 id="videoTitle">Anime Player</h2>
+  <p id="videoEpisode" class="muted"></p>
+  <video id="video" controls playsinline></video>
+  <p id="videoMessage" class="muted"></p>
+ </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <script>
-const API="https://api.jikan.moe/v4";
-let page=1;
-let currentQuery="";
-let currentGenre="";
-let loading=false;
-let mode="top";
-let requestId=0;
+const KEY="ahsanime_anime_v1";
+const DEMO_PASSWORD="ahsadmin123";
+let animeList=[];
+let hls=null;
 
-const grid=document.getElementById("animeGrid");
-const heading=document.getElementById("heading");
+function load(){
+ try{
+  animeList=JSON.parse(localStorage.getItem(KEY)||"[]");
+  if(!Array.isArray(animeList))animeList=[];
+ }catch(e){animeList=[]}
+ render();
+}
 
-function safe(text){
- return String(text||"").replace(/[&<>"']/g,c=>({
+function save(){
+ localStorage.setItem(KEY,JSON.stringify(animeList));
+ render();
+ manage();
+}
+
+function safe(s){
+ return String(s||"").replace(/[&<>"']/g,c=>({
  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
  }[c]));
 }
 
-function showMessage(msg){
- grid.innerHTML='<div class="status">'+safe(msg)+'</div>';
-}
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const grid=document.getElementById("grid");
+ grid.innerHTML="";
+ const filtered=animeList.filter(a=>a.name.toLowerCase().includes(q));
+ document.getElementById("empty").style.display=filtered.length?"none":"block";
 
-async function getAnime(url){
- if(loading)return;
- loading=true;
- const id=++requestId;
- if(page===1)showMessage("Loading anime...");
- try{
-  const response=await fetch(url);
-  if(!response.ok)throw new Error("API busy");
-  const data=await response.json();
-  if(id!==requestId)return;
-  renderAnime(data.data||[]);
-  document.getElementById("moreBtn").style.display=
-   data.pagination?.has_next_page?"block":"none";
- }catch(error){
-  if(id===requestId){
-   if(page===1)showMessage("Could not load anime. Please try again.");
-   else alert("Loading failed. Try again.");
-  }
- }finally{
-  if(id===requestId)loading=false;
- }
-}
-
-function renderAnime(list){
- if(page===1)grid.innerHTML="";
- if(!list.length && page===1){
-  showMessage("No anime found. Try another search.");
-  return;
- }
- list.forEach(a=>{
-  const card=document.createElement("article");
+ filtered.forEach(a=>{
+  const card=document.createElement("div");
   card.className="card";
-  const img=a.images?.jpg?.large_image_url||
-   a.images?.jpg?.image_url||"";
-  const title=a.title_english||a.title||"Anime";
-  const score=a.score||"N/A";
-  const year=a.year||a.aired?.prop?.from?.year||"Unknown";
   card.innerHTML=`
-   <img class="poster" loading="lazy" src="${safe(img)}" alt="${safe(title)}">
-   <div class="card-info">
-    <h3>${safe(title)}</h3>
-    <div class="meta"><span class="rating">★ ${safe(score)}</span> · ${safe(year)}</div>
-    <button class="watch">VIEW DETAILS</button>
+   <img src="${safe(a.poster)}" alt="${safe(a.name)}" loading="lazy">
+   <div class="info">
+    <h3>${safe(a.name)}</h3>
+    <button>▶ WATCH NOW</button>
    </div>`;
-  card.querySelector("button").onclick=()=>showDetails(a.mal_id);
-  card.querySelector("img").onclick=()=>showDetails(a.mal_id);
+  card.querySelector("button").onclick=()=>playAnime(a.id);
   grid.appendChild(card);
  });
 }
 
-function loadTop(){
- mode="top";page=1;currentQuery="";currentGenre="";
- heading.textContent="Popular Anime";
- getAnime(`${API}/top/anime?page=${page}&limit=20`);
+function openAdmin(){
+ document.getElementById("admin").style.display="block";
 }
 
-function searchAnime(){
- const q=document.getElementById("searchInput").value.trim();
- if(!q){loadTop();return;}
- mode="search";page=1;currentQuery=q;currentGenre="";
- heading.textContent="Search Results";
- getAnime(`${API}/anime?q=${encodeURIComponent(q)}&page=1&limit=20`);
- document.querySelectorAll(".genre").forEach(b=>b.classList.remove("active"));
+function closeAdmin(){
+ document.getElementById("admin").style.display="none";
 }
 
-function genreSelect(name,btn){
- document.querySelectorAll(".genre").forEach(b=>b.classList.remove("active"));
- btn.classList.add("active");
- if(name==="All"){loadTop();return;}
- mode="genre";page=1;currentGenre=name;currentQuery="";
- heading.textContent=name+" Anime";
- getAnime(`${API}/anime?genres=${genreId(name)}&page=1&limit=20`);
-}
-
-function genreId(name){
- const ids={
-  Action:1,Adventure:2,Comedy:4,Drama:8,
-  Fantasy:10,Horror:14,Romance:22
- };
- return ids[name];
-}
-
-function loadMore(){
- if(loading)return;
- page++;
- let url;
- if(mode==="search")
-  url=`${API}/anime?q=${encodeURIComponent(currentQuery)}&page=${page}&limit=20`;
- else if(mode==="genre")
-  url=`${API}/anime?genres=${genreId(currentGenre)}&page=${page}&limit=20`;
- else
-  url=`${API}/top/anime?page=${page}&limit=20`;
- getAnime(url);
-}
-
-async function showDetails(id){
- const modal=document.getElementById("modal");
- const content=document.getElementById("modalContent");
- modal.style.display="flex";
- content.innerHTML='<p>Loading details...</p>';
- try{
-  const res=await fetch(`${API}/anime/${id}/full`);
-  if(!res.ok)throw new Error();
-  const json=await res.json();
-  const a=json.data;
-  const trailer=a.trailer?.url;
-  const genres=(a.genres||[]).map(g=>g.name).join(", ");
-  const img=a.images?.jpg?.large_image_url||"";
-  content.innerHTML=`
-   <div class="modal-content">
-    <img src="${safe(img)}" alt="${safe(a.title)}">
-    <div>
-     <h2>${safe(a.title_english||a.title)}</h2>
-     <p>★ Rating: ${safe(a.score||"N/A")}</p>
-     <p>Episodes: ${safe(a.episodes||"Unknown")}</p>
-     <p>Status: ${safe(a.status||"Unknown")}</p>
-     <p>Type: ${safe(a.type||"Unknown")}</p>
-    </div>
-   </div>
-   <p><b>Genres:</b> ${safe(genres)}</p>
-   <p>${safe(a.synopsis||"Synopsis unavailable.")}</p>
-   ${trailer?`<a href="${safe(trailer)}" target="_blank" rel="noopener">▶ Watch Official Trailer</a>`:"<p>Official trailer unavailable.</p>"}
-  `;
- }catch(e){
-  content.innerHTML="<p>Details unavailable. Please try again.</p>";
+function login(){
+ if(document.getElementById("password").value===DEMO_PASSWORD){
+  document.getElementById("login").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  manage();
+ }else{
+  document.getElementById("loginError").textContent="Wrong password!";
  }
 }
 
-function closeModal(){
- document.getElementById("modal").style.display="none";
+function logout(){
+ document.getElementById("dashboard").style.display="none";
+ document.getElementById("login").style.display="block";
+ document.getElementById("password").value="";
 }
 
-document.getElementById("searchInput").addEventListener("keydown",e=>{
- if(e.key==="Enter")searchAnime();
-});
+function resetForm(){
+ document.getElementById("animeForm").reset();
+ document.getElementById("editId").value="";
+ document.getElementById("formTitle").textContent="Add New Anime";
+}
 
-loadTop();
+document.getElementById("animeForm").onsubmit=function(e){
+ e.preventDefault();
+ const id=document.getElementById("editId").value;
+ const item={
+  id:id||String(Date.now()),
+  name:document.getElementById("name").value.trim(),
+  poster:document.getElementById("poster").value.trim(),
+  description:document.getElementById("description").value.trim(),
+  episode:document.getElementById("episode").value.trim(),
+  stream:document.getElementById("stream").value.trim()
+ };
+ if(!/^https:\/\//i.test(item.poster)){
+  alert("Poster must use HTTPS");return;
+ }
+ if(item.stream && !/^https:\/\//i.test(item.stream)){
+  alert("Stream must use HTTPS");return;
+ }
+ if(id){
+  animeList=animeList.map(a=>a.id===id?item:a);
+ }else{
+  animeList.unshift(item);
+ }
+ save();
+ resetForm();
+ alert("Anime saved!");
+};
+
+function manage(){
+ const box=document.getElementById("manage");
+ box.innerHTML="";
+ animeList.forEach(a=>{
+  const row=document.createElement("div");
+  row.style.cssText="padding:12px 0;border-bottom:1px solid #49335c";
+  row.innerHTML=`
+   <b>${safe(a.name)}</b>
+   <div class="actions">
+    <button class="edit">EDIT</button>
+    <button class="delete" style="background:#a83248">DELETE</button>
+   </div>`;
+  row.querySelector(".edit").onclick=()=>editAnime(a.id);
+  row.querySelector(".delete").onclick=()=>deleteAnime(a.id);
+  box.appendChild(row);
+ });
+}
+
+function editAnime(id){
+ const a=animeList.find(x=>x.id===id);
+ if(!a)return;
+ document.getElementById("editId").value=a.id;
+ document.getElementById("name").value=a.name;
+ document.getElementById("poster").value=a.poster;
+ document.getElementById("description").value=a.description;
+ document.getElementById("episode").value=a.episode;
+ document.getElementById("stream").value=a.stream;
+ document.getElementById("formTitle").textContent="Edit Anime";
+ window.scrollTo(0,0);
+}
+
+function deleteAnime(id){
+ if(!confirm("Delete this anime?"))return;
+ animeList=animeList.filter(a=>a.id!==id);
+ save();
+}
+
+function playAnime(id){
+ const a=animeList.find(x=>x.id===id);
+ if(!a)return;
+ document.getElementById("player").style.display="block";
+ document.getElementById("videoTitle").textContent=a.name;
+ document.getElementById("videoEpisode").textContent=a.episode||"Episode";
+ document.getElementById("videoMessage").textContent=a.description||"";
+ const video=document.getElementById("video");
+ stopStream();
+ if(!a.stream){
+  document.getElementById("videoMessage").textContent="No licensed episode stream added yet.";
+  return;
+ }
+ if(!/^https:\/\//i.test(a.stream)){
+  document.getElementById("videoMessage").textContent="Invalid secure stream URL.";
+  return;
+ }
+ if(video.canPlayType("application/vnd.apple.mpegurl")){
+  video.src=a.stream;
+ }else if(window.Hls && Hls.isSupported()){
+  hls=new Hls();
+  hls.loadSource(a.stream);
+  hls.attachMedia(video);
+  hls.on(Hls.Events.ERROR,(event,data)=>{
+   if(data.fatal)document.getElementById("videoMessage").textContent="Stream error. Check provider URL and access.";
+  });
+ }else{
+  document.getElementById("videoMessage").textContent="This browser cannot play this HLS stream.";
+ }
+}
+
+function stopStream(){
+ const video=document.getElementById("video");
+ video.pause();
+ video.removeAttribute("src");
+ video.load();
+ if(hls){hls.destroy();hls=null}
+}
+
+function closePlayer(){
+ stopStream();
+ document.getElementById("player").style.display="none";
+}
+
+load();
 </script>
 </body>
 </html>
