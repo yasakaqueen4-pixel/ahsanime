@@ -2,261 +2,67 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#100d19">
-<title>AHSANIME - Anime World</title>
+<title>AHSANIME | Anime World</title>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:#100d19;
-  color:#fff;
-  font-family:Arial,sans-serif;
-}
-header{
-  background:#191326;
-  padding:16px 5%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  flex-wrap:wrap;
-  position:sticky;
-  top:0;
-  z-index:5;
-  border-bottom:1px solid #342747;
-}
-.logo{
-  font-size:26px;
-  font-weight:900;
-  color:#bd79ff;
-}
+body{background:#100d19;color:white;font-family:Arial,sans-serif}
+header{background:#191326;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:5;border-bottom:1px solid #38264d}
+.logo{font-size:26px;font-weight:900;color:#bd79ff}
 .logo span{color:white}
-.search{
-  background:#292137;
-  border:1px solid #49365f;
-  color:white;
-  padding:12px;
-  border-radius:9px;
-  width:220px;
-}
+.search{background:#292137;border:1px solid #49365f;color:white;padding:12px;border-radius:9px;width:220px}
 nav{display:flex;gap:17px}
-nav a{
-  color:#ddd;
-  text-decoration:none;
-  font-size:14px;
-}
+nav a{color:#ddd;text-decoration:none;font-size:14px}
 nav a:hover{color:#c58aff}
-.hero{
-  margin:22px 5%;
-  padding:40px 25px;
-  border-radius:18px;
-  background:linear-gradient(110deg,#492477,#171329 80%);
-  min-height:230px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
+.hero{margin:22px 5%;padding:40px 25px;border-radius:18px;background:linear-gradient(110deg,#492477,#171329 80%);min-height:230px;display:flex;flex-direction:column;justify-content:center}
 .hero small{color:#dfbaff}
-.hero h1{
-  font-size:36px;
-  margin:13px 0;
-}
-.hero p{
-  color:#ddd;
-  line-height:1.6;
-  max-width:480px;
-}
-.btn{
-  background:#a64ff0;
-  color:white;
-  border:0;
-  padding:13px 22px;
-  border-radius:9px;
-  font-weight:bold;
-  margin-top:17px;
-  cursor:pointer;
-  width:max-content;
-}
+.hero h1{font-size:36px;margin:13px 0}
+.hero p{color:#ddd;line-height:1.6;max-width:480px}
+.btn{background:#a64ff0;color:white;border:0;padding:13px 22px;border-radius:9px;font-weight:bold;margin-top:17px;cursor:pointer;width:max-content}
 .btn:hover{background:#bd72ff}
 main{padding:0 5% 70px}
-.filters{
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:17px 0;
-}
-.filters button{
-  background:#211a30;
-  color:#ddd;
-  border:1px solid #453453;
-  border-radius:22px;
-  padding:11px 18px;
-  white-space:nowrap;
-  cursor:pointer;
-}
-.filters button.active{
-  background:#9b4bdf;
-  color:white;
-}
-.language-filter{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin:15px 0 25px;
-}
+.filters{display:flex;gap:10px;overflow-x:auto;padding:17px 0}
+.filters button{background:#211a30;color:#ddd;border:1px solid #453453;border-radius:22px;padding:11px 18px;white-space:nowrap;cursor:pointer}
+.filters button.active{background:#9b4bdf;color:white}
+.language-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:15px 0 25px}
 .language-filter label{color:#dfbaff}
-select{
-  background:#292137;
-  color:white;
-  border:1px solid #604079;
-  border-radius:9px;
-  padding:12px;
-}
-.heading{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:25px 0 17px;
-}
+select{background:#292137;color:white;border:1px solid #604079;border-radius:9px;padding:12px}
+.heading{display:flex;justify-content:space-between;align-items:center;margin:25px 0 17px}
 .heading h2{font-size:23px}
 .heading span{color:#bd79ff;font-size:13px}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:16px;
-}
-.card{
-  min-width:0;
-  cursor:pointer;
-}
-.poster{
-  height:210px;
-  border-radius:11px;
-  display:flex;
-  align-items:end;
-  padding:12px;
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(145deg,#603b83,#171329);
-  box-shadow:0 5px 18px #0008;
-}
-.poster img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-.poster:after{
-  content:"";
-  position:absolute;
-  inset:40% 0 0;
-  background:linear-gradient(transparent,#000c);
-}
-.poster strong{
-  font-size:17px;
-  text-shadow:0 2px 8px #000;
-  position:relative;
-  z-index:1;
-}
-.tag{
-  position:absolute;
-  top:9px;
-  left:9px;
-  z-index:2;
-  background:#9b4bdf;
-  padding:6px 8px;
-  border-radius:5px;
-  font-size:10px;
-}
-.card h3{
-  font-size:14px;
-  margin:10px 0 5px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.meta{
-  font-size:12px;
-  color:#aaa;
-  margin-top:5px;
-}
-.empty{
-  color:#aaa;
-  padding:30px 0;
-  display:none;
-}
-.status{
-  color:#c58aff;
-  margin:12px 0;
-  font-size:13px;
-  line-height:1.5;
-}
-footer{
-  background:#191326;
-  text-align:center;
-  padding:35px 15px;
-  color:#aaa;
-  line-height:1.8;
-}
-#modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#000d;
-  z-index:10;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-}
-.modalbox{
-  background:#21182f;
-  border:1px solid #604079;
-  border-radius:15px;
-  padding:24px;
-  max-width:420px;
-  width:100%;
-  max-height:90vh;
-  overflow-y:auto;
-}
+.status{color:#c58aff;font-size:13px;margin:12px 0;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.card{min-width:0;cursor:pointer}
+.poster{height:210px;border-radius:11px;display:flex;align-items:end;padding:12px;position:relative;overflow:hidden;background:linear-gradient(145deg,var(--a),var(--b));box-shadow:0 5px 18px #0008}
+.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.poster:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#000c)}
+.poster strong{font-size:17px;text-shadow:0 2px 8px #000;position:relative;z-index:1}
+.tag{position:absolute;top:9px;left:9px;z-index:2;background:#9b4bdf;padding:6px 8px;border-radius:5px;font-size:10px}
+.card h3{font-size:14px;margin:10px 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:12px;color:#aaa;margin-top:5px}
+.empty{color:#aaa;padding:30px 0;display:none}
+footer{background:#191326;text-align:center;padding:35px 15px;color:#aaa;line-height:1.8}
+#modal{display:none;position:fixed;inset:0;background:#000d;z-index:10;align-items:center;justify-content:center;padding:18px}
+.modalbox{background:#21182f;border:1px solid #604079;border-radius:15px;padding:24px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
 .modalbox h2{color:#d39aff;margin-bottom:12px}
 .modalbox p{color:#ddd;line-height:1.6;margin-bottom:12px}
-.close{
-  float:right;
-  background:none;
-  border:0;
-  color:white;
-  font-size:27px;
-  cursor:pointer;
-}
-.modalbox label{
-  display:block;
-  color:#dfbaff;
-  margin:15px 0 8px;
-}
+.close{float:right;background:none;border:0;color:white;font-size:27px;cursor:pointer}
+.modalbox label{display:block;color:#dfbaff;margin:15px 0 8px}
 .modalbox select{width:100%}
 .note{font-size:12px;color:#aaa;margin-top:12px}
-@media(max-width:850px){
-  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-  .poster{height:180px}
-}
+@media(max-width:850px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.poster{height:180px}}
 @media(max-width:500px){
-  header{padding:13px 4%}
-  nav{
-    order:3;
-    width:100%;
-    overflow-x:auto;
-    padding:7px 0;
-  }
-  nav a{white-space:nowrap}
-  .search{width:155px}
-  .hero{margin:15px 4%;padding:28px 20px}
-  .hero h1{font-size:28px}
-  main{padding-left:4%;padding-right:4%}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .poster{height:180px}
+header{padding:13px 4%}
+nav{order:3;width:100%;overflow-x:auto;padding:7px 0}
+nav a{white-space:nowrap}
+.search{width:155px}
+.hero{margin:15px 4%;padding:28px 20px}
+.hero h1{font-size:28px}
+main{padding-left:4%;padding-right:4%}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.poster{height:180px}
 }
 </style>
 </head>
@@ -307,7 +113,7 @@ footer{
       <h2>🔥 Popular Anime</h2>
       <span>VIEW ALL</span>
     </div>
-    <p class="status" id="status">Connecting to anime database...</p>
+    <p class="status" id="status">Loading demo anime...</p>
     <div class="grid" id="animeGrid"></div>
     <p class="empty" id="empty">No anime found. Try another search.</p>
   </section>
@@ -317,8 +123,8 @@ footer{
       <h2>✨ Latest Updates</h2>
       <span>NEW RELEASES</span>
     </div>
-    <p style="color:#aaa;font-size:14px;line-height:1.7">
-      Latest anime information and episodes will appear here when added to the database.
+    <p style="color:#aaa;line-height:1.7">
+      New anime information and episodes can be added here.
     </p>
   </section>
 </main>
@@ -336,9 +142,7 @@ footer{
     <p id="modalInfo"></p>
     <label for="modalLanguage">Select Subtitle Language:</label>
     <select id="modalLanguage"></select>
-    <p class="note">
-      Subtitle choices are display options only. Actual subtitles require a compatible authorized video source.
-    </p>
+    <p class="note">Actual subtitle tracks require a compatible authorized video source.</p>
     <button class="btn" id="modalClose">Close</button>
   </div>
 </div>
@@ -354,7 +158,6 @@ import {
 } from
 "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-// FIREBASE CONFIGURATION
 const firebaseConfig = {
   apiKey: "AIzaSyAJ5KAZvolz5jYwZtQFf7WZp6f6WrsPtvc",
   authDomain: "ahsanime.firebaseapp.com",
@@ -364,9 +167,6 @@ const firebaseConfig = {
   appId: "1:708478416786:web:6920488d83f1a684acf34b"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
 const languages = [
   "Hindi Roman",
   "Hindi Devanagari",
@@ -374,7 +174,6 @@ const languages = [
   "Japanese"
 ];
 
-// DEMO ANIME: displayed if database is empty or unavailable
 const demoAnime = [
   {id:"naruto",name:"Naruto",type:"Hindi Dub",genre:"Action",year:"2002",a:"#ed702d",b:"#48202d"},
   {id:"one-piece",name:"One Piece",type:"Hindi Sub",genre:"Adventure",year:"1999",a:"#277d9d",b:"#18294d"},
@@ -393,7 +192,7 @@ const demoAnime = [
   subs:languages
 }));
 
-let anime = [];
+let anime = [...demoAnime];
 let filter = "All";
 let selectedLanguage = "All";
 
@@ -403,11 +202,7 @@ const status = document.getElementById("status");
 
 function safe(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[c]);
 }
 
@@ -418,8 +213,7 @@ function render() {
     (filter === "All" ||
       x.type.toLowerCase() === filter.toLowerCase() ||
       x.genre.toLowerCase() === filter.toLowerCase()) &&
-    (selectedLanguage === "All" ||
-      x.subs.includes(selectedLanguage)) &&
+    (selectedLanguage === "All" || x.subs.includes(selectedLanguage)) &&
     x.name.toLowerCase().includes(q)
   );
 
@@ -431,7 +225,7 @@ function render() {
     return `
       <article class="card" data-id="${safe(x.id)}">
         <div class="poster"
-          style="background:linear-gradient(145deg,${safe(x.a || "#603b83")},${safe(x.b || "#171329")})">
+          style="--a:${safe(x.a)};--b:${safe(x.b)}">
           ${image}
           <span class="tag">${safe(x.type)}</span>
           <strong>${safe(x.name)}</strong>
@@ -475,19 +269,18 @@ document.getElementById("exploreBtn").addEventListener("click", () => {
   document.getElementById("popular").scrollIntoView({behavior:"smooth"});
 });
 
+document.getElementById("search").addEventListener("input", render);
+
 document.getElementById("filters").addEventListener("click", e => {
   if (!e.target.matches("button")) return;
-
   filter = e.target.dataset.filter;
 
-  document.querySelectorAll(".filters button").forEach(b => {
-    b.classList.toggle("active", b === e.target);
-  });
+  document.querySelectorAll(".filters button").forEach(b =>
+    b.classList.toggle("active", b === e.target)
+  );
 
   render();
 });
-
-document.getElementById("search").addEventListener("input", render);
 
 document.getElementById("subtitleLanguage").addEventListener("change", e => {
   selectedLanguage = e.target.value;
@@ -510,61 +303,65 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeModal();
 });
 
-// LOAD FIRESTORE DATA
-anime = demoAnime;
+// Show demo anime immediately
 render();
+status.textContent = "10 demo anime loaded. Connecting to Firebase...";
 
-status.textContent = "Loading anime from Firebase...";
-
+// Firebase connection
 try {
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
   onSnapshot(
     collection(db, "Anime_data"),
 
     snapshot => {
       if (snapshot.empty) {
-        anime = demoAnime;
-        status.textContent = "Demo anime shown. Add anime to your Firestore Anime_data collection.";
+        anime = [...demoAnime];
+        status.textContent =
+          "Firebase connected. Showing demo anime because database is empty.";
         render();
         return;
       }
 
       anime = snapshot.docs.map(doc => {
-        const data = doc.data();
-
+        const d = doc.data();
         return {
           id:doc.id,
-          name:data.title || doc.id,
-          type:data.language || "Hindi Sub",
-          genre:data.category || "Anime",
-          year:data.year || "",
-          description:data.description || "No description available.",
-          imageUrl:data.imageUrl || "",
+          name:String(d.title || doc.id),
+          type:String(d.language || "Hindi Sub"),
+          genre:String(d.category || "Anime"),
+          year:String(d.year || ""),
+          description:String(d.description || "No description available."),
+          imageUrl:String(d.imageUrl || ""),
           a:"#603b83",
           b:"#171329",
-          subs:Array.isArray(data.subtitles) && data.subtitles.length
-            ? data.subtitles
+          subs:Array.isArray(d.subtitles) && d.subtitles.length
+            ? d.subtitles.filter(v => typeof v === "string")
             : languages
         };
       });
 
-      status.textContent = "Anime database connected successfully!";
+      status.textContent = "Firebase connected successfully!";
       render();
     },
 
     error => {
       console.error("Firestore error:",error);
-      anime = demoAnime;
-      status.textContent = "Firebase error: Check Firestore Rules and database connection. Demo anime shown.";
+      anime = [...demoAnime];
+      status.textContent =
+        "Firebase unavailable. Demo anime are still showing. Check Firestore Rules.";
       render();
     }
   );
-} catch (error) {
-  console.error(error);
-  anime = demoAnime;
-  status.textContent = "Firebase setup error. Demo anime shown.";
+
+} catch(error) {
+  console.error("Firebase setup error:",error);
+  anime = [...demoAnime];
+  status.textContent = "Firebase connection failed. Demo anime are still showing.";
   render();
 }
 </script>
 
 </body>
- </html>
+</html>
