@@ -10,50 +10,50 @@
 import { createClient } from
 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const supabase = createClient(
- 'https://yvfstkkcetyavpzqytde.supabase.co',
- 'sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D'
-);
+const SUPABASE_URL = 'https://yvfstkkcetyavpzqytde.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D';
 
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.db = supabase;
 
 window.addEventListener('DOMContentLoaded', async () => {
- const {data:{session}} = await supabase.auth.getSession();
+ const { data: { session } } = await supabase.auth.getSession();
  updateUser(session);
- document.getElementById('status').textContent='Supabase initialized';
- supabase.auth.onAuthStateChange((_event,session)=>updateUser(session));
+ document.getElementById('status').textContent = 'Supabase initialized';
+
+ supabase.auth.onAuthStateChange((_event, session) => updateUser(session));
 });
 
 function updateUser(session) {
- const el=document.getElementById('user');
- if(el) el.textContent=session ? session.user.email : 'Guest';
+ const el = document.getElementById('user');
+ if (el) el.textContent = session ? session.user.email : 'Guest';
 }
 
 window.account = async (mode) => {
- const email=document.getElementById('email').value.trim();
- const password=document.getElementById('password').value;
- const msg=document.getElementById('message');
+ const email = document.getElementById('email').value.trim();
+ const password = document.getElementById('password').value;
+ const msg = document.getElementById('message');
 
- if(!email || !password) {
-  msg.textContent='Enter email and password';
+ if (!email || !password) {
+  msg.textContent = 'Enter email and password';
   return;
  }
 
- const result=mode==='signup'
-  ? await supabase.auth.signUp({email,password})
-  : await supabase.auth.signInWithPassword({email,password});
+ const result = mode === 'signup'
+  ? await supabase.auth.signUp({ email, password })
+  : await supabase.auth.signInWithPassword({ email, password });
 
- msg.textContent=result.error
+ msg.textContent = result.error
   ? result.error.message
-  : mode==='signup'
+  : mode === 'signup'
    ? 'Account created! Check email if confirmation is required.'
    : 'Login successful!';
 };
 
 window.logout = async () => {
- const {error}=await supabase.auth.signOut();
- document.getElementById('message').textContent=
- error ? error.message : 'Logged out';
+ const { error } = await supabase.auth.signOut();
+ document.getElementById('message').textContent =
+  error ? error.message : 'Logged out';
 };
 </script>
 
@@ -62,8 +62,8 @@ window.logout = async () => {
 :root{--bg:#090711;--panel:#151020;--purple:#a855f7;--pink:#ec4899}
 body{background:var(--bg);color:#fff;font-family:Arial,sans-serif}
 header{
- height:70px;background:#100c1a;
- display:flex;align-items:center;justify-content:space-between;
+ height:70px;background:#100c1a;display:flex;
+ align-items:center;justify-content:space-between;
  padding:0 6%;position:sticky;top:0;z-index:20;
  border-bottom:1px solid #292033
 }
@@ -80,8 +80,7 @@ button{
 button:hover{opacity:.85}
 .hero{
  min-height:410px;padding:95px 8%;
- background:
- linear-gradient(90deg,#100a1deF,#100a1d99,transparent),
+ background:linear-gradient(90deg,#100a1def,#100a1d99,transparent),
  linear-gradient(135deg,#30134d,#711d71,#140e29);
  display:flex;align-items:center
 }
@@ -98,9 +97,7 @@ button:hover{opacity:.85}
 }
 .heading h2{font-size:24px}
 .heading span{color:#c084fc;font-size:13px}
-.cards{
- display:grid;grid-template-columns:repeat(5,1fr);gap:17px
-}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:17px}
 .card{
  background:var(--panel);border-radius:12px;overflow:hidden;
  transition:.2s;cursor:pointer;border:1px solid #2a2037
@@ -123,9 +120,9 @@ button:hover{opacity:.85}
 .pills button{background:#21182e;border:1px solid #443050}
 .pills button.active{background:#8736bc}
 .search{
- width:100%;max-width:430px;background:#171120;
- color:white;padding:14px;border:1px solid #40304d;
- border-radius:10px;margin-bottom:20px
+ width:100%;max-width:430px;background:#171120;color:white;
+ padding:14px;border:1px solid #40304d;border-radius:10px;
+ margin-bottom:20px
 }
 .account-box{
  max-width:440px;margin:0 auto;background:#171120;
@@ -199,8 +196,7 @@ footer{
   <h2>Trending Anime</h2>
   <span>EXPLORE MORE →</span>
  </div>
- <input class="search" id="search" placeholder="Search your anime..."
- oninput="filterAnime()">
+ <input class="search" id="search" placeholder="Search your anime..." oninput="filterAnime()">
  <div class="cards" id="cards">
   <div class="card" data-name="fantasy adventure">
    <div class="poster">Fantasy<br>Adventure</div>
