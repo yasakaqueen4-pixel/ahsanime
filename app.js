@@ -1,319 +1,270 @@
-const animeList = [
-  {
-    id: 1,
-    title: "Anime Adventure",
-    category: "Adventure",
-    language: "Hindi",
-    rating: "9.2",
-    description: "An exciting adventure in a mysterious world.",
-    videoUrl: ""
-  },
-  {
-    id: 2,
-    title: "Fantasy Kingdom",
-    category: "Fantasy",
-    language: "Japanese",
-    rating: "9.0",
-    description: "A magical journey through another world.",
-    videoUrl: ""
-  },
-  {
-    id: 3,
-    title: "Shadow Warrior",
-    category: "Action",
-    language: "Hindi",
-    rating: "8.9",
-    description: "A warrior discovers a hidden power.",
-    videoUrl: ""
-  },
-  {
-    id: 4,
-    title: "Ancient Legends",
-    category: "Historical",
-    language: "Japanese",
-    rating: "8.8",
-    description: "An epic story inspired by an ancient era.",
-    videoUrl: ""
-  },
-  {
-    id: 5,
-    title: "Spirit World",
-    category: "Supernatural",
-    language: "Hindi",
-    rating: "9.1",
-    description: "A mysterious supernatural adventure.",
-    videoUrl: ""
-  },
-  {
-    id: 6,
-    title: "Dragon Path",
-    category: "Martial Arts",
-    language: "Japanese",
-    rating: "8.7",
-    description: "A journey of courage and martial arts.",
-    videoUrl: ""
-  },
-  {
-    id: 7,
-    title: "Another Life",
-    category: "Isekai",
-    language: "Hindi",
-    rating: "9.3",
-    description: "A new beginning in another world.",
-    videoUrl: ""
-  },
-  {
-    id: 8,
-    title: "Moonlight Story",
-    category: "Romance",
-    language: "Japanese",
-    rating: "8.6",
-    description: "A beautiful story of friendship and feelings.",
-    videoUrl: ""
-  }
-];
+import { animeData } from "./data.js";
 
-const $ = (id) => document.getElementById(id);
+// AHSANIME 3.0
+const animeList = animeData;
 
-function readStorage(key, fallback) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key));
-    return value ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
+const $ = (selector) => document.querySelector(selector);
 
-let watchlist = readStorage("ahsanime_watchlist", []);
-let history = readStorage("ahsanime_history", []);
-let activeCategory = "All";
-let searchText = "";
+const animeGrid = $("#animeGrid");
+const hindiGrid = $("#hindiGrid");
+const watchlistGrid = $("#watchlistGrid");
+const historyGrid = $("#historyGrid");
+const searchInput = $("#searchInput");
+
+let watchlist = JSON.parse(localStorage.getItem("ahsanime_watchlist") || "[]");
+let history = JSON.parse(localStorage.getItem("ahsanime_history") || "[]");
 
 function saveData() {
   localStorage.setItem("ahsanime_watchlist", JSON.stringify(watchlist));
   localStorage.setItem("ahsanime_history", JSON.stringify(history));
 }
 
-function getAnime(id) {
-  return animeList.find(anime => anime.id === Number(id));
-}
+function makeCard(anime) {
+  const card = document.createElement("article");
+  card.className = "anime-card";
 
-function createCard(anime) {
-  const saved = watchlist.includes(anime.id);
+  const poster = anime.poster || "";
+  const image = poster
+    ? `<img src="${poster}" alt="" class="anime-poster">`
+    : `<div class="anime-placeholder">🎬</div>`;
 
-  return `
-    <article class="anime-card">
-      <div class="anime-poster">
-        <span>アニメ</span>
-      </div>
-      <div class="anime-card-content">
-        <h3>${anime.title}</h3>
-        <p>${anime.category} • ${anime.language} • ⭐ ${anime.rating}</p>
-        <button data-watch="${anime.id}">▶ Details</button>
-        <button data-save="${anime.id}">
-          ${saved ? "❤️ Saved" : "♡ Watchlist"}
-        </button>
-      </div>
-    </article>
+  card.innerHTML = `
+    ${image}
+    <div class="anime-card-info">
+      <h3>${escapeHTML(anime.title)}</h3>
+      <p>${escapeHTML(anime.category)} • ${escapeHTML(anime.language)}</p>
+      <p>⭐ ${escapeHTML(anime.rating)}</p>
+      <button class="watch-button">Watch</button>
+      <button class="save-button">
+        ${watchlist.includes(anime.id) ? "Saved ✓" : "＋ Watchlist"}
+      </button>
+    </div>
   `;
-}
 
-function renderGrid(elementId, items) {
-  const element = $(elementId);
-  if (!element) return;
-
-  element.innerHTML = items.length
-    ? items.map(createCard).join("")
-    : '<p class="empty-message">No anime found.</p>';
-}
-
-function renderAnime() {
-  const filtered = animeList.filter(anime => {
-    const matchesSearch = anime.title
-      .toLowerCase()
-      .includes(searchText);
-
-    const matchesCategory =
-      activeCategory === "All" ||
-      anime.category === activeCategory;
-
-    return matchesSearch && matchesCategory;
+  card.querySelector(".watch-button").addEventListener("click", () => {
+    openPlayer(anime);
   });
 
-  renderGrid("animeGrid", filtered);
+  card.querySelector(".save-button").addEventListener("click", () => {
+    toggleWatchlist(anime.id);
+    renderAll();
+  });
 
-  const hindiAnime = filtered.filter(
-    anime => anime.language === "Hindi"
-  );
-
-  renderGrid("hindiGrid", hindiAnime);
-
-  renderGrid(
-    "watchlistGrid",
-    animeList.filter(anime => watchlist.includes(anime.id))
-  );
-
-  renderGrid(
-    "historyGrid",
-    history.map(getAnime).filter(Boolean)
-  );
+  return card;
 }
 
-// SEARCH
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
 
-$("searchInput")?.addEventListener("input", event => {
-  searchText = event.target.value.trim().toLowerCase();
-  renderAnime();
-});
+function showCards(container, list) {
+  if (!container) return;
+  container.replaceChildren();
 
-// CATEGORY FILTER
-
-document.querySelectorAll("[data-category]").forEach(button => {
-  button.addEventListener("click", () => {
-    activeCategory = button.dataset.category;
-
-    document.querySelectorAll("[data-category]").forEach(btn => {
-      btn.classList.remove("active");
-    });
-
-    button.classList.add("active");
-    renderAnime();
-    $("trending")?.scrollIntoView({ behavior: "smooth" });
-  });
-});
-
-// ANIME CARD ACTIONS
-
-document.addEventListener("click", event => {
-  const watchButton = event.target.closest("[data-watch]");
-  const saveButton = event.target.closest("[data-save]");
-
-  if (watchButton) {
-    openAnime(watchButton.dataset.watch);
+  if (!list.length) {
+    container.textContent = "No anime found.";
+    return;
   }
 
-  if (saveButton) {
-    toggleWatchlist(saveButton.dataset.save);
-  }
-});
+  list.forEach((anime) => container.appendChild(makeCard(anime)));
+}
+
+function renderAll() {
+  showCards(animeGrid, animeList);
+  showCards(
+    hindiGrid,
+    animeList.filter((anime) =>
+      String(anime.language).toLowerCase().includes("hindi")
+    )
+  );
+  showCards(
+    watchlistGrid,
+    animeList.filter((anime) => watchlist.includes(anime.id))
+  );
+  showCards(
+    historyGrid,
+    history.map((id) => animeList.find((anime) => anime.id === id)).filter(Boolean)
+  );
+}
 
 function toggleWatchlist(id) {
-  id = Number(id);
-
-  if (watchlist.includes(id)) {
-    watchlist = watchlist.filter(item => item !== id);
-  } else {
-    watchlist.push(id);
-  }
+  watchlist = watchlist.includes(id)
+    ? watchlist.filter((item) => item !== id)
+    : [...watchlist, id];
 
   saveData();
-  renderAnime();
 }
 
-// PLAYER
+function openPlayer(anime) {
+  const dialog = $("#playerDialog");
+  const video = $("#videoPlayer");
+  const info = $("#subtitleInfo");
+  const select = $("#subtitleSelect");
+  const tracks = $("#subtitleTracks");
 
-function openAnime(id) {
-  const anime = getAnime(id);
-  if (!anime) return;
-
-  $("playerTitle").textContent = anime.title;
-
-  const player = $("videoPlayer");
-  player.pause();
-  player.removeAttribute("src");
-  player.load();
-
-  const subtitleInfo = $("subtitleInfo");
-  if (subtitleInfo) {
-    subtitleInfo.textContent =
-      "No subtitle tracks have been added for this demo.";
+  if (!dialog || !video) {
+    alert("Player section nahi mila. index.html check karo.");
+    return;
   }
 
-  const subtitleMenu = $("subtitleSelect");
-  if (subtitleMenu) subtitleMenu.value = "off";
+  video.pause();
+  video.removeAttribute("src");
+  video.querySelectorAll("track").forEach((track) => track.remove());
 
   if (anime.videoUrl) {
-    player.src = anime.videoUrl;
+    video.src = anime.videoUrl;
+    video.load();
   }
 
-  history = [anime.id, ...history.filter(item => item !== anime.id)]
-    .slice(0, 30);
+  if (select) select.value = "off";
 
+  if (tracks) {
+    tracks.innerHTML = "";
+    const subtitles = anime.subtitles || {};
+
+    Object.entries({
+      en: "English",
+      hi: "Hindi",
+      hinglish: "Hinglish"
+    }).forEach(([key, label]) => {
+      if (subtitles[key]) {
+        const track = document.createElement("track");
+        track.kind = "subtitles";
+        track.label = label;
+        track.srclang = key === "hinglish" ? "hi" : key;
+        track.src = subtitles[key];
+        tracks.appendChild(track);
+      }
+    });
+  }
+
+  if (info) {
+    info.textContent = anime.videoUrl
+      ? "Video loaded. Subtitle option available if a subtitle file is added."
+      : "Demo anime: video URL abhi add nahi hua hai.";
+  }
+
+  history = [anime.id, ...history.filter((id) => id !== anime.id)].slice(0, 20);
   saveData();
-  renderAnime();
+  renderAll();
 
-  $("playerDialog")?.showModal();
+  dialog.showModal();
 }
 
-$("closePlayer")?.addEventListener("click", () => {
-  $("videoPlayer")?.pause();
-  $("playerDialog")?.close();
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase().trim();
+
+    const results = animeList.filter((anime) =>
+      `${anime.title} ${anime.category} ${anime.language}`
+        .toLowerCase()
+        .includes(query)
+    );
+
+    showCards(animeGrid, results);
+  });
+}
+
+document.querySelectorAll("[data-category]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const category = button.dataset.category;
+
+    const results = category === "All"
+      ? animeList
+      : animeList.filter((anime) =>
+          anime.category.toLowerCase() === category.toLowerCase()
+        );
+
+    showCards(animeGrid, results);
+  });
 });
 
-// SUBTITLE MENU DEMO
+const closePlayer = $("#closePlayer");
+if (closePlayer) {
+  closePlayer.addEventListener("click", () => {
+    const video = $("#videoPlayer");
+    if (video) video.pause();
+    $("#playerDialog")?.close();
+  });
+}
 
-$("subtitleSelect")?.addEventListener("change", event => {
-  const language = event.target.value;
-  const messages = {
-    off: "Subtitles turned off.",
-    en: "English subtitle track is not added yet.",
-    hi: "Hindi subtitle track is not added yet.",
-    hinglish: "Hinglish subtitle track is not added yet."
-  };
+const subtitleSelect = $("#subtitleSelect");
+if (subtitleSelect) {
+  subtitleSelect.addEventListener("change", () => {
+    const video = $("#videoPlayer");
+    const info = $("#subtitleInfo");
+    if (!video) return;
 
-  $("subtitleInfo").textContent = messages[language];
-});
+    [...video.textTracks].forEach((track) => {
+      track.mode = "disabled";
+    });
 
-// THEME TOGGLE
+    const selected = subtitleSelect.value;
 
-const savedTheme = localStorage.getItem("ahsanime_theme");
+    if (selected !== "off") {
+      const track = [...video.textTracks].find((item) =>
+        item.language === (selected === "hinglish" ? "hi" : selected)
+      );
 
-if (savedTheme === "light") {
+      if (track) {
+        track.mode = "showing";
+        if (info) info.textContent = "Subtitle: " + selected;
+      } else if (info) {
+        info.textContent = "Is language ki subtitle file abhi add nahi hui.";
+      }
+    } else if (info) {
+      info.textContent = "Subtitles off.";
+    }
+  });
+}
+
+// Theme toggle
+const themeButton = $("#themeToggle");
+if (themeButton) {
+  themeButton.addEventListener("click", () => {
+    document.body.classList.toggle("light");
+    localStorage.setItem(
+      "ahsanime_theme",
+      document.body.classList.contains("light") ? "light" : "dark"
+    );
+  });
+}
+
+if (localStorage.getItem("ahsanime_theme") === "light") {
   document.body.classList.add("light");
 }
 
-function updateThemeButton() {
-  if ($("themeToggle")) {
-    $("themeToggle").textContent =
-      document.body.classList.contains("light") ? "🌙" : "☀️";
+// Login demo only — real secure login needs a backend
+const loginDialog = $("#loginDialog");
+$("#loginBtn")?.addEventListener("click", () => loginDialog?.showModal());
+$("#closeLogin")?.addEventListener("click", () => loginDialog?.close());
+
+function demoLogin() {
+  const email = $("#emailInput")?.value.trim();
+  const password = $("#passwordInput")?.value;
+  const message = $("#loginMessage");
+
+  if (!email || !password) {
+    if (message) message.textContent = "Email aur password enter karo.";
+    return;
+  }
+
+  if (message) {
+    message.textContent =
+      "Demo only: secure login abhi backend se connect nahi hai.";
   }
 }
 
-updateThemeButton();
+$("#signupBtn")?.addEventListener("click", demoLogin);
+$("#signinBtn")?.addEventListener("click", demoLogin);
 
-$("themeToggle")?.addEventListener("click", () => {
-  document.body.classList.toggle("light");
+// First page load
+renderAll();
 
-  const theme = document.body.classList.contains("light")
-    ? "light"
-    : "dark";
-
-  localStorage.setItem("ahsanime_theme", theme);
-  updateThemeButton();
-});
-
-// LOGIN POPUP FRONTEND
-
-$("loginBtn")?.addEventListener("click", () => {
-  $("loginDialog")?.showModal();
-});
-
-$("closeLogin")?.addEventListener("click", () => {
-  $("loginDialog")?.close();
-});
-
-$("signupBtn")?.addEventListener("click", () => {
-  $("loginMessage").textContent =
-    "Account creation will be connected to secure authentication later.";
-});
-
-$("signinBtn")?.addEventListener("click", () => {
-  $("loginMessage").textContent =
-    "Login will be connected to secure authentication later.";
-});
-
-// INITIAL DISPLAY
-
-renderAnime();
-
-console.log("AHSANIME 3.0 frontend loaded successfully!");
+console.log("AHSANIME 3.0 loaded successfully!");
