@@ -1,42 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#100d19"><title>AHSANIME 2.0</title>
-<link rel="stylesheet" href="/styles.css">
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#100d19">
+  <title>AHSANIME 2.0 - Anime World</title>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-<header><a class="brand" href="#">AHSANIME<span> 2.0</span></a><nav>
-<button data-view="home">Home</button><button data-view="watchlist">Watchlist</button>
-<button data-view="history">History</button><button id="themeBtn">☀/☾</button>
-<button id="accountBtn">Login</button><button id="adminNav" class="hidden" data-view="admin">Admin</button>
-</nav></header>
-<main>
-<section id="homeView">
-<div class="hero"><h1>Discover your next anime</h1><p>Stream anime, choose subtitles, build your watchlist.</p></div>
-<div class="toolbar"><input id="search" placeholder="Search anime..."><select id="category"><option value="">All categories</option><option>Action</option><option>Adventure</option><option>Romance</option><option>Fantasy</option><option>Comedy</option><option>Drama</option></select><select id="language"><option value="">All audio</option><option>Hindi Dub</option><option>Japanese</option><option>English</option></select></div>
-<div class="ad-slot"><!-- AdSense responsive ad unit: replace publisher and slot IDs after approval -->
-<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-REPLACE_WITH_YOUR_PUBLISHER_ID" data-ad-slot="REPLACE_WITH_AD_SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
-</div>
-<h2>Anime Library</h2><div id="animeGrid" class="grid"><p>Loading anime…</p></div>
-</section>
-<section id="savedView" class="hidden"><h2 id="savedTitle"></h2><div id="savedGrid" class="grid"></div></section>
-<section id="adminView" class="hidden"><h2>Admin dashboard</h2><p class="muted">Only accounts with the Firebase admin custom claim can access admin actions.</p>
-<form id="animeForm" class="panel">
-<input type="hidden" id="animeId"><label>Title<input id="title" required maxlength="120"></label>
-<label>Description<textarea id="description"></textarea></label>
-<div class="two"><label>Categories (comma separated)<input id="categories" placeholder="Action, Fantasy"></label><label>Audio language<select id="audioLanguage"><option>Japanese</option><option>Hindi Dub</option><option>English</option></select></label></div>
-<div class="two"><label>Poster image<input id="poster" type="file" accept="image/*"></label><label>Video file<input id="video" type="file" accept="video/*,audio/*"></label></div>
-<label>Or video URL<input id="videoUrl" type="url" placeholder="https://…"></label>\n<label>Japanese audio source for AI subtitles (MP3/WAV/M4A, preferably audio-only)<input id="audioSource" type="file" accept="audio/*"></label>\n<button type="button" id="generateSubs">Generate / reuse AI subtitles for selected anime</button>
-<label><input id="published" type="checkbox" checked> Publish anime</label>
-<button class="primary" type="submit">Save anime</button><button type="button" id="resetForm">Clear</button>
-<p id="uploadStatus" class="muted"></p></form>
-<h3>Manage anime</h3><div id="adminList"></div>
-</section>
+
+<header class="header">
+  <a class="logo" href="#">AHS<span>ANIME</span></a>
+  <nav class="nav">
+    <a href="#home">Home</a>
+    <a href="#anime">Anime</a>
+    <a href="#categories">Categories</a>
+    <a href="#hindi">Hindi Dub</a>
+    <a href="#watchlist">Watchlist</a>
+  </nav>
+  <button id="themeToggle" class="theme-btn">☀️</button>
+</header>
+
+<main id="home">
+
+  <section class="hero">
+    <div class="hero-content">
+      <span class="tag">WELCOME TO AHSANIME 2.0</span>
+      <h1>YOUR ANIME<br><span>UNIVERSE</span></h1>
+      <p>Discover anime, explore new worlds and enjoy your favourite stories.</p>
+      <a href="#anime" class="primary-btn">Explore Anime →</a>
+    </div>
+  </section>
+
+  <section class="search-section" id="anime">
+    <h2>Explore Anime</h2>
+    <input id="searchInput" type="search"
+      placeholder="Search your favourite anime...">
+    <div class="filters">
+      <button class="filter-btn active" data-category="All">All</button>
+      <button class="filter-btn" data-category="Action">Action</button>
+      <button class="filter-btn" data-category="Fantasy">Fantasy</button>
+      <button class="filter-btn" data-category="Romance">Romance</button>
+      <button class="filter-btn" data-category="Adventure">Adventure</button>
+    </div>
+  </section>
+
+  <section class="anime-section">
+    <div class="section-heading">
+      <h2>🔥 Trending Anime</h2>
+      <span>Explore more</span>
+    </div>
+    <div class="anime-grid" id="animeGrid">
+      <article class="anime-card">
+        <div class="poster-placeholder">ANIME 01</div>
+        <h3>Demo Anime</h3>
+        <p>Action • Adventure</p>
+        <button class="watch-btn" type="button">Details</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="anime-section" id="hindi">
+    <div class="section-heading">
+      <h2>🎧 Hindi Dubbed Anime</h2>
+    </div>
+    <div class="anime-grid" id="hindiGrid">
+      <p class="empty-message">Hindi dubbed anime will appear here.</p>
+    </div>
+  </section>
+
+  <section class="anime-section" id="categories">
+    <h2>Browse Categories</h2>
+    <div class="category-grid">
+      <div class="category-card">⚔️ Action</div>
+      <div class="category-card">🐉 Fantasy</div>
+      <div class="category-card">🌍 Adventure</div>
+      <div class="category-card">👻 Supernatural</div>
+      <div class="category-card">🏯 Historical</div>
+      <div class="category-card">🥋 Martial Arts</div>
+    </div>
+  </section>
+
+  <section class="anime-section" id="watchlist">
+    <h2>❤️ My Watchlist</h2>
+    <div id="watchlistGrid" class="anime-grid">
+      <p class="empty-message">Your saved anime will appear here.</p>
+    </div>
+  </section>
+
 </main>
-<dialog id="accountDialog"><form method="dialog" id="accountForm" class="panel"><button class="x" value="cancel">✕</button><h2 id="accountTitle">Login</h2><input id="email" type="email" placeholder="Email" required><input id="password" type="password" placeholder="Password (6+ characters)" required minlength="6"><div class="row"><button id="loginBtn" type="button" class="primary">Login</button><button id="signupBtn" type="button">Create account</button></div><button id="resetPassword" type="button" class="link">Forgot password?</button><p id="authStatus" class="muted"></p></form></dialog>
-<dialog id="playerDialog"><div class="player panel"><button class="x" id="closePlayer">✕</button><h2 id="playerTitle"></h2><video id="player" controls playsinline crossorigin="anonymous"></video><div class="row subtitle-row"><label>Subtitles<select id="subtitleSelect"><option value="">Off</option><option value="en">English</option><option value="hi">हिन्दी</option><option value="hinglish">Hinglish</option></select></label><button id="saveWatchlist">＋ Watchlist</button></div><p id="subtitleStatus" class="muted"></p><p id="playerDescription"></p></div></dialog>
-<div id="toast" role="status"></div>
-</body><script type="module" src="/app.js"></script>
+
+<footer class="footer">
+  <h2>AHS<span>ANIME</span></h2>
+  <p>Discover your anime world.</p>
+  <p>© 2026 AHSANIME. Use only content you have permission to publish.</p>
+</footer>
+
+<script type="module" src="./app.js"></script>
+</body>
 </html>
