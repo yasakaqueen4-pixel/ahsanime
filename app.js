@@ -268,3 +268,101 @@ $("#signinBtn")?.addEventListener("click", demoLogin);
 renderAll();
 
 console.log("AHSANIME 3.0 loaded successfully!");
+const subtitleVideo = document.getElementById("video");
+const subtitleBtn = document.getElementById("subtitleBtn");
+const subtitleMenu = document.getElementById("subtitleMenu");
+
+const subtitleLanguages = [
+  { code: "ja", label: "Japanese Sub", key: "japanese_sub_url" },
+  { code: "en", label: "English Sub", key: "english_sub_url" },
+  { code: "hi", label: "Hindi Sub", key: "hindi_sub_url" },
+  { code: "hi-Latn", label: "Hinglish (Roman)", key: "hinglish_sub_url" }
+];
+
+let currentSubtitleTracks = [];
+
+subtitleBtn.addEventListener("click", () => {
+  subtitleMenu.hidden = !subtitleMenu.hidden;
+});
+
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".subtitle-wrapper")) {
+    subtitleMenu.hidden = true;
+  }
+});
+
+function loadAnimeSubtitles(anime) {
+  // Remove previous anime subtitle tracks
+  subtitleVideo.querySelectorAll("track").forEach(track => track.remove());
+
+  currentSubtitleTracks = [];
+
+  subtitleLanguages.forEach(language => {
+    const url = anime[language.key];
+
+    if (!url) return;
+
+    const track = document.createElement("track");
+    track.kind = "subtitles";
+    track.label = language.label;
+    track.srclang = language.code;
+    track.src = url;
+    track.default = false;
+
+    subtitleVideo.appendChild(track);
+    currentSubtitleTracks.push({
+      code: language.code,
+      label: language.label,
+      element: track
+    });
+  });
+
+  subtitleMenu.querySelectorAll("[data-sub]").forEach(button => {
+    const code = button.dataset.sub;
+    const available = code === "off" ||
+      currentSubtitleTracks.some(t => t.code === code);
+
+    button.disabled = !available;
+    button.style.opacity = available ? "1" : "0.4";
+    button.classList.remove("active");
+  });
+
+  subtitleBtn.textContent = "CC Subtitles ⚙";
+}
+
+function setAnimeSubtitle(code) {
+  if (code !== "off") {
+    const selected = currentSubtitleTracks.find(t => t.code === code);
+
+    if (!selected) {
+      alert("Is anime ke liye ye subtitle available nahi hai.");
+      return;
+    }
+  }
+
+  Array.from(subtitleVideo.textTracks).forEach(track => {
+    track.mode = "disabled";
+  });
+
+  if (code !== "off") {
+    const selected = currentSubtitleTracks.find(t => t.code === code);
+    selected.element.track.mode = "showing";
+  }
+
+  subtitleMenu.querySelectorAll("[data-sub]").forEach(button => {
+    button.classList.toggle("active", button.dataset.sub === code);
+  });
+
+  const label = code === "off"
+    ? "CC Subtitles ⚙"
+    : "CC " + currentSubtitleTracks.find(t => t.code === code).label;
+
+  subtitleBtn.textContent = label;
+  subtitleMenu.hidden = true;
+}
+
+subtitleMenu.querySelectorAll("[data-sub]").forEach(button => {
+  button.addEventListener("click", () => {
+    setAnimeSubtitle(button.dataset.sub);
+  });
+});
