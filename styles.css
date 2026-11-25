@@ -30,3 +30,55 @@ h3, .anime-card-info h3 {
 .anime-card {
   min-height: 0 !important;
 }
+.subtitle-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#subtitleBtn {
+  background: #a64ff0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.subtitle-menu {
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  width: 210px;
+  background: #191326;
+  border: 1px solid #7541a5;
+  border-radius: 10px;
+  padding: 7px;
+  z-index: 999;
+}
+
+.subtitle-menu[hidden] {
+  display: none;
+}
+
+.subtitle-menu button {
+  display: block;
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  color: white;
+  border: none;
+  text-align: left;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.subtitle-menu button:hover {
+  background: #63318c;
+}
+
+.subtitle-menu button.active {
+  background: #63318c;
+  color: #e6c5ff;
+}
