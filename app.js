@@ -1,32 +1,67 @@
 
-import { animeData } from "./data.js";
+/* =========================================
+   AnimeNoona ♡
+   Main JavaScript + Supabase
+========================================= */
 
-// AHSANIME 3.0 - UPDATED SUBTITLE PLAYER
+import { createClient } from
+  "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-const animeList = animeData;
-const $ = (selector) => document.querySelector(selector);
+/* =========================================
+   1. SUPABASE CONNECTION
+========================================= */
 
-const animeGrid = $("#animeGrid");
-const hindiGrid = $("#hindiGrid");
-const watchlistGrid = $("#watchlistGrid");
-const historyGrid = $("#historyGrid");
-const searchInput = $("#searchInput");
+const SUPABASE_URL = "https://yvfstkkcetyavpzqytde.supabase.co";
 
-let watchlist = JSON.parse(localStorage.getItem("ahsanime_watchlist") || "[]");
-let history = JSON.parse(localStorage.getItem("ahsanime_history") || "[]");
+const SUPABASE_KEY =
+  "sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D";
 
-// Current anime subtitle tracks
-let activeSubtitleTracks = new Map();
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// SAVE DATA
-function saveData() {
-  localStorage.setItem("ahsanime_watchlist", JSON.stringify(watchlist));
-  localStorage.setItem("ahsanime_history", JSON.stringify(history));
+/* =========================================
+   2. ELEMENTS
+========================================= */
+
+const $ = (id) => document.getElementById(id);
+
+const animeGrid = $("animeGrid");
+const continueGrid = $("continueGrid");
+const watchlistGrid = $("watchlistGrid");
+
+const video = $("video");
+const playerTitle = $("playerTitle");
+const episodeSelect = $("episodeSelect");
+const subtitleSelect = $("subtitleSelect");
+
+let animeList = [];
+let currentAnime = null;
+let currentEpisodes = [];
+let currentUser = null;
+let isAdmin = false;
+
+let selectedCategory = "All";
+
+const WATCHLIST_KEY = "animenoona_watchlist";
+const HISTORY_KEY = "animenoona_history";
+
+/* =========================================
+   3. LOCAL STORAGE
+========================================= */
+
+function getStored(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || [];
+  } catch {
+    return [];
+  }
 }
 
-// ESCAPE HTML
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+function saveStored(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
@@ -35,347 +70,834 @@ function escapeHTML(value) {
   })[char]);
 }
 
-// ANIME CARD
-function makeCard(anime) {
-  const card = document.createElement("article");
-  card.className = "anime-card";
-
-  const poster = anime.poster || "";
-  const image = poster
-    ? `<img src="${escapeHTML(poster)}" alt="" class="anime-poster">`
-    : `<div class="anime-placeholder">🎬</div>`;
-
-  card.innerHTML = `
-    ${image}
-    <div class="anime-card-info">
-      <h3>${escapeHTML(anime.title)}</h3>
-      <p>${escapeHTML(anime.category)} • ${escapeHTML(anime.language)}</p>
-      <p>⭐ ${escapeHTML(anime.rating)}</p>
-      <button class="watch-button">Watch</button>
-      <button class="save-button">
-        ${watchlist.includes(anime.id) ? "Saved ✓" : "＋ Watchlist"}
-      </button>
-    </div>
-  `;
-
-  card.querySelector(".watch-button").addEventListener("click", () => {
-    openPlayer(anime);
-  });
-
-  card.querySelector(".save-button").addEventListener("click", () => {
-    toggleWatchlist(anime.id);
-    renderAll();
-  });
-
-  return card;
+function notify(message) {
+  alert(message);
 }
 
-// SHOW CARDS
-function showCards(container, list) {
-  if (!container) return;
+/* =========================================
+   4. LOAD ANIME
+========================================= */
 
-  container.replaceChildren();
+async function loadAnime() {
+  if (!animeGrid) return;
 
-  if (!list.length) {
-    container.textContent = "No anime found.";
+  animeGrid.innerHTML = "<p>Loading anime...</p>";
+
+  const { data, error } = await db
+    .from("anime_uploads")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    animeGrid.innerHTML =
+      "<p>Anime load nahi hua. Database table check karo.</p>";
     return;
   }
 
-  list.forEach((anime) => {
-    container.appendChild(makeCard(anime));
+  animeList = data || [];
+  renderAnime();
+  renderWatchlist();
+  renderContinueWatching();
+  populateAnimeDropdowns();
+}
+
+function getAnimeTitle(anime) {
+  return anime.title || anime.name || "Untitled Anime";
+}
+
+function getAnimePoster(anime) {
+  return anime.poster_url || anime.poster || "";
+}
+
+function getAnimeGenres(anime) {
+  return anime.genre || anime.genres || "";
+}
+
+function renderAnime() {
+  if (!animeGrid) return;
+
+  const search = ($("searchInput")?.value || "")
+    .trim()
+    .toLowerCase();
+
+  const filtered = animeList.filter((anime) => {
+    const title = getAnimeTitle(anime).toLowerCase();
+    const genre = String(getAnimeGenres(anime)).toLowerCase();
+    const type = String(anime.anime_type || "").toLowerCase();
+
+    const matchesSearch =
+      title.includes(search) ||
+      genre.includes(search) ||
+      type.includes(search);
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      genre.includes(selectedCategory.toLowerCase()) ||
+      type.includes(selectedCategory.toLowerCase());
+
+    return matchesSearch && matchesCategory;
+  });
+
+  if (!filtered.length) {
+    animeGrid.innerHTML =
+      '<p class="empty-message">No anime found.</p>';
+    return;
+  }
+
+  animeGrid.innerHTML = filtered.map((anime) => {
+    const id = escapeHTML(anime.id);
+    const title = escapeHTML(getAnimeTitle(anime));
+    const poster = escapeHTML(getAnimePoster(anime));
+    const genre = escapeHTML(getAnimeGenres(anime));
+    const type = escapeHTML(anime.anime_type || "Anime");
+
+    return `
+      <article class="anime-card">
+        ${
+          poster
+            ? `<img src="${poster}" alt="${title}" loading="lazy">`
+            : `<div class="anime-poster"></div>`
+        }
+
+        <div class="anime-card-content">
+          <h3>${title}</h3>
+          <p>${genre}</p>
+          <p>${type}</p>
+
+          <button data-play="${id}">
+            ▶ Watch Now
+          </button>
+
+          <button data-save="${id}">
+            ♡ Add to Watchlist
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+/* =========================================
+   5. SEARCH
+========================================= */
+
+$("searchInput")?.addEventListener("input", renderAnime);
+
+$("searchBtn")?.addEventListener("click", renderAnime);
+
+/* =========================================
+   6. CATEGORY FILTERS
+========================================= */
+
+$("categoryFilters")?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-category]");
+  if (!button) return;
+
+  selectedCategory = button.dataset.category;
+
+  document.querySelectorAll(".filter-btn").forEach((item) => {
+    item.classList.remove("active");
+  });
+
+  button.classList.add("active");
+  renderAnime();
+});
+
+/* =========================================
+   7. ANIME CARD ACTIONS
+========================================= */
+
+animeGrid?.addEventListener("click", async (event) => {
+  const playButton = event.target.closest("[data-play]");
+  const saveButton = event.target.closest("[data-save]");
+
+  if (playButton) {
+    await openAnime(playButton.dataset.play);
+  }
+
+  if (saveButton) {
+    addToWatchlist(saveButton.dataset.save);
+  }
+});
+
+/* =========================================
+   8. WATCHLIST
+========================================= */
+
+function addToWatchlist(id) {
+  const list = getStored(WATCHLIST_KEY);
+
+  if (list.includes(String(id))) {
+    notify("Already in your Watchlist ♡");
+    return;
+  }
+
+  list.push(String(id));
+  saveStored(WATCHLIST_KEY, list);
+
+  renderWatchlist();
+  notify("Added to Watchlist ♡");
+}
+
+function removeFromWatchlist(id) {
+  const list = getStored(WATCHLIST_KEY)
+    .filter((item) => item !== String(id));
+
+  saveStored(WATCHLIST_KEY, list);
+  renderWatchlist();
+}
+
+function renderWatchlist() {
+  if (!watchlistGrid) return;
+
+  const saved = getStored(WATCHLIST_KEY);
+
+  const items = animeList.filter((anime) =>
+    saved.includes(String(anime.id))
+  );
+
+  if (!items.length) {
+    watchlistGrid.innerHTML =
+      '<p class="empty-message">Your Watchlist is empty.</p>';
+    return;
+  }
+
+  watchlistGrid.innerHTML = items.map((anime) => `
+    <article class="anime-card">
+      ${
+        getAnimePoster(anime)
+          ? `<img src="${escapeHTML(getAnimePoster(anime))}" alt="${escapeHTML(getAnimeTitle(anime))}">`
+          : `<div class="anime-poster"></div>`
+      }
+
+      <div class="anime-card-content">
+        <h3>${escapeHTML(getAnimeTitle(anime))}</h3>
+        <button data-watch="${escapeHTML(anime.id)}">
+          ▶ Watch
+        </button>
+        <button data-remove="${escapeHTML(anime.id)}">
+          Remove
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+watchlistGrid?.addEventListener("click", async (event) => {
+  const watch = event.target.closest("[data-watch]");
+  const remove = event.target.closest("[data-remove]");
+
+  if (watch) await openAnime(watch.dataset.watch);
+  if (remove) removeFromWatchlist(remove.dataset.remove);
+});
+
+/* =========================================
+   9. CONTINUE WATCHING
+========================================= */
+
+function saveProgress(animeId, episodeId, time, duration) {
+  if (!animeId || !episodeId) return;
+
+  const history = getStored(HISTORY_KEY);
+
+  const updated = history.filter(
+    (item) => String(item.animeId) !== String(animeId)
+  );
+
+  updated.unshift({
+    animeId: String(animeId),
+    episodeId: String(episodeId),
+    time,
+    duration,
+    updatedAt: Date.now()
+  });
+
+  saveStored(HISTORY_KEY, updated.slice(0, 30));
+}
+
+function renderContinueWatching() {
+  if (!continueGrid) return;
+
+  const history = getStored(HISTORY_KEY);
+
+  const items = history
+    .map((entry) => {
+      const anime = animeList.find(
+        (item) => String(item.id) === String(entry.animeId)
+      );
+
+      return anime ? { ...entry, anime } : null;
+    })
+    .filter(Boolean);
+
+  if (!items.length) {
+    continueGrid.innerHTML =
+      '<p class="empty-message">Your watch history will appear here.</p>';
+    return;
+  }
+
+  continueGrid.innerHTML = items.map((entry) => `
+    <article class="anime-card">
+      ${
+        getAnimePoster(entry.anime)
+          ? `<img src="${escapeHTML(getAnimePoster(entry.anime))}" alt="${escapeHTML(getAnimeTitle(entry.anime))}">`
+          : `<div class="anime-poster"></div>`
+      }
+
+      <div class="anime-card-content">
+        <h3>${escapeHTML(getAnimeTitle(entry.anime))}</h3>
+        <p>Continue watching</p>
+        <button data-continue="${escapeHTML(entry.animeId)}"
+                data-episode="${escapeHTML(entry.episodeId)}">
+          ▶ Continue
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+continueGrid?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-continue]");
+  if (!button) return;
+
+  await openAnime(button.dataset.continue, button.dataset.episode);
+});
+
+/* =========================================
+   10. OPEN ANIME + LOAD EPISODES
+========================================= */
+
+async function openAnime(id, resumeEpisodeId = null) {
+  currentAnime = animeList.find(
+    (anime) => String(anime.id) === String(id)
+  );
+
+  if (!currentAnime) {
+    notify("Anime not found.");
+    return;
+  }
+
+  if (playerTitle) {
+    playerTitle.textContent = getAnimeTitle(currentAnime);
+  }
+
+  $("playerDescription").textContent =
+    currentAnime.description || "";
+
+  if (video) {
+    video.pause();
+    video.removeAttribute("src");
+    video.querySelectorAll("track").forEach((track) => track.remove());
+    video.load();
+  }
+
+  if (episodeSelect) {
+    episodeSelect.innerHTML =
+      '<option value="">Loading episodes...</option>';
+  }
+
+  const { data, error } = await db
+    .from("anime_episodes")
+    .select("*")
+    .eq("anime_id", currentAnime.id)
+    .order("episode_number", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    notify("Episode load error. Database check karo.");
+    return;
+  }
+
+  currentEpisodes = data || [];
+
+  if (!currentEpisodes.length) {
+    if (episodeSelect) {
+      episodeSelect.innerHTML =
+        '<option value="">No episodes available</option>';
+    }
+
+    notify("Is anime ke episodes abhi available nahi hain.");
+    $("player")?.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
+  if (episodeSelect) {
+    episodeSelect.innerHTML = currentEpisodes.map((episode) => `
+      <option value="${escapeHTML(episode.id)}">
+        Episode ${escapeHTML(episode.episode_number)}
+        ${episode.title ? " - " + escapeHTML(episode.title) : ""}
+      </option>
+    `).join("");
+  }
+
+  const selectedEpisode =
+    currentEpisodes.find(
+      (episode) => String(episode.id) === String(resumeEpisodeId)
+    ) || currentEpisodes[0];
+
+  if (episodeSelect) {
+    episodeSelect.value = selectedEpisode.id;
+  }
+
+  await playEpisode(selectedEpisode);
+
+  $("player")?.scrollIntoView({ behavior: "smooth" });
+}
+
+/* =========================================
+   11. PLAY EPISODE
+========================================= */
+
+async function playEpisode(episode) {
+  if (!episode || !video) return;
+
+  video.pause();
+
+  video.querySelectorAll("track").forEach((track) => track.remove());
+
+  video.src = episode.video_url;
+  video.load();
+
+  if ($("nowPlaying")) {
+    $("nowPlaying").textContent =
+      `Now Playing: Episode ${episode.episode_number}`;
+  }
+
+  video.onloadedmetadata = () => {
+    const history = getStored(HISTORY_KEY);
+
+    const saved = history.find(
+      (item) =>
+        String(item.animeId) === String(currentAnime.id) &&
+        String(item.episodeId) === String(episode.id)
+    );
+
+    if (saved?.time > 0 && saved.time < video.duration - 10) {
+      video.currentTime = saved.time;
+    }
+  };
+
+  await loadSubtitles(episode.id);
+
+  video.play().catch(() => {
+    console.log("Press play to start the video.");
   });
 }
 
-// RENDER ALL
-function renderAll() {
-  showCards(animeGrid, animeList);
-
-  showCards(
-    hindiGrid,
-    animeList.filter((anime) =>
-      String(anime.language).toLowerCase().includes("hindi")
-    )
+episodeSelect?.addEventListener("change", async () => {
+  const episode = currentEpisodes.find(
+    (item) => String(item.id) === String(episodeSelect.value)
   );
 
-  showCards(
-    watchlistGrid,
-    animeList.filter((anime) => watchlist.includes(anime.id))
+  if (episode) {
+    await playEpisode(episode);
+  }
+});
+
+/* =========================================
+   12. SAVE WATCH PROGRESS
+========================================= */
+
+let lastProgressSave = 0;
+
+video?.addEventListener("timeupdate", () => {
+  if (!currentAnime || !episodeSelect?.value) return;
+
+  const now = Date.now();
+
+  if (now - lastProgressSave < 5000) return;
+
+  lastProgressSave = now;
+
+  saveProgress(
+    currentAnime.id,
+    episodeSelect.value,
+    video.currentTime,
+    video.duration || 0
   );
+});
 
-  showCards(
-    historyGrid,
-    history.map((id) =>
-      animeList.find((anime) => anime.id === id)
-    ).filter(Boolean)
+video?.addEventListener("ended", () => {
+  if (!currentAnime || !episodeSelect?.value) return;
+
+  saveProgress(
+    currentAnime.id,
+    episodeSelect.value,
+    0,
+    video.duration || 0
   );
-}
+});
 
-// WATCHLIST
-function toggleWatchlist(id) {
-  watchlist = watchlist.includes(id)
-    ? watchlist.filter((item) => item !== id)
-    : [...watchlist, id];
+/* =========================================
+   13. SUBTITLE SYSTEM
+========================================= */
 
-  saveData();
-}
+async function loadSubtitles(episodeId) {
+  if (!video || !subtitleSelect) return;
 
-// SUBTITLE LANGUAGES
-const subtitleLanguages = [
-  { key: "ja", code: "ja", label: "🇯🇵 Japanese Sub" },
-  { key: "en", code: "en", label: "🇬🇧 English Sub" },
-  { key: "hi", code: "hi", label: "🇮🇳 Hindi Sub" },
-  { key: "hinglish", code: "hi-Latn", label: "🇮🇳 Hinglish (Roman)" }
-];
+  const { data, error } = await db
+    .from("anime_subtitles")
+    .select("*")
+    .eq("episode_id", episodeId);
 
-// LOAD ANIME SUBTITLES
-function loadAnimeSubtitles(anime, video, select) {
-  // Remove old subtitle tracks
-  video.querySelectorAll("track").forEach((track) => track.remove());
-
-  activeSubtitleTracks.clear();
-
-  const subtitles = anime.subtitles || {};
-
-  // Automatically create language options
-  if (select) {
-    select.replaceChildren();
-
-    const offOption = document.createElement("option");
-    offOption.value = "off";
-    offOption.textContent = "🚫 Off";
-    select.appendChild(offOption);
+  if (error) {
+    console.warn("Subtitle table not ready:", error.message);
+    subtitleSelect.value = "off";
+    $("subtitleInfo").textContent =
+      "Subtitle files are not configured yet.";
+    return;
   }
 
-  subtitleLanguages.forEach((language) => {
-    const url = subtitles[language.key];
+  video.querySelectorAll("track").forEach((track) => track.remove());
 
-    if (!url) return;
-
-    // Create subtitle track
+  (data || []).forEach((subtitle) => {
     const track = document.createElement("track");
 
     track.kind = "subtitles";
-    track.label = language.label;
-    track.srclang = language.code;
-    track.src = url;
+    track.src = subtitle.subtitle_url;
+    track.srclang = subtitle.language_code;
+    track.label = subtitle.language_name || subtitle.language_code;
     track.default = false;
 
     video.appendChild(track);
-
-    activeSubtitleTracks.set(language.key, track);
-
-    // Add language to dropdown
-    if (select) {
-      const option = document.createElement("option");
-      option.value = language.key;
-      option.textContent = language.label;
-
-      select.appendChild(option);
-    }
   });
 
-  if (select) {
-    select.value = "off";
-  }
+  subtitleSelect.value = "off";
+
+  $("subtitleInfo").textContent =
+    "Select Japanese, English, Hindi or Hinglish subtitles.";
 }
 
-// OPEN PLAYER
-function openPlayer(anime) {
-  const dialog = $("#playerDialog");
-  const video = $("#videoPlayer");
-  const info = $("#subtitleInfo");
-  const select = $("#subtitleSelect");
+subtitleSelect?.addEventListener("change", () => {
+  const language = subtitleSelect.value;
+  const tracks = video?.textTracks;
 
-  if (!dialog || !video) {
-    alert("Player section nahi mila. index.html check karo.");
+  if (!tracks) return;
+
+  for (let i = 0; i < tracks.length; i++) {
+    tracks[i].mode =
+      language !== "off" &&
+      tracks[i].language === language
+        ? "showing"
+        : "disabled";
+  }
+
+  $("subtitleInfo").textContent =
+    language === "off"
+      ? "Subtitles Off"
+      : `Selected subtitle: ${language}`;
+});
+
+/* =========================================
+   14. LOGIN / SIGNUP / FORGOT PASSWORD
+========================================= */
+
+function showAuthForm(type) {
+  $("loginForm").hidden = type !== "login";
+  $("signupForm").hidden = type !== "signup";
+  $("forgotForm").hidden = type !== "forgot";
+
+  $("authTitle").textContent = {
+    login: "Login to AnimeNoona",
+    signup: "Create Your Account",
+    forgot: "Reset Your Password"
+  }[type];
+
+  $("authMessage").textContent = "";
+
+  $("authSection")?.scrollIntoView({ behavior: "smooth" });
+}
+
+$("loginOpenBtn")?.addEventListener("click", () => {
+  showAuthForm("login");
+});
+
+$("signupOpenBtn")?.addEventListener("click", () => {
+  showAuthForm("signup");
+});
+
+$("forgotOpenBtn")?.addEventListener("click", () => {
+  showAuthForm("forgot");
+});
+
+$("loginForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+
+  $("authMessage").textContent = "Logging in...";
+
+  const { error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    $("authMessage").textContent = error.message;
     return;
   }
 
-  // Stop previous video
-  video.pause();
-
-  // Remove previous video and subtitles
-  video.removeAttribute("src");
-  video.querySelectorAll("track").forEach((track) => track.remove());
-
-  activeSubtitleTracks.clear();
-
-  // Load new video
-  if (anime.videoUrl) {
-    video.src = anime.videoUrl;
-  }
-
-  // Load new anime subtitles
-  loadAnimeSubtitles(anime, video, select);
-
-  // Load video and subtitle tracks
-  video.load();
-
-  if (info) {
-    info.textContent = anime.videoUrl
-      ? "Video loaded. Select your subtitle language."
-      : "Demo anime: video URL abhi add nahi hua hai.";
-  }
-
-  // Save watch history
-  history = [
-    anime.id,
-    ...history.filter((id) => id !== anime.id)
-  ].slice(0, 20);
-
-  saveData();
-  renderAll();
-
-  if (!dialog.open) {
-    dialog.showModal();
-  }
-}
-
-// SUBTITLE CHANGE
-const subtitleSelect = $("#subtitleSelect");
-
-if (subtitleSelect) {
-  subtitleSelect.addEventListener("change", () => {
-    const video = $("#videoPlayer");
-    const info = $("#subtitleInfo");
-
-    if (!video) return;
-
-    const selected = subtitleSelect.value;
-
-    // Turn all subtitle tracks off first
-    Array.from(video.textTracks).forEach((track) => {
-      track.mode = "disabled";
-    });
-
-    if (selected === "off") {
-      if (info) info.textContent = "🚫 Subtitles off.";
-      return;
-    }
-
-    const selectedTrack = activeSubtitleTracks.get(selected);
-
-    if (!selectedTrack) {
-      if (info) {
-        info.textContent = "Is language ki subtitle file available nahi hai.";
-      }
-      return;
-    }
-
-    // Show selected subtitle
-    selectedTrack.track.mode = "showing";
-
-    if (info) {
-      const language = subtitleLanguages.find(
-        (item) => item.key === selected
-      );
-
-      info.textContent = "Subtitle: " + language.label;
-    }
-  });
-}
-
-// SEARCH
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase().trim();
-
-    const results = animeList.filter((anime) =>
-      `${anime.title} ${anime.category} ${anime.language}`
-        .toLowerCase()
-        .includes(query)
-    );
-
-    showCards(animeGrid, results);
-  });
-}
-
-// CATEGORY FILTER
-document.querySelectorAll("[data-category]").forEach((button) => {
-  button.addEventListener("click", () => {
-    const category = button.dataset.category;
-
-    const results = category === "All"
-      ? animeList
-      : animeList.filter((anime) =>
-          anime.category.toLowerCase() === category.toLowerCase()
-        );
-
-    showCards(animeGrid, results);
-  });
+  notify("Login successful!");
 });
 
-// CLOSE PLAYER
-const closePlayer = $("#closePlayer");
+$("signupForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-if (closePlayer) {
-  closePlayer.addEventListener("click", () => {
-    const video = $("#videoPlayer");
+  const name = $("signupName").value.trim();
+  const email = $("signupEmail").value.trim();
+  const password = $("signupPassword").value;
 
-    if (video) {
-      video.pause();
-      video.removeAttribute("src");
-      video.querySelectorAll("track").forEach((track) => track.remove());
-      video.load();
+  $("authMessage").textContent = "Creating account...";
+
+  const { error } = await db.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name: name }
     }
-
-    activeSubtitleTracks.clear();
-
-    $("#playerDialog")?.close();
   });
-}
 
-// THEME TOGGLE
-const themeButton = $("#themeToggle");
-
-if (themeButton) {
-  themeButton.addEventListener("click", () => {
-    document.body.classList.toggle("light");
-
-    localStorage.setItem(
-      "ahsanime_theme",
-      document.body.classList.contains("light") ? "light" : "dark"
-    );
-  });
-}
-
-if (localStorage.getItem("ahsanime_theme") === "light") {
-  document.body.classList.add("light");
-}
-
-// LOGIN DEMO
-const loginDialog = $("#loginDialog");
-
-$("#loginBtn")?.addEventListener("click", () => {
-  loginDialog?.showModal();
-});
-
-$("#closeLogin")?.addEventListener("click", () => {
-  loginDialog?.close();
-});
-
-function demoLogin() {
-  const email = $("#emailInput")?.value.trim();
-  const password = $("#passwordInput")?.value;
-  const message = $("#loginMessage");
-
-  if (!email || !password) {
-    if (message) {
-      message.textContent = "Email aur password enter karo.";
-    }
+  if (error) {
+    $("authMessage").textContent = error.message;
     return;
   }
 
-  if (message) {
-    message.textContent =
-      "Demo only: secure login abhi backend se connect nahi hai.";
+  $("authMessage").textContent =
+    "Account created! Check your email if confirmation is enabled.";
+});
+
+$("forgotForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = $("forgotEmail").value.trim();
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+
+  $("authMessage").textContent = error
+    ? error.message
+    : "Password reset link sent. Check your email.";
+});
+
+/* =========================================
+   15. AUTH STATE + ADMIN CHECK
+========================================= */
+
+async function checkAdmin() {
+  isAdmin = false;
+
+  if (!currentUser) {
+    $("adminDashboard").hidden = true;
+    return;
   }
+
+  const { data, error } = await db.rpc("is_admin");
+
+  if (error) {
+    console.warn("Admin check failed:", error.message);
+    $("adminDashboard").hidden = true;
+    return;
+  }
+
+  isAdmin = data === true;
+  $("adminDashboard").hidden = !isAdmin;
 }
 
-$("#signupBtn")?.addEventListener("click", demoLogin);
-$("#signinBtn")?.addEventListener("click", demoLogin);
+async function updateAuthUI() {
+  const { data } = await db.auth.getUser();
 
-// FIRST PAGE LOAD
-renderAll();
+  currentUser = data.user || null;
 
-console.log("AHSANIME 3.0 loaded successfully!");
+  $("loginOpenBtn").hidden = !!currentUser;
+  $("signupOpenBtn").hidden = !!currentUser;
+  $("logoutBtn").hidden = !currentUser;
+
+  await checkAdmin();
+}
+
+$("logoutBtn")?.addEventListener("click", async () => {
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    notify(error.message);
+    return;
+  }
+
+  notify("Logged out.");
+});
+
+db.auth.onAuthStateChange(() => {
+  setTimeout(updateAuthUI, 0);
+});
+
+/* =========================================
+   16. ADMIN: ADD ANIME
+========================================= */
+
+$("animeUploadForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!isAdmin) {
+    notify("Admin access required.");
+    return;
+  }
+
+  const anime = {
+    title: $("animeName").value.trim(),
+    description: $("animeDescription").value.trim(),
+    genre: $("animeGenre").value.trim(),
+    anime_type: $("animeType").value,
+    poster_url: $("animePoster").value.trim()
+  };
+
+  $("adminMessage").textContent = "Adding anime...";
+
+  const { error } = await db
+    .from("anime_uploads")
+    .insert(anime);
+
+  if (error) {
+    $("adminMessage").textContent = error.message;
+    return;
+  }
+
+  $("animeUploadForm").reset();
+  $("adminMessage").textContent = "Anime added successfully!";
+
+  await loadAnime();
+});
+
+/* =========================================
+   17. ADMIN DROPDOWNS
+========================================= */
+
+function populateAnimeDropdowns() {
+  ["episodeAnime", "subtitleAnime"].forEach((id) => {
+    const select = $(id);
+    if (!select) return;
+
+    select.innerHTML =
+      '<option value="">Select Anime</option>' +
+      animeList.map((anime) => `
+        <option value="${escapeHTML(anime.id)}">
+          ${escapeHTML(getAnimeTitle(anime))}
+        </option>
+      `).join("");
+  });
+}
+
+/* =========================================
+   18. ADMIN: ADD EPISODE
+========================================= */
+
+$("episodeUploadForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!isAdmin) {
+    notify("Admin access required.");
+    return;
+  }
+
+  const animeId = $("episodeAnime").value;
+
+  if (!animeId) {
+    notify("Select an anime first.");
+    return;
+  }
+
+  const episode = {
+    anime_id: animeId,
+    episode_number: Number($("episodeNumber").value),
+    title: $("episodeTitle").value.trim(),
+    video_url: $("episodeVideoUrl").value.trim()
+  };
+
+  $("adminMessage").textContent = "Adding episode...";
+
+  const { error } = await db
+    .from("anime_episodes")
+    .insert(episode);
+
+  if (error) {
+    $("adminMessage").textContent = error.message;
+    return;
+  }
+
+  $("episodeUploadForm").reset();
+  $("adminMessage").textContent = "Episode added successfully!";
+});
+
+/* =========================================
+   19. ADMIN: ADD SUBTITLE
+========================================= */
+
+$("subtitleUploadForm")?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!isAdmin) {
+    notify("Admin access required.");
+    return;
+  }
+
+  const animeId = $("subtitleAnime").value;
+  const language = $("subtitleLanguage").value;
+  const subtitleUrl = $("subtitleUrl").value.trim();
+
+  if (!animeId || !subtitleUrl) {
+    notify("Select anime and enter subtitle URL.");
+    return;
+  }
+
+  const { data: episodes, error: episodeError } = await db
+    .from("anime_episodes")
+    .select("id")
+    .eq("anime_id", animeId);
+
+  if (episodeError || !episodes?.length) {
+    notify("No episodes found for this anime.");
+    return;
+  }
+
+  const languageNames = {
+    ja: "Japanese",
+    en: "English",
+    hi: "Hindi",
+    "hi-Latn": "Hinglish (Roman)"
+  };
+
+  const rows = episodes.map((episode) => ({
+    episode_id: episode.id,
+    language_code: language,
+    language_name: languageNames[language],
+    subtitle_url: subtitleUrl
+  }));
+
+  const { error } = await db
+    .from("anime_subtitles")
+    .insert(rows);
+
+  if (error) {
+    $("adminMessage").textContent = error.message;
+    return;
+  }
+
+  $("subtitleUploadForm").reset();
+  $("adminMessage").textContent =
+    "Subtitle added to all episodes of selected anime.";
+});
+
+/* =========================================
+   20. INITIAL START
+========================================= */
+
+async function startAnimeNoona() {
+  await loadAnime();
+  await updateAuthUI();
+}
+
+startAnimeNoona().catch((error) => {
+  console.error("AnimeNoona startup error:", error);
+});
