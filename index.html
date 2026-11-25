@@ -5,239 +5,437 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090711">
+  <meta name="description" content="AnimeNoona - Your Anime Universe">
   <title>AnimeNoona ♡ | Watch Anime</title>
+
   <link rel="stylesheet" href="styles.css">
+
+  <script type="module" src="app.js"></script>
 </head>
+
 <body>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <a href="#" class="logo">Anime<span>Noona</span> ♡</a>
+  <!-- LOADING -->
+  <div id="loadingScreen" class="loading-screen">
+    <h1>AnimeNoona ♡</h1>
+    <p>Entering Anime Universe...</p>
+  </div>
 
-    <nav>
+  <!-- HEADER -->
+  <header class="main-header">
+    <a href="#home" class="logo">
+      Anime<span>Noona</span> ♡
+    </a>
+
+    <nav class="navbar">
       <a href="#home">Home</a>
-      <a href="#library">Library</a>
-      <a href="#categories">Categories</a>
-      <a href="#watchlist">Watchlist</a>
+      <a href="#anime">Anime</a>
+      <a href="#genres">Genres</a>
+      <a href="#myList">Watchlist</a>
+      <a href="#account">Account</a>
     </nav>
 
-    <div class="nav-actions">
-      <button id="loginOpenBtn">Login</button>
-      <button id="signupOpenBtn">Sign Up</button>
-      <button id="logoutBtn" hidden>Logout</button>
+    <div class="header-actions">
+      <span id="user">Guest</span>
+      <button id="logoutBtn" type="button" hidden>Logout</button>
+      <button id="menuBtn" type="button" aria-label="Open menu">☰</button>
     </div>
   </header>
 
+
+  <!-- HOME / HERO -->
   <main>
 
-    <!-- HOME / HERO -->
-    <section id="home" class="hero">
+    <section class="hero-section" id="home">
       <div class="hero-content">
-        <p class="eyebrow">WELCOME TO ANIMENOONA</p>
-        <h1>Your Anime World<br><span>Starts Here.</span></h1>
-        <p>Discover anime, explore new worlds and enjoy your favourite episodes.</p>
-        <a href="#library" class="primary-btn">Explore Anime →</a>
+        <span class="hero-tag">WELCOME TO ANIMENOONA</span>
+
+        <h1>
+          Discover Your
+          <span>Anime World.</span>
+        </h1>
+
+        <p>
+          Explore amazing anime, exciting adventures,
+          fantasy worlds and unforgettable stories.
+        </p>
+
+        <div class="hero-buttons">
+          <button id="exploreBtn" type="button">
+            Explore Anime →
+          </button>
+
+          <button id="heroWatchBtn" type="button" class="secondary-btn">
+            ▶ Start Watching
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <strong>Anime</strong>
+            <span>Library</span>
+          </div>
+          <div>
+            <strong>Multi</strong>
+            <span>Subtitles</span>
+          </div>
+          <div>
+            <strong>HD</strong>
+            <span>Player</span>
+          </div>
+        </div>
       </div>
-      <div class="hero-art" aria-hidden="true"></div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="hero-orb"></div>
+        <div class="hero-card hero-card-one">✦</div>
+        <div class="hero-card hero-card-two">ANIME ♡</div>
+        <div class="hero-card hero-card-three">✧</div>
+      </div>
     </section>
+
 
     <!-- SEARCH -->
-    <section class="search-section">
-      <input id="searchInput" type="search"
-        placeholder="Search anime..." autocomplete="off">
-      <button id="searchBtn">Search</button>
-    </section>
-
-    <!-- CATEGORIES -->
-    <section id="categories" class="section">
-      <h2>Explore Categories</h2>
-      <div id="categoryFilters" class="filter-list">
-        <button class="filter-btn active" data-category="All">All Anime</button>
-        <button class="filter-btn" data-category="Action">Action</button>
-        <button class="filter-btn" data-category="Romance">Romance</button>
-        <button class="filter-btn" data-category="Adventure">Adventure</button>
-        <button class="filter-btn" data-category="Fantasy">Fantasy</button>
-        <button class="filter-btn" data-category="Comedy">Comedy</button>
-        <button class="filter-btn" data-category="Hindi Dub">Hindi Dub</button>
-        <button class="filter-btn" data-category="Hindi Sub">Hindi Sub</button>
+    <section class="section" id="anime">
+      <div class="section-heading">
+        <div>
+          <span class="section-tag">EXPLORE</span>
+          <h2>Anime Library</h2>
+        </div>
+        <span id="animeCount">Loading anime...</span>
       </div>
-    </section>
 
-    <!-- ANIME LIBRARY -->
-    <section id="library" class="section">
-      <h2>Anime Library</h2>
+      <div class="search-filter-area">
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Search anime..."
+          autocomplete="off"
+        >
+
+        <select id="genreFilter">
+          <option value="all">All Genres</option>
+          <option value="action">Action</option>
+          <option value="adventure">Adventure</option>
+          <option value="romance">Romance</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="comedy">Comedy</option>
+          <option value="drama">Drama</option>
+          <option value="mystery">Mystery</option>
+          <option value="horror">Horror</option>
+        </select>
+
+        <select id="languageFilter">
+          <option value="all">All Languages</option>
+          <option value="Hindi Sub">Hindi Sub</option>
+          <option value="Hindi Dub">Hindi Dub</option>
+          <option value="Hinglish (Roman)">Hinglish</option>
+          <option value="English Sub">English Sub</option>
+          <option value="Japanese">Japanese</option>
+        </select>
+      </div>
+
       <div id="animeGrid" class="anime-grid">
-        <p id="animeLoading">Loading anime...</p>
+        <p class="muted">Loading anime library...</p>
+      </div>
+
+      <p id="libraryMessage" class="message" aria-live="polite"></p>
+    </section>
+
+
+    <!-- GENRES -->
+    <section class="section" id="genres">
+      <div class="section-heading">
+        <div>
+          <span class="section-tag">CATEGORIES</span>
+          <h2>Explore Genres</h2>
+        </div>
+      </div>
+
+      <div class="genre-grid">
+        <button class="genre-card" data-genre="Action">⚔️ Action</button>
+        <button class="genre-card" data-genre="Adventure">🌍 Adventure</button>
+        <button class="genre-card" data-genre="Romance">💗 Romance</button>
+        <button class="genre-card" data-genre="Fantasy">✨ Fantasy</button>
+        <button class="genre-card" data-genre="Comedy">😂 Comedy</button>
+        <button class="genre-card" data-genre="Horror">👻 Horror</button>
       </div>
     </section>
+
 
     <!-- CONTINUE WATCHING -->
-    <section id="continueWatching" class="section">
-      <h2>Continue Watching</h2>
+    <section class="section" id="continueWatching">
+      <div class="section-heading">
+        <h2>▶ Continue Watching</h2>
+      </div>
+
       <div id="continueGrid" class="anime-grid">
-        <p class="empty-message">Your watch history will appear here.</p>
+        <p class="muted">Your recently watched anime will appear here.</p>
       </div>
     </section>
+
 
     <!-- WATCHLIST -->
-    <section id="watchlist" class="section">
-      <h2>My Watchlist ♡</h2>
+    <section class="section" id="myList">
+      <div class="section-heading">
+        <h2>♡ My Watchlist</h2>
+      </div>
+
       <div id="watchlistGrid" class="anime-grid">
-        <p class="empty-message">Your saved anime will appear here.</p>
+        <p class="muted">Your saved anime will appear here.</p>
       </div>
     </section>
 
-    <!-- ANIME PLAYER -->
-    <section id="player" class="section player-section">
-      <h2 id="playerTitle">Anime Player</h2>
 
-      <div class="playerBox">
-        <video id="video" controls playsinline preload="metadata">
+    <!-- ANIME PLAYER -->
+    <section class="section player-section" id="player">
+
+      <div class="section-heading">
+        <div>
+          <span class="section-tag">NOW PLAYING</span>
+          <h2 id="playerTitle">Anime Player</h2>
+        </div>
+      </div>
+
+      <div class="player-container">
+
+        <video
+          id="animeVideo"
+          controls
+          playsinline
+          preload="metadata"
+        >
           Your browser does not support video playback.
         </video>
 
-        <div class="player-controls">
-          <label for="episodeSelect">Select Episode</label>
-          <select id="episodeSelect">
-            <option value="">Select an episode</option>
-          </select>
-
-          <label for="subtitleSelect">Subtitle Language</label>
-          <select id="subtitleSelect">
-            <option value="off">Subtitles Off</option>
-            <option value="ja">Japanese Sub</option>
-            <option value="en">English Sub</option>
-            <option value="hi">Hindi Sub</option>
-            <option value="hi-Latn">Hinglish (Roman)</option>
-          </select>
-
-          <p id="subtitleInfo">Choose your subtitle language.</p>
+        <div class="player-details">
+          <h3 id="nowPlayingTitle">Select an anime to watch</h3>
+          <p id="playerDescription" class="muted">
+            Choose an anime from the library.
+          </p>
         </div>
 
-        <p id="playerDescription"></p>
-        <p id="nowPlaying"></p>
+        <!-- EPISODES -->
+        <div class="player-settings">
+          <div class="setting-group">
+            <label for="episodeSelect">Select Episode</label>
+            <select id="episodeSelect">
+              <option value="">Select an episode</option>
+            </select>
+          </div>
+
+          <!-- SUBTITLE SETTINGS -->
+          <div class="setting-group">
+            <label for="subtitleSelect">CC Subtitle Settings</label>
+
+            <select id="subtitleSelect">
+              <option value="off">🚫 Subtitles Off</option>
+              <option value="ja">🇯🇵 Japanese</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="hi">🇮🇳 Hindi (देवनागरी)</option>
+              <option value="hi-Latn">🇮🇳 Hinglish (Roman)</option>
+            </select>
+          </div>
+        </div>
+
+        <p id="subtitleStatus" class="muted" aria-live="polite">
+          Select subtitle language.
+        </p>
+
+        <p id="playerMessage" class="message" aria-live="polite"></p>
       </div>
     </section>
+
 
     <!-- LOGIN / SIGNUP -->
-    <section id="authSection" class="section auth-section">
-      <div class="auth-box">
-        <h2 id="authTitle">Login to AnimeNoona</h2>
+    <section class="section account-section" id="account">
 
-        <form id="loginForm">
-          <input id="loginEmail" type="email"
-            placeholder="Email address" required>
-          <input id="loginPassword" type="password"
-            placeholder="Password" required>
-          <button type="submit">Login</button>
-        </form>
+      <div class="account-panel" id="loginPanel">
+        <span class="section-tag">YOUR ACCOUNT</span>
+        <h2>Welcome to AnimeNoona ♡</h2>
 
-        <form id="signupForm" hidden>
-          <input id="signupName" type="text"
-            placeholder="Your name" required>
-          <input id="signupEmail" type="email"
-            placeholder="Email address" required>
-          <input id="signupPassword" type="password"
-            placeholder="Create password" minlength="6" required>
-          <button type="submit">Create Account</button>
-        </form>
+        <p id="accountUser" class="muted">Guest</p>
 
-        <form id="forgotForm" hidden>
-          <input id="forgotEmail" type="email"
-            placeholder="Your registered email" required>
-          <button type="submit">Send Reset Link</button>
-        </form>
+        <label for="emailInput">Email Address</label>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="Enter your email"
+          autocomplete="email"
+        >
 
-        <button id="forgotOpenBtn" type="button">Forgot Password?</button>
-        <p id="authMessage" role="status"></p>
+        <label for="passwordInput">Password</label>
+        <input
+          type="password"
+          id="passwordInput"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        >
+
+        <div class="account-buttons">
+          <button id="signupBtn" type="button">Create Account</button>
+          <button id="loginBtn" type="button">Login</button>
+        </div>
+
+        <button id="forgotBtn" type="button" class="text-btn">
+          Forgot Password?
+        </button>
+
+        <p id="accountMessage" class="message" aria-live="polite"></p>
       </div>
+
+
+      <!-- PASSWORD RESET -->
+      <div class="account-panel" id="resetPanel" hidden>
+        <h2>Reset Password</h2>
+
+        <label for="newPassword">New Password</label>
+        <input
+          type="password"
+          id="newPassword"
+          placeholder="New password"
+        >
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="Confirm password"
+        >
+
+        <button id="updatePasswordBtn" type="button">
+          Update Password
+        </button>
+
+        <p id="resetMessage" class="message" aria-live="polite"></p>
+      </div>
+
     </section>
 
+
     <!-- ADMIN DASHBOARD -->
-    <section id="adminDashboard" class="section" hidden>
-      <h2>Admin Dashboard</h2>
-      <p>Manage your anime library and episodes.</p>
+    <section class="section admin-section" id="adminDashboard" hidden>
 
-      <div class="admin-box">
-        <h3>Upload Anime</h3>
-
-        <form id="animeUploadForm">
-          <input id="animeName" type="text"
-            placeholder="Anime title" required>
-
-          <textarea id="animeDescription"
-            placeholder="Anime description"></textarea>
-
-          <input id="animeGenre" type="text"
-            placeholder="Genres (Action, Romance...)">
-
-          <select id="animeType">
-            <option value="Hindi Sub">Hindi Sub</option>
-            <option value="Hindi Dub">Hindi Dub</option>
-            <option value="Both">Both</option>
-          </select>
-
-          <input id="animePoster" type="url"
-            placeholder="Poster image URL">
-
-          <button type="submit">Add Anime</button>
-        </form>
-
-        <hr>
-
-        <h3>Upload Episode</h3>
-        <form id="episodeUploadForm">
-          <select id="episodeAnime">
-            <option value="">Select Anime</option>
-          </select>
-
-          <input id="episodeNumber" type="number"
-            min="1" placeholder="Episode number" required>
-
-          <input id="episodeTitle" type="text"
-            placeholder="Episode title">
-
-          <input id="episodeVideoUrl" type="url"
-            placeholder="Video URL" required>
-
-          <button type="submit">Add Episode</button>
-        </form>
-
-        <hr>
-
-        <h3>Subtitle Files</h3>
-        <p>Subtitle tracks use WebVTT (.vtt) file URLs.</p>
-        <form id="subtitleUploadForm">
-          <select id="subtitleAnime">
-            <option value="">Select Anime</option>
-          </select>
-
-          <select id="subtitleLanguage">
-            <option value="ja">Japanese</option>
-            <option value="en">English</option>
-            <option value="hi">Hindi</option>
-            <option value="hi-Latn">Hinglish (Roman)</option>
-          </select>
-
-          <input id="subtitleUrl" type="url"
-            placeholder="Subtitle .vtt URL">
-
-          <button type="submit">Add Subtitle</button>
-        </form>
+      <div class="section-heading">
+        <div>
+          <span class="section-tag">ADMIN ONLY</span>
+          <h2>Admin Dashboard</h2>
+        </div>
+        <span id="adminStatus">Admin</span>
       </div>
 
-      <p id="adminMessage" role="status"></p>
+      <div class="admin-panel">
+
+        <h3>Upload Anime / Episode</h3>
+
+        <form id="uploadForm">
+
+          <label for="uploadTitle">Anime Title *</label>
+          <input
+            type="text"
+            id="uploadTitle"
+            maxlength="150"
+            placeholder="Enter anime title"
+            required
+          >
+
+          <label for="uploadDescription">Description</label>
+          <textarea
+            id="uploadDescription"
+            rows="3"
+            placeholder="Anime description"
+          ></textarea>
+
+          <label for="uploadGenre">Genre</label>
+          <input
+            type="text"
+            id="uploadGenre"
+            placeholder="Action, Adventure, Fantasy"
+          >
+
+          <label for="uploadLanguage">Audio / Release Language</label>
+          <select id="uploadLanguage">
+            <option>Hindi Sub</option>
+            <option>Hindi Dub</option>
+            <option>Hinglish (Roman)</option>
+            <option>English Sub</option>
+            <option>Japanese</option>
+            <option>Multi-language</option>
+          </select>
+
+          <label for="uploadEpisode">Episode Number</label>
+          <input
+            type="number"
+            id="uploadEpisode"
+            min="1"
+            value="1"
+          >
+
+          <label for="uploadVideo">Video File</label>
+          <input
+            type="file"
+            id="uploadVideo"
+            accept="video/mp4,video/webm,video/quicktime"
+          >
+
+          <label for="uploadPoster">Poster Image</label>
+          <input
+            type="file"
+            id="uploadPoster"
+            accept="image/png,image/jpeg,image/webp"
+          >
+
+          <button type="submit" id="uploadButton">
+            Upload Anime
+          </button>
+
+          <p id="uploadMessage" class="message" aria-live="polite"></p>
+
+        </form>
+
+        <hr>
+
+        <h3>Subtitle Upload</h3>
+
+        <label for="subtitleAnimeSelect">Select Anime / Episode</label>
+        <select id="subtitleAnimeSelect">
+          <option value="">Select anime</option>
+        </select>
+
+        <label for="subtitleLanguageUpload">Subtitle Language</label>
+        <select id="subtitleLanguageUpload">
+          <option value="ja">Japanese</option>
+          <option value="en">English</option>
+          <option value="hi">Hindi (देवनागरी)</option>
+          <option value="hi-Latn">Hinglish (Roman)</option>
+        </select>
+
+        <label for="subtitleFileUpload">Subtitle File (.vtt)</label>
+        <input
+          type="file"
+          id="subtitleFileUpload"
+          accept=".vtt,text/vtt"
+        >
+
+        <button type="button" id="subtitleUploadButton">
+          Upload Subtitle
+        </button>
+
+        <p id="subtitleUploadMessage" class="message" aria-live="polite"></p>
+
+      </div>
     </section>
 
   </main>
 
+
   <!-- FOOTER -->
-  <footer class="footer">
-    <h2>AnimeNoona ♡</h2>
-    <p>Your Anime World • Made for Anime Fans</p>
-    <p>Only authorized anime streams will be linked here.</p>
+  <footer class="main-footer">
+    <h2>Anime<span>Noona</span> ♡</h2>
+    <p>Your Anime Universe.</p>
+    <p>© 2026 AnimeNoona. All rights reserved.</p>
+    <p>Only content you own or are authorized to distribute.</p>
   </footer>
 
-  <script type="module" src="app.js"></script>
 </body>
 </html>
