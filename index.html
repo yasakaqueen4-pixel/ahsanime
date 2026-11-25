@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,19 +17,36 @@ const SUPABASE_KEY = 'sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 window.db = supabase;
 
-window.addEventListener('DOMContentLoaded', async () => {
- const { data: { session } } = await supabase.auth.getSession();
- updateUser(session);
- document.getElementById('status').textContent = 'Supabase initialized';
-
- supabase.auth.onAuthStateChange((_event, session) => updateUser(session));
-});
-
 function updateUser(session) {
  const el = document.getElementById('user');
  if (el) el.textContent = session ? session.user.email : 'Guest';
 }
 
+function showResetForm() {
+ document.getElementById('resetBox').style.display = 'block';
+ document.getElementById('loginBox').style.display = 'none';
+ document.getElementById('resetMessage').textContent =
+  'Enter your new password below.';
+ document.getElementById('resetBox').scrollIntoView();
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+ const { data: { session } } = await supabase.auth.getSession();
+ updateUser(session);
+
+ document.getElementById('status').textContent =
+  'Supabase initialized';
+
+ supabase.auth.onAuthStateChange((event, session) => {
+  updateUser(session);
+
+  if (event === 'PASSWORD_RECOVERY') {
+   showResetForm();
+  }
+ });
+});
+
+// SIGN UP AND LOGIN
 window.account = async (mode) => {
  const email = document.getElementById('email').value.trim();
  const password = document.getElementById('password').value;
@@ -39,6 +57,8 @@ window.account = async (mode) => {
   return;
  }
 
+ msg.textContent = 'Please wait...';
+
  const result = mode === 'signup'
   ? await supabase.auth.signUp({ email, password })
   : await supabase.auth.signInWithPassword({ email, password });
@@ -46,10 +66,77 @@ window.account = async (mode) => {
  msg.textContent = result.error
   ? result.error.message
   : mode === 'signup'
-   ? 'Account created! Check email if confirmation is required.'
+   ? 'Account created! Check your email if confirmation is required.'
    : 'Login successful!';
 };
 
+// FORGOT PASSWORD
+window.sendResetLink = async () => {
+ const email = document.getElementById('email').value.trim();
+ const msg = document.getElementById('message');
+
+ if (!email) {
+  msg.textContent = 'Enter your email address first.';
+  return;
+ }
+
+ msg.textContent = 'Sending reset link...';
+
+ const redirectUrl =
+  window.location.origin + window.location.pathname;
+
+ const { error } = await supabase.auth.resetPasswordForEmail(
+  email,
+  { redirectTo: redirectUrl }
+ );
+
+ msg.textContent = error
+  ? error.message
+  : 'Password reset link sent! Check your Gmail inbox and spam folder.';
+};
+
+// SHOW RESET PAGE
+window.openResetPage = showResetForm;
+
+// SAVE NEW PASSWORD
+window.saveNewPassword = async () => {
+ const password = document.getElementById('newPassword').value;
+ const confirm = document.getElementById('confirmPassword').value;
+ const msg = document.getElementById('resetMessage');
+
+ if (password.length < 6) {
+  msg.textContent = 'Password must be at least 6 characters.';
+  return;
+ }
+
+ if (password !== confirm) {
+  msg.textContent = 'Passwords do not match!';
+  return;
+ }
+
+ msg.textContent = 'Updating password...';
+
+ const { error } = await supabase.auth.updateUser({
+  password: password
+ });
+
+ if (error) {
+  msg.textContent = error.message;
+ } else {
+  msg.textContent = 'Password updated successfully! You can now login.';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('confirmPassword').value = '';
+
+  await supabase.auth.signOut();
+
+  document.getElementById('resetBox').style.display = 'none';
+  document.getElementById('loginBox').style.display = 'block';
+  document.getElementById('message').textContent =
+   'Password changed! Please login with your new password.';
+ }
+};
+
+// LOGOUT
 window.logout = async () => {
  const { error } = await supabase.auth.signOut();
  document.getElementById('message').textContent =
@@ -59,108 +146,306 @@ window.logout = async () => {
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#090711;--panel:#151020;--purple:#a855f7;--pink:#ec4899}
-body{background:var(--bg);color:#fff;font-family:Arial,sans-serif}
-header{
- height:70px;background:#100c1a;display:flex;
- align-items:center;justify-content:space-between;
- padding:0 6%;position:sticky;top:0;z-index:20;
- border-bottom:1px solid #292033
+
+:root{
+ --bg:#090711;
+ --panel:#151020;
+ --purple:#a855f7;
+ --pink:#ec4899;
 }
-.logo{font-size:25px;font-weight:900;color:#c084fc}
+
+body{
+ background:var(--bg);
+ color:#fff;
+ font-family:Arial,sans-serif;
+}
+
+header{
+ height:70px;
+ background:#100c1a;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:0 6%;
+ position:sticky;
+ top:0;
+ z-index:20;
+ border-bottom:1px solid #292033;
+}
+
+.logo{
+ font-size:25px;
+ font-weight:900;
+ color:#c084fc;
+}
+
 .logo span{color:#f472b6}
+
 nav{display:flex;gap:24px}
-nav a{color:#ddd;text-decoration:none;font-size:14px}
+
+nav a{
+ color:#ddd;
+ text-decoration:none;
+ font-size:14px;
+}
+
 nav a:hover{color:#d8a1ff}
+
 button{
  background:linear-gradient(110deg,#9333ea,#db2777);
- color:white;border:0;padding:12px 19px;
- border-radius:9px;font-weight:bold;cursor:pointer
+ color:white;
+ border:0;
+ padding:12px 19px;
+ border-radius:9px;
+ font-weight:bold;
+ cursor:pointer;
 }
+
 button:hover{opacity:.85}
+
 .hero{
- min-height:410px;padding:95px 8%;
- background:linear-gradient(90deg,#100a1def,#100a1d99,transparent),
+ min-height:410px;
+ padding:95px 8%;
+ background:
+ linear-gradient(90deg,#100a1def,#100a1d99,transparent),
  linear-gradient(135deg,#30134d,#711d71,#140e29);
- display:flex;align-items:center
+ display:flex;
+ align-items:center;
 }
+
 .hero-content{max-width:570px}
-.tag{color:#e9a8ff;letter-spacing:3px;font-size:12px}
-.hero h1{font-size:55px;margin:18px 0}
-.hero p{color:#ded3e9;line-height:1.8}
-.hero-buttons{display:flex;gap:12px;margin-top:25px}
-.secondary{background:#30223f;border:1px solid #79519a}
+
+.tag{
+ color:#e9a8ff;
+ letter-spacing:3px;
+ font-size:12px;
+}
+
+.hero h1{
+ font-size:55px;
+ margin:18px 0;
+}
+
+.hero p{
+ color:#ded3e9;
+ line-height:1.8;
+}
+
+.hero-buttons{
+ display:flex;
+ gap:12px;
+ margin-top:25px;
+}
+
+.secondary{
+ background:#30223f;
+ border:1px solid #79519a;
+}
+
 .section{padding:35px 6%}
+
 .heading{
- display:flex;justify-content:space-between;
- align-items:center;margin-bottom:22px
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:22px;
 }
+
 .heading h2{font-size:24px}
-.heading span{color:#c084fc;font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:17px}
+
+.heading span{
+ color:#c084fc;
+ font-size:13px;
+}
+
+.cards{
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:17px;
+}
+
 .card{
- background:var(--panel);border-radius:12px;overflow:hidden;
- transition:.2s;cursor:pointer;border:1px solid #2a2037
+ background:var(--panel);
+ border-radius:12px;
+ overflow:hidden;
+ transition:.2s;
+ cursor:pointer;
+ border:1px solid #2a2037;
 }
-.card:hover{transform:translateY(-5px);border-color:#a855f7}
+
+.card:hover{
+ transform:translateY(-5px);
+ border-color:#a855f7;
+}
+
 .poster{
- height:205px;display:flex;align-items:center;
- justify-content:center;text-align:center;padding:12px;
- font-size:23px;font-weight:bold;
- background:linear-gradient(140deg,#32134b,#a33a91,#25122f)
+ height:205px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ padding:12px;
+ font-size:23px;
+ font-weight:bold;
+ background:linear-gradient(140deg,#32134b,#a33a91,#25122f);
 }
+
 .poster.two{background:linear-gradient(140deg,#132d54,#5140a3,#17142b)}
 .poster.three{background:linear-gradient(140deg,#511d32,#bc4d76,#261329)}
 .poster.four{background:linear-gradient(140deg,#123e42,#297c75,#17232e)}
 .poster.five{background:linear-gradient(140deg,#513518,#b07835,#241829)}
+
 .info{padding:13px}
-.info h3{font-size:15px;margin-bottom:7px}
-.info p{color:#a99cb7;font-size:12px}
-.pills{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
-.pills button{background:#21182e;border:1px solid #443050}
+
+.info h3{
+ font-size:15px;
+ margin-bottom:7px;
+}
+
+.info p{
+ color:#a99cb7;
+ font-size:12px;
+}
+
+.pills{
+ display:flex;
+ flex-wrap:wrap;
+ gap:9px;
+ margin-top:15px;
+}
+
+.pills button{
+ background:#21182e;
+ border:1px solid #443050;
+}
+
 .pills button.active{background:#8736bc}
+
 .search{
- width:100%;max-width:430px;background:#171120;color:white;
- padding:14px;border:1px solid #40304d;border-radius:10px;
- margin-bottom:20px
+ width:100%;
+ max-width:430px;
+ background:#171120;
+ color:white;
+ padding:14px;
+ border:1px solid #40304d;
+ border-radius:10px;
+ margin-bottom:20px;
 }
+
 .account-box{
- max-width:440px;margin:0 auto;background:#171120;
- padding:27px;border:1px solid #34243f;border-radius:15px
+ max-width:440px;
+ margin:0 auto;
+ background:#171120;
+ padding:27px;
+ border:1px solid #34243f;
+ border-radius:15px;
 }
+
 .account-box input{
- display:block;width:100%;padding:14px;margin:12px 0;
- border:1px solid #40304d;background:#0f0b16;
- color:white;border-radius:9px
+ display:block;
+ width:100%;
+ padding:14px;
+ margin:12px 0;
+ border:1px solid #40304d;
+ background:#0f0b16;
+ color:white;
+ border-radius:9px;
 }
+
 .account-box button{margin:5px 3px 5px 0}
-#message{margin-top:12px;color:#d8a1ff;font-size:13px}
-#user{color:#c084fc;margin:12px 0}
+
+.link-button{
+ background:none;
+ color:#c084fc;
+ border:0;
+ padding:12px 0;
+ text-decoration:underline;
+}
+
+#message,#resetMessage{
+ margin-top:12px;
+ color:#d8a1ff;
+ font-size:13px;
+ line-height:1.6;
+}
+
+#user{
+ color:#c084fc;
+ margin:12px 0;
+}
+
+#resetBox{display:none}
+
 .player-box{
- background:#171120;border:1px solid #34243f;
- border-radius:15px;padding:20px
+ background:#171120;
+ border:1px solid #34243f;
+ border-radius:15px;
+ padding:20px;
 }
-.player-box video{width:100%;max-height:450px;background:#000}
+
+.player-box video{
+ width:100%;
+ max-height:450px;
+ background:#000;
+}
+
 select{
- background:#21182e;color:white;border:1px solid #443050;
- padding:12px;border-radius:8px;margin:12px 0
+ background:#21182e;
+ color:white;
+ border:1px solid #443050;
+ padding:12px;
+ border-radius:8px;
+ margin:12px 0;
 }
-#status{color:#9bdfb4;font-size:13px}
+
+#status{
+ color:#9bdfb4;
+ font-size:13px;
+}
+
 footer{
- text-align:center;padding:35px 15px;
- border-top:1px solid #30243a;color:#a99cb7;line-height:2
+ text-align:center;
+ padding:35px 15px;
+ border-top:1px solid #30243a;
+ color:#a99cb7;
+ line-height:2;
 }
+
 @media(max-width:850px){
  .cards{grid-template-columns:repeat(3,1fr)}
 }
+
 @media(max-width:600px){
- header{height:auto;min-height:65px;padding:15px 4%;flex-wrap:wrap;gap:13px}
- nav{width:100%;justify-content:space-between;gap:8px}
+ header{
+  height:auto;
+  min-height:65px;
+  padding:15px 4%;
+  flex-wrap:wrap;
+  gap:13px;
+ }
+
+ nav{
+  width:100%;
+  justify-content:space-between;
+  gap:8px;
+ }
+
  nav a{font-size:12px}
- .hero{padding:65px 7%;min-height:350px}
+
+ .hero{
+  padding:65px 7%;
+  min-height:350px;
+ }
+
  .hero h1{font-size:39px}
- .cards{grid-template-columns:repeat(2,1fr);gap:11px}
+
+ .cards{
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+ }
+
  .poster{height:160px}
+
  .section{padding:28px 4%}
 }
 </style>
@@ -182,11 +467,18 @@ footer{
  <div class="hero-content">
   <div class="tag">WELCOME TO YOUR ANIME WORLD</div>
   <h1>Discover Your Next Anime.</h1>
-  <p>Explore amazing anime adventures, romance, action and fantasy.
-  Your anime universe starts here.</p>
+  <p>
+   Explore amazing anime adventures, romance, action and fantasy.
+   Your anime universe starts here.
+  </p>
   <div class="hero-buttons">
-   <button onclick="document.getElementById('anime').scrollIntoView()">Explore Anime</button>
-   <button class="secondary" onclick="document.getElementById('account').scrollIntoView()">Join Now</button>
+   <button onclick="document.getElementById('anime').scrollIntoView()">
+    Explore Anime
+   </button>
+   <button class="secondary"
+   onclick="document.getElementById('account').scrollIntoView()">
+    Join Now
+   </button>
   </div>
  </div>
 </section>
@@ -196,36 +488,63 @@ footer{
   <h2>Trending Anime</h2>
   <span>EXPLORE MORE →</span>
  </div>
- <input class="search" id="search" placeholder="Search your anime..." oninput="filterAnime()">
+
+ <input class="search" id="search"
+ placeholder="Search your anime..."
+ oninput="filterAnime()">
+
  <div class="cards" id="cards">
+
   <div class="card" data-name="fantasy adventure">
    <div class="poster">Fantasy<br>Adventure</div>
-   <div class="info"><h3>Fantasy World</h3><p>Fantasy • Adventure</p></div>
+   <div class="info">
+    <h3>Fantasy World</h3>
+    <p>Fantasy • Adventure</p>
+   </div>
   </div>
+
   <div class="card" data-name="romance school">
    <div class="poster two">Romance<br>Story</div>
-   <div class="info"><h3>Romance Story</h3><p>Romance • School</p></div>
+   <div class="info">
+    <h3>Romance Story</h3>
+    <p>Romance • School</p>
+   </div>
   </div>
+
   <div class="card" data-name="action battle">
    <div class="poster three">Action<br>Battle</div>
-   <div class="info"><h3>Action Battle</h3><p>Action • Adventure</p></div>
+   <div class="info">
+    <h3>Action Battle</h3>
+    <p>Action • Adventure</p>
+   </div>
   </div>
+
   <div class="card" data-name="comedy">
    <div class="poster four">Comedy<br>Time</div>
-   <div class="info"><h3>Comedy Time</h3><p>Comedy • Slice of Life</p></div>
+   <div class="info">
+    <h3>Comedy Time</h3>
+    <p>Comedy • Slice of Life</p>
+   </div>
   </div>
+
   <div class="card" data-name="mystery">
    <div class="poster five">Mystery<br>World</div>
-   <div class="info"><h3>Mystery World</h3><p>Mystery • Drama</p></div>
+   <div class="info">
+    <h3>Mystery World</h3>
+    <p>Mystery • Drama</p>
+   </div>
   </div>
+
  </div>
+
  <p style="color:#a99cb7;font-size:12px;margin-top:15px">
- Demo titles only. Add your licensed anime catalog to publish real content.
+  Demo titles only. Add your licensed anime catalog to publish real content.
  </p>
 </section>
 
 <section class="section" id="genres">
  <div class="heading"><h2>Explore Genres</h2></div>
+
  <div class="pills">
   <button onclick="genre('all')">All</button>
   <button onclick="genre('action')">Action</button>
@@ -238,11 +557,14 @@ footer{
 
 <section class="section" id="player">
  <div class="heading"><h2>Anime Player</h2></div>
+
  <div class="player-box">
   <video controls playsinline preload="metadata">
    Your browser does not support video.
   </video>
+
   <p style="margin-top:15px">Subtitle language</p>
+
   <select id="language">
    <option>No subtitles</option>
    <option>Hindi</option>
@@ -251,6 +573,7 @@ footer{
    <option>Japanese</option>
    <option>All available languages</option>
   </select>
+
   <p style="font-size:12px;color:#a99cb7">
    Subtitles and video require authorized provider files and tracks.
   </p>
@@ -258,16 +581,54 @@ footer{
 </section>
 
 <section class="section" id="account">
- <div class="account-box">
+
+ <!-- LOGIN AND SIGNUP -->
+ <div class="account-box" id="loginBox">
   <h2>Welcome to AnimeNoona ♡</h2>
+
   <p id="user">Guest</p>
-  <input id="email" type="email" placeholder="Email address">
-  <input id="password" type="password" placeholder="Password">
+
+  <input id="email" type="email"
+  placeholder="Email address" autocomplete="email">
+
+  <input id="password" type="password"
+  placeholder="Password" autocomplete="current-password">
+
   <button onclick="account('signup')">Create Account</button>
   <button onclick="account('login')">Login</button>
+
+  <br>
+
+  <button class="link-button" onclick="sendResetLink()">
+   Forgot Password?
+  </button>
+
+  <br>
+
   <button class="secondary" onclick="logout()">Logout</button>
+
   <p id="message"></p>
  </div>
+
+ <!-- NEW PASSWORD FORM -->
+ <div class="account-box" id="resetBox">
+  <h2>Reset Your Password ♡</h2>
+
+  <p style="color:#bba8ca;margin-top:12px">
+   Create a new password for your AnimeNoona account.
+  </p>
+
+  <input id="newPassword" type="password"
+  placeholder="New password" autocomplete="new-password">
+
+  <input id="confirmPassword" type="password"
+  placeholder="Confirm new password" autocomplete="new-password">
+
+  <button onclick="saveNewPassword()">Update Password</button>
+
+  <p id="resetMessage"></p>
+ </div>
+
 </section>
 
 <section class="section">
@@ -284,13 +645,17 @@ footer{
 <script>
 function filterAnime(){
  const q=document.getElementById('search').value.toLowerCase();
+
  document.querySelectorAll('.card').forEach(card=>{
-  card.style.display=card.innerText.toLowerCase().includes(q)?'block':'none';
+  card.style.display=
+   card.innerText.toLowerCase().includes(q)?'block':'none';
  });
 }
+
 function genre(g){
  document.querySelectorAll('.card').forEach(card=>{
-  card.style.display=(g==='all'||card.dataset.name.includes(g))?'block':'none';
+  card.style.display=
+   (g==='all'||card.dataset.name.includes(g))?'block':'none';
  });
 }
 </script>
