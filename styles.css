@@ -1,18 +1,20 @@
 
+/* =================================
+   AnimeNoona — Professional 3D Design
+================================= */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --bg: #090711;
-  --bg-soft: #100c1c;
-  --panel: #171126;
-  --panel-light: #211735;
+  --surface: #151020;
+  --surface2: #20152f;
   --purple: #a855f7;
-  --purple-light: #c084fc;
-  --pink: #ed75cf;
+  --pink: #ec4899;
   --text: #f8f4ff;
-  --muted: #aaa0ba;
-  --border: rgba(192,132,252,.18);
-  --shadow: 0 15px 45px rgba(0,0,0,.35);
+  --muted: #aaa0b8;
+  --border: rgba(190,130,255,.18);
+  --glow: 0 0 35px rgba(168,85,247,.25);
 }
 
 * {
@@ -27,14 +29,14 @@ html {
 }
 
 body {
-  min-height: 100vh;
   background:
-    radial-gradient(ellipse at 15% 0%, rgba(168,85,247,.15), transparent 35%),
-    radial-gradient(ellipse at 90% 25%, rgba(237,117,207,.09), transparent 30%),
+    radial-gradient(ellipse at 15% 10%, #301346 0%, transparent 35%),
+    radial-gradient(ellipse at 90% 50%, #1e1030 0%, transparent 35%),
     var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 button, input, select, textarea {
@@ -50,29 +52,23 @@ a {
   text-decoration: none;
 }
 
-img {
+img, video {
   max-width: 100%;
-  display: block;
 }
 
-[hidden] {
-  display: none !important;
-}
+/* HEADER */
 
-/* NAVBAR */
-
-.navbar {
+.main-header {
   position: sticky;
   top: 0;
-  z-index: 100;
-  min-height: 72px;
-  padding: 14px 5%;
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  background: rgba(9,7,17,.88);
-  backdrop-filter: blur(18px);
+  gap: 22px;
+  padding: 16px 5%;
+  background: rgba(9,7,17,.86);
+  backdrop-filter: blur(22px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -80,596 +76,507 @@ img {
   font-family: 'Outfit', sans-serif;
   font-size: 27px;
   font-weight: 900;
-  letter-spacing: -1px;
-  color: white;
   white-space: nowrap;
+  background: linear-gradient(90deg,#fff,#d8a4ff,#ed70c8);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-.logo span {
-  color: var(--pink);
-  text-shadow: 0 0 20px rgba(237,117,207,.5);
-}
-
-.navbar nav,
-.nav-actions {
+.navbar {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 28px;
 }
 
-.navbar nav a {
+.navbar a {
+  color: #ded5eb;
+  font-size: 14px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.navbar a:hover {
+  color: #d38cff;
+  text-shadow: 0 0 15px var(--purple);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#user, #accountUser {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 600;
-  transition: .25s;
+  overflow-wrap: anywhere;
 }
 
-.navbar nav a:hover {
-  color: var(--pink);
-}
-
-.nav-actions button,
-.nav-actions a {
-  font-size: 13px;
+#menuBtn {
+  background: linear-gradient(135deg,var(--purple),#7026d5);
+  color: white;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 17px;
+  font-size: 20px;
+  box-shadow: var(--glow);
 }
 
 /* BUTTONS */
 
 button,
-.btn {
-  border: none;
-  border-radius: 12px;
-  padding: 11px 18px;
-  color: white;
-  background: linear-gradient(135deg, var(--purple), #7934d3);
-  font-weight: 700;
-  transition: transform .25s, box-shadow .25s, filter .25s;
+.primary-btn,
+.secondary-btn {
+  transition: transform .25s, box-shadow .25s, background .25s;
 }
 
 button:hover,
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(168,85,247,.3);
-  filter: brightness(1.12);
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(168,85,247,.3);
 }
 
-button:active {
-  transform: scale(.97);
+.primary-btn,
+#exploreBtn,
+#heroWatchBtn {
+  border: 0;
+  border-radius: 15px;
+  padding: 15px 24px;
+  color: white;
+  font-weight: 800;
+  background: linear-gradient(135deg,#b44eff,#7728dc);
+  box-shadow: 0 8px 25px rgba(147,51,234,.3);
+}
+
+.secondary-btn {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 14px 22px;
+  background: rgba(255,255,255,.06);
+  color: white;
 }
 
 /* HERO */
 
-.hero {
+.hero-section {
   position: relative;
-  min-height: 450px;
-  padding: 90px 7%;
+  min-height: 540px;
+  padding: 100px 7%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(9,7,17,.98), rgba(9,7,17,.65), rgba(9,7,17,.25)),
-    radial-gradient(circle at 75% 40%, rgba(168,85,247,.35), transparent 38%),
-    linear-gradient(135deg, #24123c, #100c1c 65%);
+    linear-gradient(90deg,rgba(9,7,17,.97),rgba(16,8,27,.76),rgba(9,7,17,.35)),
+    radial-gradient(ellipse at 75% 45%,#672d91,transparent 50%);
   border-bottom: 1px solid var(--border);
 }
 
-.hero::after {
-  content: "ANIME NOONA";
+.hero-section::before {
+  content: "✦";
   position: absolute;
-  right: -15px;
-  bottom: -35px;
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(65px, 13vw, 180px);
-  font-weight: 900;
-  color: rgba(255,255,255,.025);
-  pointer-events: none;
+  right: 12%;
+  top: 12%;
+  color: #d6a2ff;
+  font-size: 180px;
+  opacity: .12;
+  animation: float 5s ease-in-out infinite;
 }
 
-.hero-content {
+.hero-section::after {
+  content: "";
+  position: absolute;
+  width: 330px;
+  height: 330px;
+  right: 12%;
+  bottom: -180px;
+  background: #a855f7;
+  filter: blur(120px);
+  opacity: .3;
+}
+
+.hero-section > * {
   position: relative;
   z-index: 2;
-  max-width: 650px;
 }
 
-.hero h1 {
+.hero-section h1 {
+  max-width: 750px;
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(38px, 6vw, 70px);
-  line-height: 1.05;
+  font-size: clamp(38px,6vw,76px);
   font-weight: 900;
-  margin-bottom: 20px;
+  line-height: 1.08;
+  margin: 16px 0;
+  background: linear-gradient(100deg,#fff 25%,#e5b5ff 60%,#f38bcf);
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-.hero h1 span {
-  color: var(--pink);
-}
-
-.hero p {
-  color: #c5bad5;
-  max-width: 530px;
+.hero-section p {
+  max-width: 650px;
+  color: #c9bfd6;
+  font-size: 17px;
   line-height: 1.8;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
-.hero button {
-  padding: 14px 25px;
-  border-radius: 14px;
+.hero-section button {
+  margin: 5px 8px 5px 0;
 }
 
 /* SECTIONS */
 
-.section,
-.search-section {
-  padding: 45px 5%;
+section {
+  padding: 65px 6%;
 }
 
-.section {
-  scroll-margin-top: 85px;
-}
-
-.heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  margin-bottom: 24px;
-}
-
-.heading h2,
-.section h2 {
+section h2 {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(22px, 3vw, 30px);
+  font-size: clamp(26px,4vw,38px);
   font-weight: 800;
+  margin-bottom: 12px;
 }
 
-.heading h2::before,
-.section > h2::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 25px;
-  background: linear-gradient(var(--purple), var(--pink));
-  border-radius: 5px;
-  margin-right: 12px;
-  vertical-align: -4px;
+section h2::first-letter {
+  color: #d58aff;
 }
 
-/* SEARCH */
-
-.search-section {
-  padding-top: 35px;
-  padding-bottom: 15px;
+section p {
+  color: var(--muted);
 }
 
-.search-box {
-  display: flex;
-  gap: 10px;
-  max-width: 750px;
-  margin: auto;
+.section-heading {
+  margin-bottom: 25px;
 }
 
-.search-box input,
-.search-section input {
-  flex: 1;
-  min-width: 0;
-  padding: 15px 18px;
-  border-radius: 13px;
+/* SEARCH AND FILTERS */
+
+#searchInput,
+#genreFilter,
+#languageFilter,
+select,
+input,
+textarea {
+  background: #171222;
   border: 1px solid var(--border);
-  outline: none;
   color: white;
-  background: var(--panel);
+  border-radius: 12px;
+  padding: 13px 15px;
+  outline: none;
+  max-width: 100%;
 }
 
-input:focus,
+#searchInput {
+  width: min(100%,500px);
+  margin: 15px 10px 15px 0;
+}
+
+#searchInput:focus,
 select:focus,
+input:focus,
 textarea:focus {
-  border-color: var(--purple-light);
+  border-color: var(--purple);
   box-shadow: 0 0 0 3px rgba(168,85,247,.13);
 }
 
-/* CATEGORY FILTERS */
-
-#categoryFilters,
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px 0 28px;
-}
-
-#categoryFilters button,
-.filters button {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  color: var(--muted);
-  border-radius: 30px;
-  padding: 9px 17px;
-  font-size: 12px;
-}
-
-#categoryFilters button.active,
-#categoryFilters button:hover,
-.filters button.active {
+select option {
+  background: #171222;
   color: white;
-  background: linear-gradient(120deg, var(--purple), #823ed5);
-  border-color: transparent;
 }
 
 /* ANIME GRID */
 
-.cards,
+.anime-grid,
 #animeGrid,
-#continueGrid,
-#watchlistGrid {
+#watchlistGrid,
+#continueGrid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill,minmax(190px,1fr));
+  gap: 24px;
+  margin-top: 25px;
 }
 
-.card {
+.anime-card,
+.anime-item,
+#animeGrid > *,
+#watchlistGrid > *,
+#continueGrid > * {
   min-width: 0;
   overflow: hidden;
   position: relative;
-  border-radius: 16px;
-  background: linear-gradient(145deg, #201630, #120e1d);
+  background: linear-gradient(145deg,#251735,#120e1c);
   border: 1px solid var(--border);
-  transition: .3s ease;
-  box-shadow: 0 8px 25px rgba(0,0,0,.18);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  transition: transform .35s, box-shadow .35s, border-color .35s;
 }
 
-.card:hover {
-  transform: translateY(-8px) scale(1.015);
-  border-color: rgba(237,117,207,.55);
-  box-shadow: 0 15px 35px rgba(168,85,247,.18);
+.anime-card:hover,
+.anime-item:hover,
+#animeGrid > *:hover,
+#watchlistGrid > *:hover,
+#continueGrid > *:hover {
+  transform: translateY(-9px) perspective(800px) rotateX(2deg);
+  border-color: #b66aff;
+  box-shadow: 0 20px 40px rgba(130,50,210,.25);
 }
 
-.poster {
+.anime-card img,
+.anime-item img,
+#animeGrid img,
+#watchlistGrid img,
+#continueGrid img {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 3/4;
   object-fit: cover;
-  background: linear-gradient(145deg, #39205a, #171126);
+  border-radius: 12px;
+  display: block;
+  background: #251735;
 }
 
-.info {
-  padding: 13px;
-}
-
-.info h3 {
-  font-size: 15px;
-  margin-bottom: 8px;
+.anime-card h3,
+#animeGrid h3,
+#watchlistGrid h3,
+#continueGrid h3 {
+  font-size: 16px;
   font-weight: 800;
+  margin: 13px 0 7px;
 }
 
-.info p,
-.muted {
-  color: var(--muted);
+.anime-card p,
+#animeGrid p,
+#watchlistGrid p,
+#continueGrid p {
   font-size: 12px;
+  color: var(--muted);
   line-height: 1.6;
 }
 
-.actions {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin-top: 12px;
+/* GENRE CARDS */
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
+  gap: 15px;
 }
 
-.actions button {
-  padding: 8px 11px;
-  font-size: 11px;
-  border-radius: 9px;
-}
-
-.saveBtn {
-  background: var(--panel-light);
+.genre-card {
+  min-height: 90px;
   border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(135deg,#34204b,#171020);
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+  transition: .3s;
 }
 
-/* PANELS */
-
-.panel {
-  padding: 25px;
-  margin: 20px 0;
-  background: linear-gradient(145deg, rgba(33,23,53,.95), rgba(17,12,28,.95));
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-.panel h2,
-.panel h3 {
-  margin-bottom: 18px;
-  font-family: 'Outfit', sans-serif;
+.genre-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  background: linear-gradient(135deg,#8c39d4,#4c1b83);
 }
 
 /* PLAYER */
 
-.player-section {
-  padding-top: 35px;
+#player {
+  background: linear-gradient(145deg,#1a1127,#0d0a14);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 
-.playerBox {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 18px;
-  background: #100d19;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-}
-
-#video,
-.playerBox video {
+#animeVideo,
+video {
   display: block;
   width: 100%;
-  max-height: 600px;
-  aspect-ratio: 16 / 9;
+  max-height: 550px;
   background: #000;
-  border-radius: 12px;
-  object-fit: contain;
+  border-radius: 17px;
+  border: 1px solid var(--border);
+  box-shadow: 0 15px 40px rgba(0,0,0,.4);
 }
 
-.player-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 18px;
+#playerTitle,
+#nowPlayingTitle {
+  margin: 18px 0;
+  font-size: 23px;
+  font-weight: 800;
 }
 
-.player-controls select,
 #episodeSelect,
 #subtitleSelect {
-  min-width: 150px;
-  padding: 11px 14px;
-  color: white;
-  background: var(--panel);
+  margin: 12px 10px 12px 0;
+  min-width: 160px;
+}
+
+/* ACCOUNT AND ADMIN */
+
+#loginPanel,
+#resetPanel,
+#adminDashboard,
+#uploadForm {
+  background: rgba(29,20,43,.85);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  outline: none;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: var(--glow);
+  max-width: 750px;
+  margin: 20px auto;
 }
 
-#subtitleInfo {
-  margin-top: 12px;
-}
-
-/* AUTHENTICATION */
-
-#authSection {
-  max-width: 650px;
-  margin: 35px auto;
-  padding: 0 18px;
-}
-
-#authSection input,
-#adminDashboard input,
-#adminDashboard select,
-#adminDashboard textarea {
-  display: block;
+#loginPanel input,
+#resetPanel input,
+#uploadForm input,
+#uploadForm select,
+#uploadForm textarea {
   width: 100%;
-  padding: 13px 15px;
-  margin: 12px 0;
-  color: white;
-  background: #100d19;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  outline: none;
+  margin: 8px 0;
 }
 
-#authSection button,
-#adminDashboard button {
-  margin: 8px 6px 8px 0;
-}
-
-#accountMsg,
-#adminMsg,
-#uploadMsg {
-  color: var(--pink);
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-/* ADMIN DASHBOARD */
-
-#adminDashboard {
-  max-width: 1000px;
-  margin: 35px auto;
-  padding: 0 18px;
-}
-
-#adminDashboard .panel {
-  margin-bottom: 25px;
-}
-
-#adminDashboard textarea {
-  min-height: 100px;
-  resize: vertical;
+#uploadForm button,
+#loginPanel button,
+#resetPanel button {
+  margin: 8px 5px 8px 0;
 }
 
 /* FOOTER */
 
 footer {
-  padding: 35px 5%;
-  margin-top: 40px;
+  padding: 35px 6%;
   text-align: center;
+  background: #0d0915;
   color: var(--muted);
-  background: #100c1a;
   border-top: 1px solid var(--border);
-  font-size: 13px;
+  line-height: 1.8;
 }
 
-footer span {
-  color: var(--pink);
+/* ANIMATIONS */
+
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-22px) rotate(8deg); }
 }
 
-/* STATUS */
+/* MOBILE RESPONSIVE */
 
-#status {
-  color: var(--muted);
-  font-size: 12px;
-}
-
-/* SCROLLBAR */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #563078;
-  border-radius: 20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--purple);
-}
-
-/* RESPONSIVE TABLET */
-
-@media (max-width: 1000px) {
-  .cards,
-  #animeGrid,
-  #continueGrid,
-  #watchlistGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .navbar {
-    padding-left: 3%;
-    padding-right: 3%;
-  }
-
-  .navbar nav {
-    gap: 12px;
-  }
-}
-
-/* RESPONSIVE MOBILE */
-
-@media (max-width: 650px) {
-  .navbar {
-    min-height: 62px;
+@media (max-width: 768px) {
+  .main-header {
+    padding: 12px 4%;
     flex-wrap: wrap;
     gap: 12px;
-    padding: 12px 4%;
   }
 
   .logo {
     font-size: 23px;
   }
 
-  .navbar nav {
+  .navbar {
     order: 3;
     width: 100%;
     overflow-x: auto;
-    padding: 5px 0;
     gap: 22px;
+    padding: 10px 0 5px;
+    scrollbar-width: none;
   }
 
-  .navbar nav a {
+  .navbar a {
     white-space: nowrap;
-  }
-
-  .nav-actions {
-    gap: 8px;
-  }
-
-  .hero {
-    min-height: 380px;
-    padding: 65px 6%;
-  }
-
-  .hero h1 {
-    font-size: 43px;
-  }
-
-  .section,
-  .search-section {
-    padding: 30px 4%;
-  }
-
-  .cards,
-  #animeGrid,
-  #continueGrid,
-  #watchlistGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 13px;
-  }
-
-  .info {
-    padding: 10px;
-  }
-
-  .info h3 {
     font-size: 13px;
   }
 
-  .actions button {
-    padding: 8px;
-    font-size: 10px;
+  .header-actions {
+    margin-left: auto;
   }
 
-  .panel {
+  #user, #accountUser {
+    max-width: 150px;
+    font-size: 11px;
+  }
+
+  .hero-section {
+    min-height: 470px;
+    padding: 65px 6%;
+  }
+
+  .hero-section h1 {
+    font-size: clamp(38px,10vw,56px);
+  }
+
+  .hero-section p {
+    font-size: 15px;
+  }
+
+  section {
+    padding: 45px 5%;
+  }
+
+  .anime-grid,
+  #animeGrid,
+  #watchlistGrid,
+  #continueGrid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 13px;
+  }
+
+  .anime-card,
+  #animeGrid > *,
+  #watchlistGrid > *,
+  #continueGrid > * {
+    padding: 8px;
+    border-radius: 14px;
+  }
+
+  .anime-card h3,
+  #animeGrid h3,
+  #watchlistGrid h3,
+  #continueGrid h3 {
+    font-size: 14px;
+  }
+
+  #searchInput {
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  #genreFilter,
+  #languageFilter {
+    width: calc(50% - 5px);
+    font-size: 13px;
+  }
+
+  #episodeSelect,
+  #subtitleSelect {
+    width: 100%;
+    margin: 7px 0;
+  }
+
+  #loginPanel,
+  #resetPanel,
+  #adminDashboard,
+  #uploadForm {
     padding: 17px;
   }
+}
 
-  .playerBox {
-    padding: 8px;
+@media (max-width: 380px) {
+  .hero-section h1 {
+    font-size: 36px;
   }
 
-  .player-controls {
-    flex-direction: column;
-  }
-
-  .player-controls select {
+  .hero-section button {
     width: 100%;
   }
 
-  .search-box {
-    flex-direction: column;
-  }
-
-  .heading {
-    align-items: flex-start;
-  }
-}
-
-/* SMALL MOBILE */
-
-@media (max-width: 360px) {
-  .hero h1 {
-    font-size: 35px;
-  }
-
-  .cards,
+  .anime-grid,
   #animeGrid,
-  #continueGrid,
-  #watchlistGrid {
+  #watchlistGrid,
+  #continueGrid {
     gap: 9px;
   }
 
-  .info h3 {
-    font-size: 12px;
-  }
-}
-
-/* ACCESSIBILITY */
-
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--pink);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-    animation-duration: .01ms !important;
+  #user, #accountUser {
+    max-width: 115px;
   }
 }
