@@ -5,31 +5,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090711">
-  <meta name="description" content="AnimeNoona - Your Anime Universe">
-  <title>AnimeNoona ♡ | Watch Anime</title>
+  <meta name="description" content="AnimeNoona - Explore your anime universe">
+  <title>AnimeNoona ♡</title>
 
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css">
+
   <script type="module" src="./app.js"></script>
 </head>
 
 <body>
 
-  <!-- LOADING -->
-  <div id="loadingScreen" class="loading-screen">
-    <h1>AnimeNoona ♡</h1>
-    <p>Entering Anime Universe...</p>
-  </div>
-
-  <!-- HEADER -->
+  <!-- SINGLE HEADER -->
   <header class="main-header">
-    <a href="#home" class="logo">
-      Anime<span>Noona</span> ♡
-    </a>
+    <a href="#home" class="logo">Anime<span>Noona</span> ♡</a>
 
-    <nav class="navbar">
+    <button id="menuBtn" type="button" aria-label="Toggle menu">☰</button>
+
+    <nav class="navbar" id="mainNav">
       <a href="#home">Home</a>
       <a href="#anime">Anime</a>
       <a href="#genres">Genres</a>
+      <a href="#continueWatching">Continue</a>
       <a href="#myList">Watchlist</a>
       <a href="#account">Account</a>
     </nav>
@@ -37,25 +37,24 @@
     <div class="header-actions">
       <span id="user">Guest</span>
       <button id="logoutBtn" type="button" hidden>Logout</button>
-      <button id="menuBtn" type="button" aria-label="Open menu">☰</button>
     </div>
   </header>
 
   <main>
 
-    <!-- HOME / HERO -->
+    <!-- 3D HOME -->
     <section class="hero-section" id="home">
       <div class="hero-content">
-        <span class="hero-tag">WELCOME TO ANIMENOONA</span>
+        <span class="hero-tag">✦ YOUR ANIME UNIVERSE</span>
 
         <h1>
-          Discover Your
-          <span>Anime World.</span>
+          Enter the World of
+          <span>AnimeNoona.</span>
         </h1>
 
         <p>
-          Explore amazing anime, exciting adventures,
-          fantasy worlds and unforgettable stories.
+          Discover amazing anime, legendary adventures,
+          beautiful stories and unforgettable characters.
         </p>
 
         <div class="hero-buttons">
@@ -69,26 +68,18 @@
         </div>
 
         <div class="hero-stats">
-          <div>
-            <strong>Anime</strong>
-            <span>Library</span>
-          </div>
-          <div>
-            <strong>Multi</strong>
-            <span>Subtitles</span>
-          </div>
-          <div>
-            <strong>HD</strong>
-            <span>Player</span>
-          </div>
+          <div><strong>ANIME</strong><span>Library</span></div>
+          <div><strong>4+</strong><span>Subtitle options</span></div>
+          <div><strong>HD</strong><span>Video Player</span></div>
         </div>
       </div>
 
       <div class="hero-visual" aria-hidden="true">
         <div class="hero-orb"></div>
+        <div class="hero-ring"></div>
         <div class="hero-card hero-card-one">✦</div>
         <div class="hero-card hero-card-two">ANIME ♡</div>
-        <div class="hero-card hero-card-three">✧</div>
+        <div class="hero-card hero-card-three">NOONA ✧</div>
       </div>
     </section>
 
@@ -96,10 +87,11 @@
     <section class="section" id="anime">
       <div class="section-heading">
         <div>
-          <span class="section-tag">EXPLORE</span>
+          <span class="section-tag">DISCOVER</span>
           <h2>Anime Library</h2>
+          <p>Find your next favourite anime.</p>
         </div>
-        <span id="animeCount">Loading anime...</span>
+        <span id="animeCount">Loading...</span>
       </div>
 
       <div class="search-filter-area">
@@ -107,19 +99,17 @@
           type="search"
           id="searchInput"
           placeholder="Search anime..."
-          autocomplete="off"
         >
 
         <select id="genreFilter">
           <option value="all">All Genres</option>
-          <option value="action">Action</option>
-          <option value="adventure">Adventure</option>
-          <option value="romance">Romance</option>
-          <option value="fantasy">Fantasy</option>
-          <option value="comedy">Comedy</option>
-          <option value="drama">Drama</option>
-          <option value="mystery">Mystery</option>
-          <option value="horror">Horror</option>
+          <option value="Action">Action</option>
+          <option value="Adventure">Adventure</option>
+          <option value="Romance">Romance</option>
+          <option value="Fantasy">Fantasy</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Horror">Horror</option>
+          <option value="Drama">Drama</option>
         </select>
 
         <select id="languageFilter">
@@ -133,7 +123,7 @@
       </div>
 
       <div id="animeGrid" class="anime-grid">
-        <p class="muted">Loading anime library...</p>
+        <p>Loading anime...</p>
       </div>
 
       <p id="libraryMessage" class="message" aria-live="polite"></p>
@@ -155,13 +145,17 @@
         <button class="genre-card" data-genre="Fantasy">✨ Fantasy</button>
         <button class="genre-card" data-genre="Comedy">😂 Comedy</button>
         <button class="genre-card" data-genre="Horror">👻 Horror</button>
+        <button class="genre-card" data-genre="Drama">🎭 Drama</button>
       </div>
     </section>
 
     <!-- CONTINUE WATCHING -->
     <section class="section" id="continueWatching">
       <div class="section-heading">
-        <h2>▶ Continue Watching</h2>
+        <div>
+          <span class="section-tag">PICK UP WHERE YOU LEFT OFF</span>
+          <h2>▶ Continue Watching</h2>
+        </div>
       </div>
 
       <div id="continueGrid" class="anime-grid">
@@ -172,7 +166,10 @@
     <!-- WATCHLIST -->
     <section class="section" id="myList">
       <div class="section-heading">
-        <h2>♡ My Watchlist</h2>
+        <div>
+          <span class="section-tag">YOUR COLLECTION</span>
+          <h2>♡ My Watchlist</h2>
+        </div>
       </div>
 
       <div id="watchlistGrid" class="anime-grid">
@@ -180,64 +177,56 @@
       </div>
     </section>
 
-    <!-- ANIME PLAYER -->
+    <!-- PLAYER -->
     <section class="section player-section" id="player">
       <div class="section-heading">
         <div>
-          <span class="section-tag">NOW PLAYING</span>
-          <h2 id="playerTitle">Anime Player</h2>
+          <span class="section-tag">WATCH NOW</span>
+          <h2>Anime Player</h2>
         </div>
       </div>
 
       <div class="player-container">
-        <video
-          id="animeVideo"
-          controls
-          playsinline
-          preload="metadata"
-        >
+        <video id="animeVideo" controls playsinline preload="metadata">
           Your browser does not support video playback.
         </video>
 
-        <div class="player-details">
-          <h3 id="nowPlayingTitle">Select an anime to watch</h3>
-          <p id="playerDescription" class="muted">
-            Choose an anime from the library.
-          </p>
-        </div>
+        <h3 id="playerTitle">Select an anime</h3>
+        <h3 id="nowPlayingTitle"></h3>
 
-        <!-- EPISODES -->
+        <p id="playerDescription" class="muted">
+          Select an anime from the library to start watching.
+        </p>
+
         <div class="player-settings">
           <div class="setting-group">
-            <label for="episodeSelect">Select Episode</label>
+            <label for="episodeSelect">Episodes</label>
             <select id="episodeSelect">
-              <option value="">Select an episode</option>
+              <option value="">Select Episode</option>
             </select>
           </div>
 
-          <!-- SUBTITLE SETTINGS -->
           <div class="setting-group">
-            <label for="subtitleSelect">CC Subtitle Settings</label>
-
+            <label for="subtitleSelect">CC Subtitles</label>
             <select id="subtitleSelect">
-              <option value="off">🚫 Subtitles Off</option>
-              <option value="ja">🇯🇵 Japanese</option>
-              <option value="en">🇬🇧 English</option>
-              <option value="hi">🇮🇳 Hindi (देवनागरी)</option>
-              <option value="hi-Latn">🇮🇳 Hinglish (Roman)</option>
+              <option value="off">Subtitles Off</option>
+              <option value="ja">Japanese</option>
+              <option value="en">English</option>
+              <option value="hi">Hindi (देवनागरी)</option>
+              <option value="hi-Latn">Hinglish (Roman)</option>
             </select>
           </div>
         </div>
 
-        <p id="subtitleStatus" class="muted" aria-live="polite">
-          Select subtitle language.
+        <p id="subtitleStatus" class="message" aria-live="polite">
+          Choose subtitle language.
         </p>
 
         <p id="playerMessage" class="message" aria-live="polite"></p>
       </div>
     </section>
 
-    <!-- LOGIN / SIGNUP -->
+    <!-- ACCOUNT -->
     <section class="section account-section" id="account">
       <div class="account-panel" id="loginPanel">
         <span class="section-tag">YOUR ACCOUNT</span>
@@ -273,23 +262,15 @@
         <p id="accountMessage" class="message" aria-live="polite"></p>
       </div>
 
-      <!-- PASSWORD RESET -->
+      <!-- RESET PASSWORD -->
       <div class="account-panel" id="resetPanel" hidden>
         <h2>Reset Password</h2>
 
         <label for="newPassword">New Password</label>
-        <input
-          type="password"
-          id="newPassword"
-          placeholder="New password"
-        >
+        <input type="password" id="newPassword" placeholder="New password">
 
         <label for="confirmPassword">Confirm Password</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          placeholder="Confirm password"
-        >
+        <input type="password" id="confirmPassword" placeholder="Confirm password">
 
         <button id="updatePasswordBtn" type="button">
           Update Password
@@ -303,84 +284,53 @@
     <section class="section admin-section" id="adminDashboard" hidden>
       <div class="section-heading">
         <div>
-          <span class="section-tag">ADMIN ONLY</span>
+          <span class="section-tag">ADMIN CONTROL</span>
           <h2>Admin Dashboard</h2>
         </div>
         <span id="adminStatus">Admin</span>
       </div>
 
       <div class="admin-panel">
-        <h3>Upload Anime / Episode</h3>
+        <h3>Upload Anime</h3>
 
         <form id="uploadForm">
-          <label for="uploadTitle">Anime Title *</label>
-          <input
-            type="text"
-            id="uploadTitle"
-            maxlength="150"
-            placeholder="Enter anime title"
-            required
-          >
+          <label for="uploadTitle">Anime Title</label>
+          <input type="text" id="uploadTitle" required>
 
           <label for="uploadDescription">Description</label>
-          <textarea
-            id="uploadDescription"
-            rows="3"
-            placeholder="Anime description"
-          ></textarea>
+          <textarea id="uploadDescription" rows="3"></textarea>
 
           <label for="uploadGenre">Genre</label>
-          <input
-            type="text"
-            id="uploadGenre"
-            placeholder="Action, Adventure, Fantasy"
-          >
+          <input type="text" id="uploadGenre" placeholder="Action, Fantasy">
 
-          <label for="uploadLanguage">Audio / Release Language</label>
+          <label for="uploadLanguage">Language</label>
           <select id="uploadLanguage">
             <option>Hindi Sub</option>
             <option>Hindi Dub</option>
             <option>Hinglish (Roman)</option>
             <option>English Sub</option>
             <option>Japanese</option>
-            <option>Multi-language</option>
           </select>
 
           <label for="uploadEpisode">Episode Number</label>
-          <input
-            type="number"
-            id="uploadEpisode"
-            min="1"
-            value="1"
-          >
+          <input type="number" id="uploadEpisode" min="1" value="1">
 
-          <label for="uploadVideo">Video File</label>
-          <input
-            type="file"
-            id="uploadVideo"
-            accept="video/mp4,video/webm,video/quicktime"
-          >
+          <label for="uploadVideo">Video Upload</label>
+          <input type="file" id="uploadVideo" accept="video/*">
 
-          <label for="uploadPoster">Poster Image</label>
-          <input
-            type="file"
-            id="uploadPoster"
-            accept="image/png,image/jpeg,image/webp"
-          >
+          <label for="uploadPoster">Poster Upload</label>
+          <input type="file" id="uploadPoster" accept="image/*">
 
-          <button type="submit" id="uploadButton">
-            Upload Anime
-          </button>
+          <button type="submit" id="uploadButton">Upload Anime</button>
 
           <p id="uploadMessage" class="message" aria-live="polite"></p>
         </form>
 
         <hr>
 
-        <!-- SUBTITLE UPLOAD -->
-        <h3>Subtitle Upload</h3>
+        <h3>Upload Subtitles</h3>
 
-        <label for="subtitleAnimeSelect">Select Anime / Episode</label>
+        <label for="subtitleAnimeSelect">Select Anime</label>
         <select id="subtitleAnimeSelect">
           <option value="">Select anime</option>
         </select>
@@ -394,11 +344,7 @@
         </select>
 
         <label for="subtitleFileUpload">Subtitle File (.vtt)</label>
-        <input
-          type="file"
-          id="subtitleFileUpload"
-          accept=".vtt,text/vtt"
-        >
+        <input type="file" id="subtitleFileUpload" accept=".vtt,text/vtt">
 
         <button type="button" id="subtitleUploadButton">
           Upload Subtitle
@@ -410,9 +356,9 @@
 
   </main>
 
-  <!-- FOOTER -->
+  <!-- SINGLE FOOTER -->
   <footer class="main-footer">
-    <h2>Anime<span>Noona</span> ♡</h2>
+    <a href="#home" class="logo">Anime<span>Noona</span> ♡</a>
     <p>Your Anime Universe.</p>
     <p>© 2026 AnimeNoona. All rights reserved.</p>
     <p>Only content you own or are authorized to distribute.</p>
