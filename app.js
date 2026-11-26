@@ -1,11 +1,12 @@
 
 /* =====================================================
-   ANIMENOONA ♡ — COMPLETE WEBSITE APP
-   Supabase • Login • Signup • Admin • Anime Upload
-   Anime Library • Episodes • Subtitles • Watchlist
+   ANIMENOONA ♡ — COMPLETE APP.JS
+   Supabase + Anime Library + Player + Episode Subtitles
 ===================================================== */
 
-/* 1. SUPABASE CONFIGURATION */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+/* =============== 1. SUPABASE CONFIG =============== */
 
 const SUPABASE_URL = "https://yvfstkkcetyavpzqytde.supabase.co";
 
@@ -15,35 +16,9 @@ const DB_TABLE = "anime_uploads";
 const ADMIN_TABLE = "admin_users";
 const STORAGE_BUCKET = "anime-media";
 
-/* =====================================================
-   2. GLOBAL VARIABLES
-===================================================== */
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let db = null;
-let currentUser = null;
-let isAdmin = false;
-
-let animeList = [];
-let activeAnime = null;
-let activeEpisode = null;
-
-let lastProgressSave = 0;
-
-let watchlist = JSON.parse(
-  localStorage.getItem("an_watchlist") || "[]"
-);
-
-let continueList = JSON.parse(
-  localStorage.getItem("an_continue") || "[]"
-);
-
-let subtitleLibrary = JSON.parse(
-  localStorage.getItem("an_subtitles") || "{}"
-);
-
-/* =====================================================
-   3. HTML ELEMENTS
-===================================================== */
+/* =============== 2. HTML ELEMENTS =============== */
 
 const $ = id => document.getElementById(id);
 
@@ -60,6 +35,7 @@ const el = {
   searchInput: $("searchInput"),
   genreFilter: $("genreFilter"),
   languageFilter: $("languageFilter"),
+
   animeGrid: $("animeGrid"),
   animeCount: $("animeCount"),
   libraryMessage: $("libraryMessage"),
@@ -80,14 +56,18 @@ const el = {
   resetPanel: $("resetPanel"),
   accountInfo: $("accountInfo"),
   accountUser: $("accountUser"),
+
   emailInput: $("emailInput"),
   passwordInput: $("passwordInput"),
   signupBtn: $("signupBtn"),
   loginBtn: $("loginBtn"),
   forgotBtn: $("forgotBtn"),
-  updatePasswordBtn: $("updatePasswordBtn"),
+  logoutBtn: $("logoutBtn"),
+
   newPassword: $("newPassword"),
   confirmPassword: $("confirmPassword"),
+  updatePasswordBtn: $("updatePasswordBtn"),
+
   accountMessage: $("accountMessage"),
   resetMessage: $("resetMessage"),
 
@@ -106,24 +86,47 @@ const el = {
   uploadMessage: $("uploadMessage"),
 
   subtitleAnimeSelect: $("subtitleAnimeSelect"),
+  subtitleEpisodeSelect: $("subtitleEpisodeSelect"),
   subtitleLanguageUpload: $("subtitleLanguageUpload"),
   subtitleFileUpload: $("subtitleFileUpload"),
   subtitleUploadButton: $("subtitleUploadButton"),
   subtitleUploadMessage: $("subtitleUploadMessage")
 };
 
-/* =====================================================
-   4. HELPER FUNCTIONS
-===================================================== */
+/* =============== 3. APP STATE =============== */
 
-function say(element, message, error = false) {
-  if (!element) return;
+const state = {
+  rows: [],
+  anime: [],
+  currentAnime: null,
+  currentEpisode: null,
+  episodes: [],
+  subtitles: [],
+  user: null,
+  isAdmin: false,
 
-  element.textContent = message;
+  watchlist: readJSON("animenoona_watchlist", []),
+  history: readJSON("animenoona_history", [])
+};
 
-  element.style.color = error
-    ? "#ff6b91"
-    : "#d9aaff";
+/* =============== 4. HELPERS =============== */
+
+function readJSON(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function say(node, message = "", error = false) {
+  if (!node) return;
+  node.textContent = message;
+  node.classList.toggle("error", Boolean(error));
 }
 
 function escapeHTML(value = "") {
@@ -132,117 +135,311 @@ function escapeHTML(value = "") {
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
-    "'": "&#039;"
+    "'": "&#39;"
   })[char]);
 }
 
-function safeURL(value = "") {
-  try {
-    const url = new URL(value, window.location.href);
+function scrollToSection(id) {
+  $(id)?.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
 
-    if (
-      url.protocol === "https:" ||
-      url.protocol === "http:"
-    ) {
-      return url.href;
+function slug(value) {
+  return String(value || "file")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function normalizeTitle(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function animeKey(title) {
+  return normalizeTitle(title);
+}
+
+function subtitleKey(episodeId) {
+  return String(episodeId);
+}
+
+function getSubtitles() {
+  return readJSON("animenoona_episode_subtitles", {});
+}
+
+function saveSubtitles(value) {
+  saveJSON("animenoona_episode_subtitles", value);
+}
+
+function languageLabel(language) {
+  const labels = {
+    Japanese: "🇯🇵 Japanese Sub",
+    English: "🇬🇧 English Sub",
+    Hindi: "🇮🇳 Hindi Sub",
+    "Hinglish (Roman)": "🇮🇳 Hinglish (Roman)"
+  };
+
+  return labels[language] || language;
+}
+
+function languageCode(language) {
+  const codes = {
+    Japanese: "ja",
+    English: "en",
+    Hindi: "hi",
+    "Hinglish (Roman)": "hi-Latn"
+  };
+
+  return codes[language] || "en";
+}
+
+function requireAdmin(messageNode) {
+  if (!state.user) {
+    say(messageNode, "Please login first.", true);
+    return false;
+  }
+
+  if (!state.isAdmin) {
+    say(messageNode, "Admin access required.", true);
+    return false;
+  }
+
+  return true;
+}
+
+/* =============== 5. DEMO ANIME =============== */
+
+const demoAnime = [
+  {
+    id: "demo-1",
+    title: "Demon Slayer",
+    description: "A young swordsman begins a dangerous journey.",
+    genre: "Action, Fantasy",
+    language: "Hindi Dub",
+    poster: ""
+  },
+  {
+    id: "demo-2",
+    title: "Your Name",
+    description: "Two strangers discover a mysterious connection.",
+    genre: "Romance, Drama",
+    language: "Japanese",
+    poster: ""
+  },
+  {
+    id: "demo-3",
+    title: "One Piece",
+    description: "A crew of pirates searches for a legendary treasure.",
+    genre: "Adventure",
+    language: "Hindi Sub",
+    poster: ""
+  },
+  {
+    id: "demo-4",
+    title: "Jujutsu Kaisen",
+    description: "A student enters the world of curses.",
+    genre: "Action, Fantasy",
+    language: "Hindi Sub",
+    poster: ""
+  }
+];
+
+/* =============== 6. NORMALIZE DATABASE ROWS =============== */
+
+function normalizeRow(row) {
+  return {
+    id: row.id,
+    title: row.title || "Untitled Anime",
+    description: row.description || "",
+    episode: Number(row.episode || 1),
+    genre: row.genre || "Anime",
+    language: row.language || "",
+    video: row.video_url || "",
+    poster: row.poster_url || "",
+    createdAt: row.created_at || ""
+  };
+}
+
+function groupAnime(rows) {
+  const groups = new Map();
+
+  rows.forEach(row => {
+    const key = normalizeTitle(row.title);
+
+    if (!groups.has(key)) {
+      groups.set(key, {
+        id: key,
+        title: row.title,
+        description: row.description,
+        genre: row.genre,
+        language: row.language,
+        poster: row.poster,
+        episodes: []
+      });
     }
 
-    return "";
-  } catch {
-    return "";
+    const anime = groups.get(key);
+
+    if (!anime.poster && row.poster) {
+      anime.poster = row.poster;
+    }
+
+    anime.episodes.push(row);
+  });
+
+  return [...groups.values()].map(anime => ({
+    ...anime,
+    episodes: anime.episodes.sort((a, b) => a.episode - b.episode)
+  }));
+}
+
+/* =============== 7. AUTHENTICATION =============== */
+
+async function account(mode) {
+  const email = el.emailInput?.value.trim();
+  const password = el.passwordInput?.value || "";
+
+  if (!email || !password) {
+    return say(el.accountMessage, "Enter email and password.", true);
   }
-}
 
-function makeId() {
-  return crypto.randomUUID
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
+  if (password.length < 6) {
+    return say(el.accountMessage, "Password must be at least 6 characters.", true);
+  }
 
-function saveLocalData() {
-  localStorage.setItem(
-    "an_watchlist",
-    JSON.stringify(watchlist)
-  );
+  el.loginBtn.disabled = true;
+  el.signupBtn.disabled = true;
 
-  localStorage.setItem(
-    "an_continue",
-    JSON.stringify(continueList)
-  );
+  say(el.accountMessage, "Please wait...");
 
-  localStorage.setItem(
-    "an_subtitles",
-    JSON.stringify(subtitleLibrary)
-  );
-}
-
-/* =====================================================
-   5. SUPABASE INITIALIZATION
-===================================================== */
-
-async function initializeSupabase() {
   try {
-    const { createClient } = await import(
-      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
-    );
+    const result = mode === "signup"
+      ? await db.auth.signUp({ email, password })
+      : await db.auth.signInWithPassword({ email, password });
 
-    db = createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    if (result.error) throw result.error;
 
-    const { data, error } = await db.auth.getSession();
-
-    if (error) throw error;
-
-    currentUser = data.session?.user || null;
-
-    db.auth.onAuthStateChange((event, session) => {
-      currentUser = session?.user || null;
-
-      updateAccountUI();
-
-      checkAdmin();
-
-      if (event === "PASSWORD_RECOVERY") {
-        if (el.resetPanel) {
-          el.resetPanel.hidden = false;
-        }
-
-        if (el.loginPanel) {
-          el.loginPanel.hidden = true;
-        }
-
-        document.getElementById("account")?.scrollIntoView({
-          behavior: "smooth"
-        });
-      }
-    });
-
-    updateAccountUI();
-
-    await checkAdmin();
-
-    console.log("AnimeNoona Supabase connected.");
-
-  } catch (error) {
-    console.error("Supabase connection error:", error);
+    if (mode === "signup" && !result.data.session) {
+      say(
+        el.accountMessage,
+        "Account created! Verify your email before logging in."
+      );
+      return;
+    }
 
     say(
-      el.libraryMessage,
-      "Supabase connection failed: " + error.message,
-      true
+      el.accountMessage,
+      mode === "signup"
+        ? "Account created successfully!"
+        : "Login successful! Welcome to AnimeNoona ♡"
     );
+
+    await refreshSession(result.data.user);
+
+  } catch (error) {
+    console.error(error);
+    say(el.accountMessage, error.message, true);
+
+  } finally {
+    el.loginBtn.disabled = false;
+    el.signupBtn.disabled = false;
   }
 }
 
-/* =====================================================
-   6. LOAD ANIME FROM SUPABASE
-===================================================== */
+async function refreshSession(user = null) {
+  if (!user) {
+    const { data, error } = await db.auth.getUser();
+
+    if (error) console.warn(error);
+
+    user = data?.user || null;
+  }
+
+  state.user = user;
+  state.isAdmin = false;
+
+  if (user) {
+    try {
+      const { data, error } = await db
+        .from(ADMIN_TABLE)
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      state.isAdmin = Boolean(
+        data && String(data.role).toLowerCase() === "admin"
+      );
+
+    } catch (error) {
+      console.warn("Admin check:", error);
+      state.isAdmin = false;
+    }
+  }
+
+  if (el.user) {
+    el.user.textContent = user?.email || "Guest";
+  }
+
+  if (el.accountUser) {
+    el.accountUser.textContent = user
+      ? `Signed in as ${user.email}`
+      : "Guest";
+  }
+
+  if (el.accountInfo) {
+    el.accountInfo.hidden = !user;
+  }
+
+  if (el.loginPanel) {
+    el.loginPanel.hidden = Boolean(user);
+  }
+
+  if (el.logoutBtn) {
+    el.logoutBtn.hidden = !user;
+  }
+
+  if (el.headerLoginBtn) {
+    el.headerLoginBtn.hidden = Boolean(user);
+  }
+
+  if (el.adminDashboard) {
+    el.adminDashboard.hidden = !state.isAdmin;
+  }
+
+  say(
+    el.adminStatus,
+    state.isAdmin ? "Admin access granted ♡" : "Admin access not available."
+  );
+
+  await loadAnime();
+}
+
+async function logout() {
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    return say(el.accountMessage, error.message, true);
+  }
+
+  state.user = null;
+  state.isAdmin = false;
+
+  if (el.adminDashboard) {
+    el.adminDashboard.hidden = true;
+  }
+
+  say(el.accountMessage, "Logged out successfully.");
+
+  await refreshSession(null);
+}
+
+/* =============== 8. LOAD ANIME LIBRARY =============== */
 
 async function loadAnime() {
-  if (!db) return;
-
   say(el.libraryMessage, "Loading anime...");
 
   try {
@@ -253,146 +450,107 @@ async function loadAnime() {
 
     if (error) throw error;
 
-    animeList = groupAnime(data || []);
+    state.rows = (data || []).map(normalizeRow);
+    state.anime = groupAnime(state.rows);
 
-    renderAll();
+    renderAnime();
+    renderSubtitleAnimeSelect();
 
     say(
       el.libraryMessage,
-      animeList.length
-        ? ""
-        : "No anime uploaded yet."
+      state.anime.length ? "" : "No anime uploaded yet."
     );
 
   } catch (error) {
     console.error("Anime loading error:", error);
 
+    state.rows = [];
+    state.anime = [];
+
+    renderAnime();
+
     say(
       el.libraryMessage,
-      error.message,
+      `Anime load failed: ${error.message}`,
       true
     );
   }
 }
 
-/* =====================================================
-   7. GROUP EPISODES BY ANIME TITLE
-===================================================== */
+/* =============== 9. SEARCH AND FILTERS =============== */
 
-function groupAnime(rows) {
-  const groups = new Map();
+function filteredAnime() {
+  const query = (el.searchInput?.value || "").trim().toLowerCase();
+  const genre = el.genreFilter?.value || "all";
+  const language = el.languageFilter?.value || "all";
 
-  rows.forEach(row => {
-    const title = String(row.title || "").trim();
+  return state.anime.filter(anime => {
+    const searchable = [
+      anime.title,
+      anime.description,
+      anime.genre
+    ].join(" ").toLowerCase();
 
-    if (!title) return;
+    const genres = anime.genre
+      .split(",")
+      .map(item => item.trim().toLowerCase());
 
-    const key = title.toLowerCase();
-
-    if (!groups.has(key)) {
-      groups.set(key, {
-        id: row.id,
-        title,
-        description: row.description || "",
-        genre: row.genre || "Anime",
-        language: row.language || "Japanese",
-        poster_url: row.poster_url || "",
-        episodes: []
-      });
-    }
-
-    const anime = groups.get(key);
-
-    anime.episodes.push({
-      id: row.id,
-      episode: Number(row.episode || 1),
-      title: row.title,
-      description: row.description || "",
-      video_url: row.video_url || "",
-      language: row.language || "Japanese"
-    });
-
-    if (!anime.poster_url && row.poster_url) {
-      anime.poster_url = row.poster_url;
-    }
+    return (
+      (!query || searchable.includes(query)) &&
+      (genre === "all" || genres.includes(genre.toLowerCase())) &&
+      (
+        language === "all" ||
+        anime.language.toLowerCase() === language.toLowerCase()
+      )
+    );
   });
-
-  return [...groups.values()].map(anime => ({
-    ...anime,
-    episodes: anime.episodes.sort(
-      (a, b) => a.episode - b.episode
-    )
-  }));
 }
 
-function renderAll() {
-  renderAnime();
-  renderContinueWatching();
-  renderWatchlist();
-  renderSubtitleAnimeSelect();
-}
-
-/* =====================================================
-   8. ANIME CARD
-===================================================== */
+/* =============== 10. ANIME CARDS =============== */
 
 function animeCard(anime) {
-  const id = escapeHTML(anime.id);
-  const title = escapeHTML(anime.title);
-  const description = escapeHTML(anime.description || "");
-  const genre = escapeHTML(anime.genre || "Anime");
-  const language = escapeHTML(anime.language || "Japanese");
-
-  const posterURL = safeURL(anime.poster_url);
-
-  const posterStyle = posterURL
-    ? `style="background-image:url('${escapeHTML(posterURL)}')"`
-    : "";
-
-  const saved = watchlist.some(
-    item => String(item) === String(anime.id)
+  const saved = state.watchlist.some(
+    item => String(item.id) === String(anime.id)
   );
+
+  const poster = anime.poster
+    ? `<img src="${escapeHTML(anime.poster)}"
+        alt="${escapeHTML(anime.title)}"
+        loading="lazy">`
+    : `<div class="anime-poster poster-placeholder">
+        <span>♡</span>
+        <b>${escapeHTML(anime.title)}</b>
+        <small>ANIMENOONA</small>
+      </div>`;
 
   return `
     <article class="anime-card">
 
-      <div class="anime-poster" ${posterStyle}>
-
-        ${!posterURL
-          ? `<span class="poster-placeholder">ANIMENOONA</span>`
-          : ""
-        }
-
-        <span class="anime-tag">
-          ${language}
-        </span>
-
-        <button
-          class="watch-now"
-          type="button"
-          data-play="${id}"
-        >
-          ▶ Watch Now
-        </button>
-
-      </div>
+      ${poster}
 
       <div class="anime-info">
 
-        <h3>${title}</h3>
+        <h3>${escapeHTML(anime.title)}</h3>
 
-        <p>${description}</p>
+        <p>${escapeHTML(anime.genre)}</p>
+
+        <p>${escapeHTML(anime.language)}</p>
 
         <div class="anime-meta">
 
-          <span>${genre}</span>
+          <button
+            type="button"
+            data-action="watch"
+            data-id="${escapeHTML(anime.id)}">
+            ▶ Watch
+          </button>
 
           <button
-            class="save-anime"
             type="button"
-            data-save="${id}"
-          >
-            ${saved ? "♥ Saved" : "♡ Watchlist"}
+            class="save-anime"
+            data-action="save"
+            data-id="${escapeHTML(anime.id)}">
+            ${saved ? "♥ Saved" : "♡ Save"}
           </button>
 
         </div>
@@ -403,142 +561,70 @@ function animeCard(anime) {
   `;
 }
 
-/* =====================================================
-   9. SEARCH AND FILTER
-===================================================== */
-
 function renderAnime() {
-  if (!el.animeGrid) return;
+  const items = filteredAnime();
 
-  const search = (
-    el.searchInput?.value || ""
-  ).toLowerCase().trim();
-
-  const genre = el.genreFilter?.value || "all";
-  const language = el.languageFilter?.value || "all";
-
-  const filtered = animeList.filter(anime => {
-
-    const matchesSearch =
-      anime.title.toLowerCase().includes(search);
-
-    const matchesGenre =
-      genre === "all" ||
-      anime.genre.toLowerCase().includes(
-        genre.toLowerCase()
-      );
-
-    const matchesLanguage =
-      language === "all" ||
-      anime.language.toLowerCase() ===
-      language.toLowerCase();
-
-    return (
-      matchesSearch &&
-      matchesGenre &&
-      matchesLanguage
-    );
-  });
-
-  el.animeGrid.innerHTML = filtered.length
-    ? filtered.map(animeCard).join("")
-    : `<p class="empty-message">No anime found.</p>`;
+  if (el.animeGrid) {
+    el.animeGrid.innerHTML = items.length
+      ? items.map(animeCard).join("")
+      : `<p class="empty-message">No anime found.</p>`;
+  }
 
   if (el.animeCount) {
-    el.animeCount.textContent =
-      `${filtered.length} Anime`;
-  }
-}
-
-/* =====================================================
-   10. WATCHLIST
-===================================================== */
-
-function toggleWatchlist(id) {
-  const exists = watchlist.some(
-    item => String(item) === String(id)
-  );
-
-  if (exists) {
-    watchlist = watchlist.filter(
-      item => String(item) !== String(id)
-    );
-  } else {
-    watchlist.push(id);
+    el.animeCount.textContent = `${items.length} Anime`;
   }
 
-  saveLocalData();
-
-  renderAnime();
   renderWatchlist();
+  renderContinue();
 }
 
 function renderWatchlist() {
   if (!el.watchlistGrid) return;
 
-  const items = animeList.filter(anime =>
-    watchlist.some(
-      id => String(id) === String(anime.id)
-    )
-  );
+  const items = state.watchlist
+    .map(saved => state.anime.find(a => a.id === saved.id) || saved);
 
   el.watchlistGrid.innerHTML = items.length
     ? items.map(animeCard).join("")
     : `<p class="empty-message">Your watchlist is empty.</p>`;
 }
 
-/* =====================================================
-   11. CONTINUE WATCHING
-===================================================== */
-
-function saveProgress(anime) {
-  if (!anime) return;
-
-  const item = {
-    id: anime.id,
-    title: anime.title,
-    poster_url: anime.poster_url || "",
-    updated: Date.now()
-  };
-
-  continueList = [
-    item,
-    ...continueList.filter(
-      x => String(x.id) !== String(anime.id)
-    )
-  ].slice(0, 10);
-
-  saveLocalData();
-
-  renderContinueWatching();
-}
-
-function renderContinueWatching() {
+function renderContinue() {
   if (!el.continueGrid) return;
 
-  const items = continueList.map(item =>
-    animeList.find(
-      anime => String(anime.id) === String(item.id)
-    )
-  ).filter(Boolean);
+  const items = state.history
+    .map(saved => state.anime.find(a => a.id === saved.id) || saved);
 
   el.continueGrid.innerHTML = items.length
     ? items.map(animeCard).join("")
     : `<p class="empty-message">Your watch history will appear here.</p>`;
 }
 
-/* =====================================================
-   12. VIDEO PLAYER
-===================================================== */
-
-function playAnime(id) {
-  const anime = animeList.find(
-    item => String(item.id) === String(id)
-  );
+function toggleWatchlist(id) {
+  const anime = state.anime.find(item => item.id === id);
 
   if (!anime) return;
 
-  activeAnime = anime;
+  const exists = state.watchlist.some(item => item.id === id);
+
+  state.watchlist = exists
+    ? state.watchlist.filter(item => item.id !== id)
+    : [anime, ...state.watchlist];
+
+  saveJSON("animenoona_watchlist", state.watchlist);
+
+  renderAnime();
+}
+
+/* =============== 11. PLAYER =============== */
+
+async function watchAnime(id) {
+  const anime = state.anime.find(item => item.id === id);
+
+  if (!anime) return;
+
+  state.currentAnime = anime;
+  state.episodes = anime.episodes || [];
 
   if (el.playerTitle) {
     el.playerTitle.textContent = anime.title;
@@ -550,562 +636,230 @@ function playAnime(id) {
 
   if (el.playerDescription) {
     el.playerDescription.textContent =
-      anime.description || "";
+      anime.description || anime.genre;
   }
 
-  renderEpisodeOptions(anime);
+  state.history = [
+    {
+      id: anime.id,
+      title: anime.title,
+      genre: anime.genre,
+      language: anime.language,
+      poster: anime.poster
+    },
+    ...state.history.filter(item => item.id !== anime.id)
+  ].slice(0, 12);
 
-  const firstEpisode = anime.episodes[0];
+  saveJSON("animenoona_history", state.history);
 
-  if (firstEpisode) {
-    playEpisode(firstEpisode.episode);
+  renderContinue();
+
+  scrollToSection("player");
+
+  if (el.episodeSelect) {
+    el.episodeSelect.innerHTML =
+      `<option value="">Select Episode</option>` +
+      state.episodes.map(ep => `
+        <option value="${escapeHTML(ep.id)}">
+          Episode ${ep.episode}
+        </option>
+      `).join("");
+  }
+
+  clearPlayer();
+
+  if (!state.episodes.length) {
+    say(el.playerMessage, "No episodes available yet.");
+    return;
+  }
+
+  if (state.episodes.length === 1) {
+    el.episodeSelect.value = String(state.episodes[0].id);
+    await playEpisode(state.episodes[0].id);
   } else {
-    say(
-      el.playerMessage,
-      "No episode available.",
-      true
-    );
-  }
-
-  saveProgress(anime);
-
-  document.getElementById("player")?.scrollIntoView({
-    behavior: "smooth"
-  });
-}
-
-/* =====================================================
-   13. EPISODE OPTIONS
-===================================================== */
-
-function renderEpisodeOptions(anime) {
-  if (!el.episodeSelect) return;
-
-  el.episodeSelect.innerHTML = anime.episodes.map(ep => `
-    <option value="${escapeHTML(ep.episode)}">
-      Episode ${escapeHTML(ep.episode)}
-    </option>
-  `).join("");
-
-  if (!anime.episodes.length) {
-    el.episodeSelect.innerHTML = `
-      <option value="">No episodes</option>
-    `;
+    say(el.playerMessage, "Select an episode to start watching.");
   }
 }
 
-function playEpisode(number) {
-  if (!activeAnime || !el.animeVideo) return;
+function clearPlayer() {
+  state.currentEpisode = null;
+  state.subtitles = [];
 
-  const episode = activeAnime.episodes.find(
-    ep => Number(ep.episode) === Number(number)
+  if (el.animeVideo) {
+    el.animeVideo.pause();
+    el.animeVideo.removeAttribute("src");
+    el.animeVideo.querySelectorAll("track").forEach(track => track.remove());
+    el.animeVideo.load();
+  }
+
+  if (el.subtitleSelect) {
+    el.subtitleSelect.innerHTML =
+      `<option value="off">Subtitles Off</option>`;
+  }
+
+  say(el.subtitleStatus, "Choose a subtitle language.");
+}
+
+async function playEpisode(episodeId) {
+  const episode = state.episodes.find(
+    item => String(item.id) === String(episodeId)
   );
 
-  if (!episode) {
-    say(
-      el.playerMessage,
-      "Episode not found.",
-      true
-    );
-    return;
+  if (!episode || !el.animeVideo) return;
+
+  if (!episode.video) {
+    return say(el.playerMessage, "Video URL missing.", true);
   }
 
-  if (!episode.video_url) {
-    say(
-      el.playerMessage,
-      "Video URL is not available.",
-      true
-    );
-    return;
-  }
-
-  const videoURL = safeURL(episode.video_url);
-
-  if (!videoURL) {
-    say(
-      el.playerMessage,
-      "Invalid video URL.",
-      true
-    );
-    return;
-  }
-
-  activeEpisode = episode;
+  state.currentEpisode = episode;
 
   el.animeVideo.pause();
+  el.animeVideo.querySelectorAll("track").forEach(track => track.remove());
 
-  removeSubtitleTracks();
-
-  el.animeVideo.src = videoURL;
+  el.animeVideo.src = episode.video;
   el.animeVideo.load();
 
-  el.animeVideo.play().catch(error => {
-    console.log("Playback requires user interaction:", error);
-  });
+  el.animeVideo.play().catch(() => {});
 
   if (el.nowPlayingTitle) {
     el.nowPlayingTitle.textContent =
-      `${activeAnime.title} - Episode ${episode.episode}`;
+      `${state.currentAnime.title} — Episode ${episode.episode}`;
   }
 
-  if (el.episodeSelect) {
-    el.episodeSelect.value = String(episode.episode);
-  }
+  say(el.playerMessage, "Now playing.");
 
-  say(el.playerMessage, "");
-
-  loadSubtitleOptions();
+  await loadSubtitleOptions(episode);
 }
 
-el.animeVideo?.addEventListener("timeupdate", () => {
-  if (!activeAnime) return;
+/* =============== 12. EPISODE SUBTITLES =============== */
 
-  const now = Date.now();
+async function loadSubtitleOptions(episode) {
+  state.subtitles = [];
 
-  if (now - lastProgressSave > 15000) {
-    lastProgressSave = now;
-    saveProgress(activeAnime);
+  const library = getSubtitles();
+  const saved = library[subtitleKey(episode.id)] || {};
+
+  const languages = Object.keys(saved);
+
+  if (el.subtitleSelect) {
+    el.subtitleSelect.innerHTML =
+      `<option value="off">Subtitles Off</option>` +
+      languages.map(language => `
+        <option value="${escapeHTML(language)}">
+          ${escapeHTML(languageLabel(language))}
+        </option>
+      `).join("");
   }
-});
-
-/* =====================================================
-   14. SUBTITLE LANGUAGES
-===================================================== */
-
-const subtitleLanguages = {
-  "Japanese": "ja",
-  "English": "en",
-  "Hindi": "hi",
-  "Hinglish (Roman)": "hi-Latn"
-};
-
-function getAnimeSubtitles() {
-  if (!activeAnime) return {};
-
-  const key = String(activeAnime.id);
-
-  return subtitleLibrary[key] || {};
-}
-
-/* =====================================================
-   15. LOAD SUBTITLE OPTIONS
-===================================================== */
-
-function loadSubtitleOptions() {
-  if (!el.subtitleSelect) return;
-
-  const subtitles = getAnimeSubtitles();
-
-  el.subtitleSelect.value = "";
-
-  removeSubtitleTracks();
 
   say(
     el.subtitleStatus,
-    "Choose an available subtitle language."
+    languages.length
+      ? "Subtitles available for this episode."
+      : "No subtitles uploaded for this episode."
   );
 }
 
-/* =====================================================
-   16. REMOVE SUBTITLE TRACKS
-===================================================== */
+function applySubtitle(language) {
+  const video = el.animeVideo;
+  const episode = state.currentEpisode;
 
-function removeSubtitleTracks() {
-  if (!el.animeVideo) return;
+  if (!video || !episode) return;
 
-  el.animeVideo.querySelectorAll("track").forEach(track => {
-    track.remove();
+  video.querySelectorAll("track").forEach(track => track.remove());
+
+  [...video.textTracks].forEach(track => {
+    track.mode = "disabled";
   });
-
-  for (
-    let i = 0;
-    i < el.animeVideo.textTracks.length;
-    i++
-  ) {
-    el.animeVideo.textTracks[i].mode = "disabled";
-  }
-}
-
-/* =====================================================
-   17. SELECT SUBTITLE
-===================================================== */
-
-function selectSubtitle(language) {
-  removeSubtitleTracks();
 
   if (!language || language === "off") {
     say(el.subtitleStatus, "Subtitles off.");
     return;
   }
 
-  if (!activeAnime || !el.animeVideo) {
-    say(
-      el.subtitleStatus,
-      "Play an anime first.",
-      true
-    );
-    return;
-  }
+  const library = getSubtitles();
+  const episodeSubtitles = library[subtitleKey(episode.id)] || {};
+  const subtitleUrl = episodeSubtitles[language];
 
-  const subtitles = getAnimeSubtitles();
-  const subtitleURL = subtitles[language];
-
-  if (!subtitleURL) {
-    say(
-      el.subtitleStatus,
-      `${language} subtitle is not available yet.`,
-      true
-    );
-    return;
-  }
-
-  const safeSubtitleURL = safeURL(subtitleURL);
-
-  if (!safeSubtitleURL) {
-    say(
-      el.subtitleStatus,
-      "Invalid subtitle URL.",
-      true
-    );
+  if (!subtitleUrl) {
+    say(el.subtitleStatus, "Selected subtitle is not available.", true);
     return;
   }
 
   const track = document.createElement("track");
 
   track.kind = "subtitles";
-  track.label = language;
-  track.srclang = subtitleLanguages[language] || "en";
-  track.src = safeSubtitleURL;
+  track.label = languageLabel(language);
+  track.srclang = languageCode(language);
+  track.src = subtitleUrl;
   track.default = true;
 
-  el.animeVideo.appendChild(track);
+  video.appendChild(track);
 
   track.addEventListener("load", () => {
-    const tracks = el.animeVideo.textTracks;
+    const activeTrack = [...video.textTracks].find(
+      item => item.language === languageCode(language)
+    );
 
-    for (let i = 0; i < tracks.length; i++) {
-      tracks[i].mode = "disabled";
-    }
-
-    if (tracks.length) {
-      tracks[tracks.length - 1].mode = "showing";
+    if (activeTrack) {
+      activeTrack.mode = "showing";
     }
   });
 
-  say(
-    el.subtitleStatus,
-    `${language} subtitle selected.`
-  );
+  say(el.subtitleStatus, `${languageLabel(language)} selected.`);
 }
 
-/* =====================================================
-   18. LOGIN AND SIGNUP
-===================================================== */
+/* =============== 13. ADMIN ANIME SELECT =============== */
 
-async function account(mode) {
-  if (!db) {
-    say(
-      el.accountMessage,
-      "Supabase is not connected.",
-      true
-    );
-    return;
+function renderSubtitleAnimeSelect() {
+  if (!el.subtitleAnimeSelect) return;
+
+  const current = el.subtitleAnimeSelect.value;
+
+  el.subtitleAnimeSelect.innerHTML =
+    `<option value="">Select Anime</option>` +
+    state.anime.map(anime => `
+      <option value="${escapeHTML(anime.id)}">
+        ${escapeHTML(anime.title)}
+      </option>
+    `).join("");
+
+  if (state.anime.some(item => item.id === current)) {
+    el.subtitleAnimeSelect.value = current;
   }
 
-  const email = el.emailInput?.value.trim();
-  const password = el.passwordInput?.value || "";
-
-  if (!email || !password) {
-    say(
-      el.accountMessage,
-      "Please enter email and password.",
-      true
-    );
-    return;
-  }
-
-  if (password.length < 6) {
-    say(
-      el.accountMessage,
-      "Password must be at least 6 characters.",
-      true
-    );
-    return;
-  }
-
-  say(el.accountMessage, "Please wait...");
-
-  try {
-    let result;
-
-    if (mode === "signup") {
-      result = await db.auth.signUp({
-        email,
-        password
-      });
-    } else {
-      result = await db.auth.signInWithPassword({
-        email,
-        password
-      });
-    }
-
-    if (result.error) throw result.error;
-
-    currentUser = result.data.user || null;
-
-    updateAccountUI();
-
-    await checkAdmin();
-
-    if (mode === "signup" && !result.data.session) {
-      say(
-        el.accountMessage,
-        "Signup successful! Please check your email to confirm your account."
-      );
-    } else {
-      say(
-        el.accountMessage,
-        mode === "signup"
-          ? "Account created successfully!"
-          : "Login successful!"
-      );
-    }
-
-  } catch (error) {
-    say(
-      el.accountMessage,
-      error.message,
-      true
-    );
-  }
+  renderSubtitleEpisodeSelect();
 }
 
-/* =====================================================
-   19. ACCOUNT UI
-===================================================== */
+function renderSubtitleEpisodeSelect() {
+  if (!el.subtitleEpisodeSelect) return;
 
-function updateAccountUI() {
-  const loggedIn = !!currentUser;
+  const animeId = el.subtitleAnimeSelect?.value;
 
-  if (el.user) {
-    el.user.textContent = loggedIn
-      ? currentUser.email
-      : "Guest";
-  }
+  const anime = state.anime.find(item => item.id === animeId);
 
-  if (el.accountUser) {
-    el.accountUser.textContent = loggedIn
-      ? currentUser.email
-      : "Guest User";
-  }
+  const episodes = anime?.episodes || [];
 
-  if (el.loginPanel) {
-    el.loginPanel.hidden = loggedIn;
-  }
-
-  if (el.logoutBtn) {
-    el.logoutBtn.hidden = !loggedIn;
-  }
-
-  if (el.headerLoginBtn) {
-    el.headerLoginBtn.hidden = loggedIn;
-  }
-
-  if (el.accountInfo) {
-    el.accountInfo.hidden = !loggedIn;
-  }
+  el.subtitleEpisodeSelect.innerHTML =
+    `<option value="">Select Episode</option>` +
+    episodes.map(ep => `
+      <option value="${escapeHTML(ep.id)}">
+        Episode ${ep.episode}
+      </option>
+    `).join("");
 }
 
-/* =====================================================
-   20. LOGOUT
-===================================================== */
+/* =============== 14. STORAGE UPLOAD =============== */
 
-async function logout() {
-  if (!db) return;
+async function uploadToStorage(file, folder) {
+  const fileName = `${Date.now()}-${slug(file.name)}`;
 
-  const { error } = await db.auth.signOut();
-
-  if (error) {
-    say(el.accountMessage, error.message, true);
-    return;
-  }
-
-  currentUser = null;
-  isAdmin = false;
-
-  updateAccountUI();
-
-  await checkAdmin();
-
-  say(el.accountMessage, "Logged out successfully.");
-}
-
-/* =====================================================
-   21. FORGOT PASSWORD
-===================================================== */
-
-async function forgotPassword() {
-  if (!db) return;
-
-  const email = el.emailInput?.value.trim();
-
-  if (!email) {
-    say(
-      el.accountMessage,
-      "Enter your email address first.",
-      true
-    );
-    return;
-  }
-
-  try {
-    const { error } = await db.auth.resetPasswordForEmail(
-      email,
-      {
-        redirectTo: window.location.origin +
-          window.location.pathname
-      }
-    );
-
-    if (error) throw error;
-
-    say(
-      el.accountMessage,
-      "Password reset link sent. Check your email."
-    );
-
-  } catch (error) {
-    say(
-      el.accountMessage,
-      error.message,
-      true
-    );
-  }
-}
-
-/* =====================================================
-   22. UPDATE PASSWORD
-===================================================== */
-
-async function updatePassword() {
-  if (!db) return;
-
-  const password = el.newPassword?.value || "";
-  const confirm = el.confirmPassword?.value || "";
-
-  if (password.length < 6) {
-    say(
-      el.resetMessage,
-      "Password must be at least 6 characters.",
-      true
-    );
-    return;
-  }
-
-  if (password !== confirm) {
-    say(
-      el.resetMessage,
-      "Passwords do not match.",
-      true
-    );
-    return;
-  }
-
-  try {
-    const { error } = await db.auth.updateUser({
-      password
-    });
-
-    if (error) throw error;
-
-    say(
-      el.resetMessage,
-      "Password updated successfully!"
-    );
-
-    el.resetPanel.hidden = true;
-    el.loginPanel.hidden = false;
-
-  } catch (error) {
-    say(
-      el.resetMessage,
-      error.message,
-      true
-    );
-  }
-}
-
-/* =====================================================
-   23. SECURE ADMIN CHECK
-===================================================== */
-
-async function checkAdmin() {
-  isAdmin = false;
-
-  if (!db || !currentUser) {
-    updateAdminUI();
-    return false;
-  }
-
-  try {
-    const { data, error } = await db
-      .from(ADMIN_TABLE)
-      .select("role")
-      .eq("user_id", currentUser.id)
-      .maybeSingle();
-
-    if (error) throw error;
-
-    isAdmin = data?.role === "admin";
-
-  } catch (error) {
-    console.error("Admin check failed:", error);
-    isAdmin = false;
-  }
-
-  updateAdminUI();
-
-  return isAdmin;
-}
-
-function updateAdminUI() {
-  if (el.adminDashboard) {
-    el.adminDashboard.hidden = !isAdmin;
-  }
-
-  if (el.adminStatus) {
-    el.adminStatus.textContent = isAdmin
-      ? "Admin access enabled ✓"
-      : "Admin access required.";
-  }
-}
-
-/* =====================================================
-   24. SUPABASE STORAGE UPLOAD
-===================================================== */
-
-async function uploadFile(file, folder) {
-  if (!db) {
-    throw new Error("Supabase is not connected.");
-  }
-
-  if (!file) {
-    throw new Error("Please select a file.");
-  }
-
-  const extension = file.name.includes(".")
-    ? file.name.split(".").pop().toLowerCase()
-    : "file";
-
-  const path =
-    `${folder}/${Date.now()}-${makeId()}.${extension}`;
+  const path = `${folder}/${fileName}`;
 
   const { error } = await db.storage
     .from(STORAGE_BUCKET)
     .upload(path, file, {
-      upsert: false,
-      cacheControl: "3600"
+      cacheControl: "3600",
+      upsert: false
     });
 
   if (error) throw error;
@@ -1114,195 +868,150 @@ async function uploadFile(file, folder) {
     .from(STORAGE_BUCKET)
     .getPublicUrl(path);
 
-  if (!data?.publicUrl) {
-    throw new Error("Could not create public file URL.");
-  }
-
   return data.publicUrl;
 }
 
-/* =====================================================
-   25. ADMIN ANIME UPLOAD
-===================================================== */
+/* =============== 15. UPLOAD ANIME =============== */
 
 async function uploadAnime(event) {
-  event?.preventDefault();
+  event.preventDefault();
 
-  if (!await checkAdmin()) {
-    say(
-      el.uploadMessage,
-      "Admin access required.",
-      true
-    );
-    return;
-  }
+  if (!requireAdmin(el.uploadMessage)) return;
 
-  const title = el.uploadTitle?.value.trim();
-  const description = el.uploadDescription?.value.trim() || "";
-  const genre = el.uploadGenre?.value;
-  const language = el.uploadLanguage?.value;
-  const episode = Number(el.uploadEpisode?.value || 1);
+  const title = el.uploadTitle.value.trim();
+  const description = el.uploadDescription.value.trim();
+  const genre = el.uploadGenre.value;
+  const language = el.uploadLanguage.value;
+  const episode = Number(el.uploadEpisode.value || 1);
 
-  const videoFile = el.uploadVideo?.files?.[0];
-  const posterFile = el.uploadPoster?.files?.[0];
+  const videoFile = el.uploadVideo.files?.[0];
+  const posterFile = el.uploadPoster.files?.[0];
 
   if (!title || !videoFile) {
-    say(
-      el.uploadMessage,
-      "Anime title and video are required.",
-      true
-    );
-    return;
+    return say(el.uploadMessage, "Title and video are required.", true);
   }
 
   if (!Number.isInteger(episode) || episode < 1) {
-    say(
-      el.uploadMessage,
-      "Enter a valid episode number.",
-      true
-    );
-    return;
+    return say(el.uploadMessage, "Enter a valid episode number.", true);
   }
 
+  el.uploadButton.disabled = true;
+
+  say(el.uploadMessage, "Uploading anime files...");
+
   try {
-    el.uploadButton.disabled = true;
+    const videoUrl = await uploadToStorage(videoFile, "videos");
 
-    say(el.uploadMessage, "Uploading video...");
+    const posterUrl = posterFile
+      ? await uploadToStorage(posterFile, "posters")
+      : "";
 
-    const videoURL = await uploadFile(
-      videoFile,
-      "videos"
-    );
-
-    let posterURL = null;
-
-    if (posterFile) {
-      say(el.uploadMessage, "Uploading poster...");
-
-      posterURL = await uploadFile(
-        posterFile,
-        "posters"
-      );
-    }
-
-    const record = {
+    const { error } = await db.from(DB_TABLE).insert({
       title,
       description,
       episode,
       genre,
       language,
-      video_url: videoURL,
-      poster_url: posterURL
-    };
-
-    say(el.uploadMessage, "Saving anime to database...");
-
-    const { error } = await db
-      .from(DB_TABLE)
-      .insert(record);
+      video_url: videoUrl,
+      poster_url: posterUrl
+    });
 
     if (error) throw error;
 
-    say(
-      el.uploadMessage,
-      "Anime uploaded successfully! ♡"
-    );
+    say(el.uploadMessage, "Anime episode uploaded successfully! ♡");
 
     el.uploadForm.reset();
 
     await loadAnime();
 
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("Anime upload:", error);
 
-    say(
-      el.uploadMessage,
-      error.message,
-      true
-    );
+    say(el.uploadMessage, `Upload failed: ${error.message}`, true);
 
   } finally {
     el.uploadButton.disabled = false;
   }
 }
 
-/* =====================================================
-   26. SUBTITLE UPLOAD
-===================================================== */
+/* =============== 16. EPISODE-WISE SUBTITLE UPLOAD =============== */
 
 async function uploadSubtitle() {
-  if (!await checkAdmin()) {
-    say(
-      el.subtitleUploadMessage,
-      "Admin access required.",
-      true
-    );
-    return;
-  }
+  if (!requireAdmin(el.subtitleUploadMessage)) return;
 
-  const file = el.subtitleFileUpload?.files?.[0];
   const animeId = el.subtitleAnimeSelect?.value;
+  const episodeId = el.subtitleEpisodeSelect?.value;
   const language = el.subtitleLanguageUpload?.value;
+  const file = el.subtitleFileUpload?.files?.[0];
 
-  if (!file || !animeId || !language) {
-    say(
+  if (!animeId || !episodeId || !language || !file) {
+    return say(
       el.subtitleUploadMessage,
-      "Choose anime, language and VTT file.",
+      "Anime, episode, language and subtitle file select karo.",
       true
     );
-    return;
   }
 
   if (!file.name.toLowerCase().endsWith(".vtt")) {
-    say(
+    return say(
       el.subtitleUploadMessage,
       "Only .vtt subtitle files are supported.",
       true
     );
-    return;
   }
 
+  if (file.size > 5 * 1024 * 1024) {
+    return say(
+      el.subtitleUploadMessage,
+      "Subtitle file must be smaller than 5 MB.",
+      true
+    );
+  }
+
+  el.subtitleUploadButton.disabled = true;
+
+  say(el.subtitleUploadMessage, "Uploading subtitle...");
+
   try {
-    el.subtitleUploadButton.disabled = true;
+    const url = await uploadToStorage(file, "subtitles");
+
+    const library = getSubtitles();
+
+    const key = subtitleKey(episodeId);
+
+    if (!library[key]) {
+      library[key] = {};
+    }
+
+    library[key][language] = url;
+
+    saveSubtitles(library);
 
     say(
       el.subtitleUploadMessage,
-      "Uploading subtitle..."
+      `${languageLabel(language)} uploaded successfully! ♡`
     );
-
-    const url = await uploadFile(
-      file,
-      `subtitles/${animeId}`
-    );
-
-    if (!subtitleLibrary[String(animeId)]) {
-      subtitleLibrary[String(animeId)] = {};
-    }
-
-    subtitleLibrary[String(animeId)][language] = url;
-
-    saveLocalData();
-
-    say(
-      el.subtitleUploadMessage,
-      `${language} subtitle uploaded successfully!`
-    );
-
-    if (
-      activeAnime &&
-      String(activeAnime.id) === String(animeId)
-    ) {
-      loadSubtitleOptions();
-    }
 
     el.subtitleFileUpload.value = "";
 
+    if (
+      state.currentEpisode &&
+      String(state.currentEpisode.id) === String(episodeId)
+    ) {
+      await loadSubtitleOptions(state.currentEpisode);
+
+      if (el.subtitleSelect) {
+        el.subtitleSelect.value = language;
+        applySubtitle(language);
+      }
+    }
+
   } catch (error) {
-    console.error(error);
+    console.error("Subtitle upload:", error);
 
     say(
       el.subtitleUploadMessage,
-      error.message,
+      `Subtitle upload failed: ${error.message}`,
       true
     );
 
@@ -1311,66 +1020,138 @@ async function uploadSubtitle() {
   }
 }
 
-/* =====================================================
-   27. SUBTITLE ANIME DROPDOWN
-===================================================== */
+/* =============== 17. PASSWORD RESET =============== */
 
-function renderSubtitleAnimeSelect() {
-  if (!el.subtitleAnimeSelect) return;
+async function sendPasswordReset() {
+  const email = el.emailInput?.value.trim();
 
-  el.subtitleAnimeSelect.innerHTML = `
-    <option value="">Select Anime</option>
-    ${animeList.map(anime => `
-      <option value="${escapeHTML(anime.id)}">
-        ${escapeHTML(anime.title)}
-      </option>
-    `).join("")}
-  `;
+  if (!email) {
+    return say(el.accountMessage, "Enter your email first.", true);
+  }
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+
+  say(
+    el.accountMessage,
+    error
+      ? error.message
+      : "Password reset link sent to your email.",
+    Boolean(error)
+  );
 }
 
-/* =====================================================
-   28. EPISODE CHANGE
-===================================================== */
+async function updatePassword() {
+  const password = el.newPassword?.value || "";
+  const confirm = el.confirmPassword?.value || "";
+
+  if (password.length < 6) {
+    return say(el.resetMessage, "Password must be at least 6 characters.", true);
+  }
+
+  if (password !== confirm) {
+    return say(el.resetMessage, "Passwords do not match.", true);
+  }
+
+  const { error } = await db.auth.updateUser({
+    password
+  });
+
+  say(
+    el.resetMessage,
+    error ? error.message : "Password updated successfully.",
+    Boolean(error)
+  );
+
+  if (!error) {
+    el.newPassword.value = "";
+    el.confirmPassword.value = "";
+  }
+}
+
+/* =============== 18. EVENT LISTENERS =============== */
+
+el.signupBtn?.addEventListener("click", () => account("signup"));
+
+el.loginBtn?.addEventListener("click", () => account("login"));
+
+el.passwordInput?.addEventListener("keydown", event => {
+  if (event.key === "Enter") account("login");
+});
+
+el.logoutBtn?.addEventListener("click", logout);
+
+el.forgotBtn?.addEventListener("click", sendPasswordReset);
+
+el.updatePasswordBtn?.addEventListener("click", updatePassword);
+
+el.uploadForm?.addEventListener("submit", uploadAnime);
+
+el.subtitleUploadButton?.addEventListener("click", uploadSubtitle);
+
+el.subtitleAnimeSelect?.addEventListener("change", renderSubtitleEpisodeSelect);
+
+el.subtitleSelect?.addEventListener("change", event => {
+  applySubtitle(event.target.value);
+});
 
 el.episodeSelect?.addEventListener("change", event => {
-  if (!activeAnime) return;
-
-  playEpisode(event.target.value);
+  if (event.target.value) {
+    playEpisode(event.target.value);
+  }
 });
 
-/* =====================================================
-   29. ALL CARD AND GENRE CLICKS
-===================================================== */
+el.searchInput?.addEventListener("input", renderAnime);
 
-document.addEventListener("click", event => {
+el.genreFilter?.addEventListener("change", renderAnime);
 
-  const playButton = event.target.closest("[data-play]");
-  const saveButton = event.target.closest("[data-save]");
-  const genreButton = event.target.closest("[data-genre]");
+el.languageFilter?.addEventListener("change", renderAnime);
 
-  if (playButton) {
-    playAnime(playButton.dataset.play);
+function handleCardClick(event) {
+  const button = event.target.closest("button[data-action]");
+
+  if (!button) return;
+
+  const id = button.dataset.id;
+
+  if (button.dataset.action === "watch") {
+    watchAnime(id);
   }
 
-  if (saveButton) {
-    toggleWatchlist(saveButton.dataset.save);
+  if (button.dataset.action === "save") {
+    toggleWatchlist(id);
   }
+}
 
-  if (genreButton && el.genreFilter) {
-    el.genreFilter.value = genreButton.dataset.genre;
+el.animeGrid?.addEventListener("click", handleCardClick);
+el.watchlistGrid?.addEventListener("click", handleCardClick);
+el.continueGrid?.addEventListener("click", handleCardClick);
+
+document.querySelectorAll(".genre-card[data-genre]").forEach(button => {
+  button.addEventListener("click", () => {
+    if (el.genreFilter) {
+      el.genreFilter.value = button.dataset.genre;
+    }
 
     renderAnime();
-
-    document.getElementById("library")?.scrollIntoView({
-      behavior: "smooth"
-    });
-  }
-
+    scrollToSection("library");
+  });
 });
 
-/* =====================================================
-   30. NAVIGATION
-===================================================== */
+el.exploreBtn?.addEventListener("click", () => {
+  scrollToSection("library");
+});
+
+el.heroWatchBtn?.addEventListener("click", () => {
+  const firstAnime = state.anime[0];
+
+  if (firstAnime) {
+    watchAnime(firstAnime.id);
+  } else {
+    scrollToSection("library");
+  }
+});
 
 el.menuBtn?.addEventListener("click", () => {
   el.mainNav?.classList.toggle("active");
@@ -1378,113 +1159,29 @@ el.menuBtn?.addEventListener("click", () => {
 
 el.mainNav?.querySelectorAll("a").forEach(link => {
   link.addEventListener("click", () => {
-    el.mainNav.classList.remove("active");
+    el.mainNav?.classList.remove("active");
   });
 });
 
-el.headerLoginBtn?.addEventListener("click", () => {
-  document.getElementById("account")?.scrollIntoView({
-    behavior: "smooth"
-  });
-});
+/* =============== 19. APP INITIALIZATION =============== */
 
-/* =====================================================
-   31. SEARCH AND FILTER EVENTS
-===================================================== */
+async function init() {
+  say(el.libraryMessage, "Connecting to AnimeNoona...");
 
-el.searchInput?.addEventListener("input", renderAnime);
-el.genreFilter?.addEventListener("change", renderAnime);
-el.languageFilter?.addEventListener("change", renderAnime);
-
-/* =====================================================
-   32. HERO BUTTONS
-===================================================== */
-
-el.exploreBtn?.addEventListener("click", () => {
-  document.getElementById("library")?.scrollIntoView({
-    behavior: "smooth"
-  });
-});
-
-el.heroWatchBtn?.addEventListener("click", () => {
-  if (animeList.length) {
-    playAnime(animeList[0].id);
-  } else {
-    say(
-      el.libraryMessage,
-      "No anime available yet.",
-      true
-    );
-
-    document.getElementById("library")?.scrollIntoView({
-      behavior: "smooth"
+  const {
+    data: { subscription }
+  } = db.auth.onAuthStateChange((_event, session) => {
+    // Avoid database queries directly inside the auth callback.
+    Promise.resolve().then(() => {
+      refreshSession(session?.user || null);
     });
-  }
-});
+  });
 
-/* =====================================================
-   33. SUBTITLE EVENT
-===================================================== */
+  window.addEventListener("beforeunload", () => {
+    subscription.unsubscribe();
+  });
 
-el.subtitleSelect?.addEventListener("change", event => {
-  selectSubtitle(event.target.value);
-});
-
-/* =====================================================
-   34. ACCOUNT EVENTS
-===================================================== */
-
-el.signupBtn?.addEventListener("click", () => {
-  account("signup");
-});
-
-el.loginBtn?.addEventListener("click", () => {
-  account("login");
-});
-
-el.logoutBtn?.addEventListener("click", logout);
-
-el.forgotBtn?.addEventListener("click", forgotPassword);
-
-el.updatePasswordBtn?.addEventListener(
-  "click",
-  updatePassword
-);
-
-/* =====================================================
-   35. ADMIN EVENTS
-===================================================== */
-
-el.uploadForm?.addEventListener(
-  "submit",
-  uploadAnime
-);
-
-el.subtitleUploadButton?.addEventListener(
-  "click",
-  uploadSubtitle
-);
-
-/* =====================================================
-   36. START WEBSITE
-===================================================== */
-
-async function startAnimeNoona() {
-  updateAccountUI();
-
-  await initializeSupabase();
-
-  await loadAnime();
-
-  renderSubtitleAnimeSelect();
-
-  await checkAdmin();
-
-  console.log("AnimeNoona is ready! ♡");
+  await refreshSession();
 }
 
-startAnimeNoona();
-
-/* =====================================================
-   END — ANIMENOONA
-===================================================== */
+init();
