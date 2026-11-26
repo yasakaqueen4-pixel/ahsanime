@@ -1,20 +1,23 @@
 
-/* =================================
-   AnimeNoona — Professional 3D Design
-================================= */
+/* ==========================================
+   ANIMENOONA ♡ PROFESSIONAL 3D DESIGN
+   Responsive Anime Streaming Website
+========================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --bg: #090711;
   --surface: #151020;
-  --surface2: #20152f;
+  --surface2: #21152f;
   --purple: #a855f7;
+  --purple-dark: #7028d5;
   --pink: #ec4899;
-  --text: #f8f4ff;
+  --text: #faf5ff;
   --muted: #aaa0b8;
-  --border: rgba(190,130,255,.18);
+  --border: rgba(190,130,255,.2);
   --glow: 0 0 35px rgba(168,85,247,.25);
+  --radius: 20px;
 }
 
 * {
@@ -25,18 +28,22 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 90px;
+  scroll-padding-top: 100px;
 }
 
 body {
+  min-height: 100vh;
+  overflow-x: hidden;
   background:
-    radial-gradient(ellipse at 15% 10%, #301346 0%, transparent 35%),
-    radial-gradient(ellipse at 90% 50%, #1e1030 0%, transparent 35%),
+    radial-gradient(ellipse at 10% 10%, #301346 0%, transparent 35%),
+    radial-gradient(ellipse at 90% 55%, #25103a 0%, transparent 35%),
     var(--bg);
   color: var(--text);
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-  min-height: 100vh;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 button, input, select, textarea {
@@ -56,20 +63,23 @@ img, video {
   max-width: 100%;
 }
 
-/* HEADER */
+/* ========== HEADER ========== */
 
 .main-header {
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+  min-height: 76px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 22px;
-  padding: 16px 5%;
-  background: rgba(9,7,17,.86);
+  padding: 14px 5%;
+  background: rgba(9,7,17,.92);
   backdrop-filter: blur(22px);
   border-bottom: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgba(0,0,0,.2);
 }
 
 .logo {
@@ -79,24 +89,30 @@ img, video {
   white-space: nowrap;
   background: linear-gradient(90deg,#fff,#d8a4ff,#ed70c8);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
+}
+
+.logo span {
+  color: #e879d0;
 }
 
 .navbar {
   display: flex;
   align-items: center;
-  gap: 28px;
+  justify-content: center;
+  gap: 25px;
 }
 
 .navbar a {
   color: #ded5eb;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   transition: .3s;
 }
 
 .navbar a:hover {
-  color: #d38cff;
+  color: #e4a7ff;
   text-shadow: 0 0 15px var(--purple);
 }
 
@@ -106,40 +122,45 @@ img, video {
   gap: 12px;
 }
 
-#user, #accountUser {
-  color: var(--muted);
-  font-size: 13px;
+#user {
+  max-width: 150px;
   overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 #menuBtn {
-  background: linear-gradient(135deg,var(--purple),#7026d5);
-  color: white;
+  display: none;
   border: 0;
-  border-radius: 14px;
-  padding: 12px 17px;
-  font-size: 20px;
+  border-radius: 13px;
+  padding: 11px 16px;
+  color: white;
+  background: linear-gradient(135deg,var(--purple),var(--purple-dark));
   box-shadow: var(--glow);
 }
 
-/* BUTTONS */
+/* ========== BUTTONS ========== */
 
-button,
-.primary-btn,
-.secondary-btn {
+button {
   transition: transform .25s, box-shadow .25s, background .25s;
 }
 
-button:hover,
-.primary-btn:hover,
-.secondary-btn:hover {
+button:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(168,85,247,.3);
 }
 
-.primary-btn,
+button:active {
+  transform: scale(.97);
+}
+
 #exploreBtn,
-#heroWatchBtn {
+#heroWatchBtn,
+#signupBtn,
+#loginBtn,
+#updatePasswordBtn,
+#uploadButton,
+#subtitleUploadButton {
   border: 0;
   border-radius: 15px;
   padding: 15px 24px;
@@ -157,19 +178,29 @@ button:hover,
   color: white;
 }
 
-/* HERO */
+.text-btn {
+  color: #dca5ff;
+  background: transparent;
+  border: 0;
+  padding: 12px 0;
+  font-weight: 700;
+}
+
+/* ========== 3D HERO ========== */
 
 .hero-section {
   position: relative;
-  min-height: 540px;
-  padding: 100px 7%;
+  min-height: 590px;
+  padding: 95px 7%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
   overflow: hidden;
+  isolation: isolate;
   background:
-    linear-gradient(90deg,rgba(9,7,17,.97),rgba(16,8,27,.76),rgba(9,7,17,.35)),
-    radial-gradient(ellipse at 75% 45%,#672d91,transparent 50%);
+    linear-gradient(100deg,rgba(9,7,17,.98),rgba(20,10,32,.78)),
+    radial-gradient(ellipse at 75% 45%,#672d91,transparent 55%);
   border-bottom: 1px solid var(--border);
 }
 
@@ -177,84 +208,201 @@ button:hover,
   content: "✦";
   position: absolute;
   right: 12%;
-  top: 12%;
+  top: 5%;
   color: #d6a2ff;
-  font-size: 180px;
+  font-size: 190px;
   opacity: .12;
   animation: float 5s ease-in-out infinite;
+  z-index: -1;
 }
 
-.hero-section::after {
-  content: "";
-  position: absolute;
-  width: 330px;
-  height: 330px;
-  right: 12%;
-  bottom: -180px;
-  background: #a855f7;
-  filter: blur(120px);
-  opacity: .3;
-}
-
-.hero-section > * {
+.hero-content {
   position: relative;
   z-index: 2;
+  max-width: 700px;
 }
 
-.hero-section h1 {
-  max-width: 750px;
+.hero-tag,
+.section-tag {
+  display: inline-block;
+  color: #dca5ff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 15px;
+}
+
+.hero-content h1 {
+  max-width: 720px;
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(38px,6vw,76px);
+  font-size: clamp(42px,6vw,76px);
   font-weight: 900;
   line-height: 1.08;
-  margin: 16px 0;
-  background: linear-gradient(100deg,#fff 25%,#e5b5ff 60%,#f38bcf);
+  margin: 14px 0 20px;
+  background: linear-gradient(100deg,#fff 20%,#e5b5ff 60%,#f38bcf);
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 }
 
-.hero-section p {
-  max-width: 650px;
+.hero-content p {
+  max-width: 620px;
   color: #c9bfd6;
   font-size: 17px;
   line-height: 1.8;
-  margin-bottom: 26px;
+  margin-bottom: 27px;
 }
 
-.hero-section button {
-  margin: 5px 8px 5px 0;
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px;
 }
 
-/* SECTIONS */
-
-section {
-  padding: 65px 6%;
+.hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 35px;
+  margin-top: 45px;
 }
 
-section h2 {
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(26px,4vw,38px);
-  font-weight: 800;
-  margin-bottom: 12px;
+.hero-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-section h2::first-letter {
-  color: #d58aff;
+.hero-stats strong {
+  color: #e6b5ff;
+  font-size: 19px;
 }
 
-section p {
+.hero-stats span {
   color: var(--muted);
+  font-size: 12px;
+}
+
+.hero-visual {
+  position: relative;
+  width: 340px;
+  height: 350px;
+  flex-shrink: 0;
+  perspective: 900px;
+}
+
+.hero-orb {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 40px;
+  left: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%,#e5a4ff,#8d35d8 45%,#351052 80%);
+  box-shadow:
+    0 0 45px rgba(168,85,247,.5),
+    inset -20px -20px 40px rgba(0,0,0,.4);
+  animation: orbFloat 6s ease-in-out infinite;
+}
+
+.hero-ring {
+  position: absolute;
+  width: 320px;
+  height: 130px;
+  top: 100px;
+  left: 10px;
+  border: 2px solid rgba(230,180,255,.5);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  box-shadow: 0 0 20px rgba(168,85,247,.3);
+}
+
+.hero-card {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.2);
+  background: linear-gradient(145deg,rgba(255,255,255,.17),rgba(80,30,110,.5));
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.3);
+  animation: float 5s ease-in-out infinite;
+}
+
+.hero-card-one {
+  width: 80px;
+  height: 80px;
+  right: 0;
+  top: 5px;
+  font-size: 40px;
+  color: #f3c2ff;
+}
+
+.hero-card-two {
+  width: 160px;
+  height: 75px;
+  left: 0;
+  bottom: 30px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: white;
+  animation-delay: 1s;
+}
+
+.hero-card-three {
+  width: 75px;
+  height: 75px;
+  right: 0;
+  bottom: 20px;
+  font-size: 35px;
+  color: #ff9bdc;
+  animation-delay: 2s;
+}
+
+/* ========== SECTIONS ========== */
+
+.section {
+  padding: 70px 6%;
 }
 
 .section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
   margin-bottom: 25px;
 }
 
-/* SEARCH AND FILTERS */
+.section-heading h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(27px,4vw,39px);
+  font-weight: 900;
+}
+
+.section-heading p {
+  margin-top: 8px;
+  color: var(--muted);
+}
+
+.section-heading > span {
+  color: #d7a1ff;
+  font-size: 13px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ========== SEARCH & FILTERS ========== */
+
+.search-filter-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 20px 0;
+}
 
 #searchInput,
-#genreFilter,
-#languageFilter,
 select,
 input,
 textarea {
@@ -264,15 +412,13 @@ textarea {
   border-radius: 12px;
   padding: 13px 15px;
   outline: none;
-  max-width: 100%;
 }
 
 #searchInput {
-  width: min(100%,500px);
-  margin: 15px 10px 15px 0;
+  flex: 1;
+  min-width: 200px;
 }
 
-#searchInput:focus,
 select:focus,
 input:focus,
 textarea:focus {
@@ -285,110 +431,105 @@ select option {
   color: white;
 }
 
-/* ANIME GRID */
+/* ========== ANIME CARDS ========== */
 
-.anime-grid,
-#animeGrid,
-#watchlistGrid,
-#continueGrid {
+.anime-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill,minmax(190px,1fr));
   gap: 24px;
   margin-top: 25px;
 }
 
-.anime-card,
-.anime-item,
-#animeGrid > *,
-#watchlistGrid > *,
-#continueGrid > * {
+.anime-grid > * {
   min-width: 0;
   overflow: hidden;
   position: relative;
   background: linear-gradient(145deg,#251735,#120e1c);
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: 19px;
   padding: 12px;
   box-shadow: 0 12px 30px rgba(0,0,0,.25);
   transition: transform .35s, box-shadow .35s, border-color .35s;
 }
 
-.anime-card:hover,
-.anime-item:hover,
-#animeGrid > *:hover,
-#watchlistGrid > *:hover,
-#continueGrid > *:hover {
+.anime-grid > *:hover {
   transform: translateY(-9px) perspective(800px) rotateX(2deg);
   border-color: #b66aff;
   box-shadow: 0 20px 40px rgba(130,50,210,.25);
 }
 
-.anime-card img,
-.anime-item img,
-#animeGrid img,
-#watchlistGrid img,
-#continueGrid img {
+.anime-grid img {
   width: 100%;
   aspect-ratio: 3/4;
   object-fit: cover;
-  border-radius: 12px;
   display: block;
+  border-radius: 13px;
   background: #251735;
 }
 
-.anime-card h3,
-#animeGrid h3,
-#watchlistGrid h3,
-#continueGrid h3 {
+.anime-grid h3 {
   font-size: 16px;
   font-weight: 800;
   margin: 13px 0 7px;
 }
 
-.anime-card p,
-#animeGrid p,
-#watchlistGrid p,
-#continueGrid p {
+.anime-grid p {
   font-size: 12px;
   color: var(--muted);
   line-height: 1.6;
 }
 
-/* GENRE CARDS */
+.anime-grid button {
+  margin-top: 10px;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 13px;
+  color: white;
+  background: linear-gradient(135deg,#a855f7,#7028d5);
+}
+
+/* ========== GENRES ========== */
 
 .genre-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fit,minmax(135px,1fr));
+  gap: 17px;
 }
 
 .genre-card {
-  min-height: 90px;
+  min-height: 100px;
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 17px;
   background: linear-gradient(135deg,#34204b,#171020);
   color: white;
   font-size: 16px;
   font-weight: 800;
   box-shadow: 0 10px 25px rgba(0,0,0,.2);
-  transition: .3s;
 }
 
 .genre-card:hover {
-  transform: translateY(-6px) scale(1.02);
   background: linear-gradient(135deg,#8c39d4,#4c1b83);
 }
 
-/* PLAYER */
+/* ========== PLAYER ========== */
 
-#player {
+.player-section {
   background: linear-gradient(145deg,#1a1127,#0d0a14);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 
-#animeVideo,
-video {
+.player-container {
+  max-width: 950px;
+  margin: auto;
+  padding: 22px;
+  background: rgba(29,20,43,.8);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--glow);
+}
+
+#animeVideo {
   display: block;
   width: 100%;
   max-height: 550px;
@@ -401,70 +542,185 @@ video {
 #playerTitle,
 #nowPlayingTitle {
   margin: 18px 0;
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 800;
 }
 
-#episodeSelect,
-#subtitleSelect {
-  margin: 12px 10px 12px 0;
-  min-width: 160px;
+.player-settings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 22px;
 }
 
-/* ACCOUNT AND ADMIN */
-
-#loginPanel,
-#resetPanel,
-#adminDashboard,
-#uploadForm {
-  background: rgba(29,20,43,.85);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: var(--glow);
-  max-width: 750px;
-  margin: 20px auto;
+.setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
-#loginPanel input,
-#resetPanel input,
-#uploadForm input,
-#uploadForm select,
-#uploadForm textarea {
+.setting-group label {
+  font-size: 13px;
+  color: #dfc6f5;
+  font-weight: 700;
+}
+
+.setting-group select {
   width: 100%;
-  margin: 8px 0;
 }
 
-#uploadForm button,
-#loginPanel button,
-#resetPanel button {
-  margin: 8px 5px 8px 0;
+/* ========== ACCOUNT ========== */
+
+.account-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* FOOTER */
+.account-panel,
+.admin-panel {
+  width: 100%;
+  max-width: 650px;
+  margin: 20px auto;
+  padding: 30px;
+  background: linear-gradient(145deg,#20152f,#130e1d);
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  box-shadow: var(--glow);
+}
 
-footer {
-  padding: 35px 6%;
+.account-panel h2 {
+  font-family: 'Outfit',sans-serif;
+  font-size: 30px;
+  margin: 12px 0 22px;
+}
+
+.account-panel label,
+.admin-panel label {
+  display: block;
+  margin: 15px 0 7px;
+  color: #e9dafa;
+  font-weight: 600;
+}
+
+.account-panel input,
+.admin-panel input,
+.admin-panel select,
+.admin-panel textarea {
+  width: 100%;
+  min-height: 48px;
+}
+
+.account-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.account-buttons button {
+  flex: 1;
+}
+
+.message {
+  margin-top: 12px;
+  color: #d9aaff;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ========== ADMIN ========== */
+
+.admin-section {
+  border-top: 1px solid var(--border);
+}
+
+.admin-panel {
+  max-width: 800px;
+}
+
+.admin-panel h3 {
+  font-family: 'Outfit',sans-serif;
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.admin-panel button {
+  margin-top: 15px;
+}
+
+.admin-panel hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 30px 0;
+}
+
+/* ========== FOOTER ========== */
+
+.main-footer {
+  padding: 45px 6%;
   text-align: center;
   background: #0d0915;
   color: var(--muted);
   border-top: 1px solid var(--border);
-  line-height: 1.8;
+  line-height: 2;
 }
 
-/* ANIMATIONS */
+.main-footer .logo {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+/* ========== ANIMATIONS ========== */
 
 @keyframes float {
-  0%,100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-22px) rotate(8deg); }
+  0%,100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-20px) rotate(7deg);
+  }
 }
 
-/* MOBILE RESPONSIVE */
+@keyframes orbFloat {
+  0%,100% {
+    transform: translateY(0) rotate(0) scale(1);
+  }
+  50% {
+    transform: translateY(-17px) rotate(10deg) scale(1.04);
+  }
+}
 
-@media (max-width: 768px) {
+/* ========== TABLET ========== */
+
+@media(max-width: 900px) {
   .main-header {
-    padding: 12px 4%;
     flex-wrap: wrap;
+  }
+
+  .navbar {
+    gap: 15px;
+  }
+
+  .hero-section {
+    padding: 75px 5%;
+  }
+
+  .hero-visual {
+    transform: scale(.8);
+    margin-right: -30px;
+  }
+}
+
+/* ========== MOBILE ========== */
+
+@media(max-width: 650px) {
+  html {
+    scroll-padding-top: 145px;
+  }
+
+  .main-header {
+    padding: 13px 4%;
     gap: 12px;
   }
 
@@ -472,111 +728,203 @@ footer {
     font-size: 23px;
   }
 
+  #menuBtn {
+    display: block;
+    margin-left: auto;
+  }
+
   .navbar {
-    order: 3;
+    order: 4;
     width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 21px;
     overflow-x: auto;
-    gap: 22px;
     padding: 10px 0 5px;
     scrollbar-width: none;
   }
 
+  .navbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .navbar a {
-    white-space: nowrap;
+    flex-shrink: 0;
     font-size: 13px;
   }
 
   .header-actions {
-    margin-left: auto;
+    order: 3;
   }
 
-  #user, #accountUser {
-    max-width: 150px;
-    font-size: 11px;
+  #user {
+    max-width: 110px;
+    font-size: 10px;
   }
 
   .hero-section {
-    min-height: 470px;
-    padding: 65px 6%;
+    min-height: auto;
+    padding: 65px 6% 55px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .hero-section h1 {
-    font-size: clamp(38px,10vw,56px);
+  .hero-content h1 {
+    font-size: clamp(39px,10vw,55px);
   }
 
-  .hero-section p {
+  .hero-content p {
     font-size: 15px;
   }
 
-  section {
-    padding: 45px 5%;
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
   }
 
-  .anime-grid,
-  #animeGrid,
-  #watchlistGrid,
-  #continueGrid {
+  .hero-buttons button {
+    width: 100%;
+  }
+
+  .hero-visual {
+    width: 100%;
+    max-width: 320px;
+    height: 280px;
+    margin: 15px auto 0;
+    transform: scale(.85);
+    transform-origin: center;
+  }
+
+  .hero-orb {
+    left: 30px;
+    top: 20px;
+  }
+
+  .hero-ring {
+    left: 0;
+    top: 85px;
+  }
+
+  .hero-stats {
+    gap: 22px;
+    margin-top: 30px;
+  }
+
+  .section {
+    padding: 48px 5%;
+  }
+
+  .anime-grid {
     grid-template-columns: repeat(2,minmax(0,1fr));
     gap: 13px;
   }
 
-  .anime-card,
-  #animeGrid > *,
-  #watchlistGrid > *,
-  #continueGrid > * {
+  .anime-grid > * {
     padding: 8px;
     border-radius: 14px;
   }
 
-  .anime-card h3,
-  #animeGrid h3,
-  #watchlistGrid h3,
-  #continueGrid h3 {
+  .anime-grid h3 {
     font-size: 14px;
   }
 
+  .search-filter-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
   #searchInput {
+    grid-column: 1 / -1;
     width: 100%;
-    margin: 12px 0;
+    min-width: 0;
   }
 
-  #genreFilter,
-  #languageFilter {
-    width: calc(50% - 5px);
-    font-size: 13px;
-  }
-
-  #episodeSelect,
-  #subtitleSelect {
+  .search-filter-area select {
     width: 100%;
-    margin: 7px 0;
+    min-width: 0;
+    font-size: 12px;
   }
 
-  #loginPanel,
-  #resetPanel,
-  #adminDashboard,
-  #uploadForm {
-    padding: 17px;
+  .genre-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+  }
+
+  .genre-card {
+    min-height: 75px;
+  }
+
+  .player-container {
+    padding: 13px;
+  }
+
+  .player-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .account-panel,
+  .admin-panel {
+    padding: 20px;
+  }
+
+  .account-panel h2 {
+    font-size: 25px;
+  }
+
+  .account-buttons {
+    flex-direction: column;
+  }
+
+  .account-buttons button {
+    width: 100%;
   }
 }
 
-@media (max-width: 380px) {
-  .hero-section h1 {
+/* ========== SMALL MOBILE ========== */
+
+@media(max-width: 380px) {
+  .logo {
+    font-size: 20px;
+  }
+
+  .hero-content h1 {
     font-size: 36px;
   }
 
-  .hero-section button {
-    width: 100%;
+  .hero-stats {
+    gap: 14px;
   }
 
-  .anime-grid,
-  #animeGrid,
-  #watchlistGrid,
-  #continueGrid {
+  .anime-grid {
     gap: 9px;
   }
 
-  #user, #accountUser {
-    max-width: 115px;
+  .anime-grid > * {
+    padding: 6px;
+  }
+
+  .section-heading h2 {
+    font-size: 25px;
+  }
+}
+
+/* ========== ACCESSIBILITY ========== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #dca5ff;
+  outline-offset: 3px;
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
   }
 }
