@@ -6,124 +6,497 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090711">
   <meta name="description" content="AnimeNoona - Your Anime Universe. Discover and watch anime.">
+
   <title>AnimeNoona ♡ | Anime Universe</title>
 
   <link rel="stylesheet" href="./styles.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    .login-header-btn {
-      display: inline-block;
-      padding: 11px 17px;
-      border-radius: 12px;
-      color: white;
-      font-weight: 800;
-      font-size: 13px;
-      background: linear-gradient(135deg,#b44eff,#7728dc);
-      box-shadow: 0 5px 20px rgba(168,85,247,.3);
+    /* ================= EXTRA DESIGN ================= */
+
+    [hidden] {
+      display: none !important;
     }
 
-    .anime-poster {
-      min-height: 260px;
-      background-size: cover;
-      background-position: center;
-      background-color: #251735;
-      position: relative;
-      border-radius: 13px;
-      overflow: hidden;
+    body {
+      font-family: 'Inter', sans-serif;
     }
 
-    .poster-placeholder {
-      display: grid;
-      place-items: center;
-      min-height: 260px;
-      color: #dca5ff;
-      font-size: 28px;
+    /* HEADER */
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      font-family: 'Poppins', sans-serif;
       font-weight: 900;
-    }
-
-    .anime-tag {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 6px 10px;
-      background: rgba(20,10,30,.85);
-      border-radius: 8px;
-      font-size: 11px;
-    }
-
-    .watch-now {
-      position: absolute;
-      left: 50%;
-      bottom: 15px;
-      transform: translateX(-50%);
       white-space: nowrap;
     }
 
+    /* Never show email in public header */
+
+    #user {
+      display: none !important;
+    }
+
+    #logoutBtn:not([hidden]) ~ #headerLoginBtn {
+      display: none !important;
+    }
+
+    body:has(#logoutBtn:not([hidden])) #headerLoginBtn {
+      display: none !important;
+    }
+
+    /* HERO */
+
+    .hero {
+      min-height: 620px;
+      align-items: center;
+    }
+
+    .hero-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hero-visual {
+      width: min(100%, 420px);
+      height: 540px;
+      flex-shrink: 0;
+      border-radius: 25px;
+      overflow: hidden;
+      background: #171126;
+      border: 1px solid rgba(168,85,247,.3);
+      box-shadow: 0 20px 60px rgba(124,58,237,.25);
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .hero-visual::before,
+    .hero-visual::after {
+      display: none !important;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero-tag {
+      margin-bottom: 20px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .hero-buttons button {
+      border: none;
+      padding: 13px 20px;
+      border-radius: 11px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg,#a855f7,#7c3aed);
+    }
+
+    .hero-buttons .secondary-btn {
+      background: #241735;
+      border: 1px solid rgba(168,85,247,.4);
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+    }
+
+    .hero-stats div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-stats strong {
+      color: #d8b4fe;
+      font-size: 22px;
+    }
+
+    .hero-stats span {
+      color: #b9adc9;
+      font-size: 12px;
+    }
+
+    /* SECTION HEADINGS */
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .section-heading h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(24px,4vw,35px);
+      font-weight: 800;
+      margin: 8px 0;
+    }
+
+    .section-heading p {
+      color: #aaa0bd;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .section-tag {
+      color: #c084fc;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    /* ANIME CARDS */
+
+    .anime-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(175px,1fr));
+      gap: 20px;
+    }
+
+    .anime-card {
+      min-width: 0;
+    }
+
+    .anime-card img,
+    .anime-poster {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 13px;
+    }
+
     .anime-info {
-      padding: 10px 3px 3px;
+      padding: 12px 3px;
+    }
+
+    .anime-info h3 {
+      font-size: 15px;
+      margin-bottom: 7px;
+    }
+
+    .anime-info p {
+      color: #aaa0bd;
+      font-size: 12px;
     }
 
     .anime-meta {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 8px;
       margin-top: 10px;
-      font-size: 12px;
     }
 
     .save-anime {
-      margin: 0 !important;
-      padding: 8px 10px !important;
-      white-space: nowrap;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #241735;
+      border: 1px solid rgba(168,85,247,.3);
+      color: white;
     }
 
     .empty-message {
-      color: #aaa0b8;
-      padding: 20px;
+      grid-column: 1/-1;
+      padding: 25px;
       text-align: center;
-      grid-column: 1 / -1;
+      color: #aaa0bd;
+      background: #171126;
+      border-radius: 13px;
     }
 
-    .account-panel > input,
+    /* SEARCH */
+
+    .search-filter-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    #searchInput {
+      flex: 1 1 220px;
+    }
+
+    #genreFilter,
+    #languageFilter {
+      width: auto;
+      min-width: 150px;
+    }
+
+    /* GENRES */
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
+      gap: 13px;
+    }
+
+    .genre-card {
+      min-height: 75px;
+      border-radius: 13px;
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+      background: linear-gradient(145deg,#281a3e,#171126);
+      border: 1px solid rgba(168,85,247,.25);
+      transition: .25s;
+    }
+
+    .genre-card:hover {
+      transform: translateY(-5px);
+      background: linear-gradient(135deg,#7c3aed,#a855f7);
+    }
+
+    /* PLAYER */
+
+    .player-container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 20px;
+      background: #171126;
+      border: 1px solid rgba(168,85,247,.2);
+    }
+
+    #animeVideo {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16/9;
+      max-height: 580px;
+      background: #000;
+      border-radius: 13px;
+    }
+
+    #playerTitle {
+      font-size: 22px;
+      margin: 20px 0 8px;
+    }
+
+    #nowPlayingTitle {
+      color: #d8b4fe;
+      margin-bottom: 12px;
+    }
+
+    .player-description {
+      color: #aaa0bd;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .player-settings {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 15px;
+    }
+
+    .setting-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #d8b4fe;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* ACCOUNT */
+
+    .account-box {
+      max-width: 520px;
+      margin: auto;
+      padding: 28px;
+      border-radius: 20px;
+      background: #171126;
+      border: 1px solid rgba(168,85,247,.25);
+      box-shadow: 0 15px 40px rgba(0,0,0,.2);
+    }
+
+    .account-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .account-box label {
+      display: block;
+      color: #d8b4fe;
+      font-size: 13px;
+      margin: 13px 0 7px;
+    }
+
+    .account-box input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .account-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .account-buttons button {
+      flex: 1;
+      min-width: 110px;
+    }
+
+    .text-btn {
+      margin-top: 15px;
+      color: #c084fc;
+      background: transparent;
+      border: none;
+    }
+
+    #accountInfo {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #241735;
+    }
+
+    /* ADMIN */
+
+    .admin-panel {
+      padding: 25px;
+      border-radius: 18px;
+      background: #171126;
+      border: 1px solid rgba(168,85,247,.25);
+    }
+
+    .admin-panel label {
+      display: block;
+      margin: 14px 0 7px;
+      color: #d8b4fe;
+      font-size: 13px;
+    }
+
     .admin-panel input,
     .admin-panel select,
     .admin-panel textarea {
       width: 100%;
+      margin-bottom: 10px;
     }
 
     .admin-panel textarea {
       min-height: 100px;
-      resize: vertical;
     }
 
-    .admin-panel input[type="file"] {
-      padding: 10px;
+    .admin-panel hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+      margin: 30px 0;
     }
 
-    .player-description {
-      color: #aaa0b8;
-      line-height: 1.7;
-      margin-bottom: 15px;
+    /* FOOTER */
+
+    .main-footer {
+      text-align: center;
+      padding: 40px 7%;
+      background: #100c1b;
+      border-top: 1px solid rgba(255,255,255,.08);
     }
 
-    .header-actions {
-      flex-wrap: wrap;
+    .main-footer p {
+      color: #aaa0bd;
+      font-size: 13px;
+      line-height: 1.8;
+      margin-top: 10px;
     }
+
+    /* MOBILE */
 
     @media(max-width:650px) {
-      .login-header-btn {
-        padding: 9px 11px;
-        font-size: 11px;
+      .hero {
+        min-height: auto;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 55px 5%;
       }
 
-      .watch-now {
-        font-size: 11px;
-        padding: 8px !important;
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .hero-visual {
+        width: 100%;
+        max-width: 360px;
+        height: 470px;
+        margin: 25px auto 0;
+      }
+
+      .hero-stats {
+        gap: 14px;
+      }
+
+      .anime-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 12px;
+      }
+
+      .anime-card img,
+      .anime-poster {
+        height: 190px;
+      }
+
+      .search-filter-area {
+        flex-direction: column;
+      }
+
+      #genreFilter,
+      #languageFilter {
+        width: 100%;
+      }
+
+      .player-settings {
+        grid-template-columns: 1fr;
+      }
+
+      .player-container {
+        padding: 12px;
+      }
+
+      .account-box {
+        padding: 20px 15px;
+      }
+
+      .section-heading {
+        align-items: flex-start;
+      }
+
+      .genre-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+
+    @media(max-width:360px) {
+      .hero h1 {
+        font-size: 33px;
+      }
+
+      .hero-visual {
+        height: 400px;
       }
     }
   </style>
@@ -131,7 +504,7 @@
 
 <body>
 
-  <!-- ================= HEADER ================= -->
+  <!-- HEADER -->
 
   <header class="main-header">
 
@@ -153,27 +526,24 @@
     </nav>
 
     <div class="header-actions">
-
-      <span id="user">Guest</span>
+      <span id="user" hidden></span>
 
       <a href="#account" id="headerLoginBtn" class="login-header-btn">
         Login / Signup
       </a>
 
-      <button id="logoutBtn" class="secondary-btn" type="button" hidden>
+      <button id="logoutBtn" type="button" hidden>
         Logout
       </button>
-
     </div>
 
   </header>
 
-
-  <!-- ================= HERO ================= -->
-
   <main>
 
-    <section class="hero-section" id="home">
+    <!-- HERO -->
+
+    <section class="hero" id="home">
 
       <div class="hero-content">
 
@@ -184,7 +554,7 @@
         <h1>
           Welcome to
           <br>
-          AnimeNoona
+          <span>AnimeNoona</span>
         </h1>
 
         <p>
@@ -225,26 +595,24 @@
 
       </div>
 
+      <!-- Uploaded image file must be named hero-anime.png -->
+
       <div class="hero-visual">
-
-        <div class="hero-orb"></div>
-        <div class="hero-ring"></div>
-
-        <div class="hero-card hero-card-one">✦</div>
-        <div class="hero-card hero-card-two">ANIMENOONA</div>
-        <div class="hero-card hero-card-three">♡</div>
-
+        <img
+          src="./hero-anime.png"
+          alt="AnimeNoona Anime Characters"
+          class="hero-image"
+          onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;display:grid;place-items:center;height:100%;font-size:50px;color:#d8b4fe&quot;>♡ AnimeNoona</div>';"
+        >
       </div>
 
     </section>
 
-
-    <!-- ================= ANIME LIBRARY ================= -->
+    <!-- ANIME LIBRARY -->
 
     <section class="section" id="library">
 
       <div class="section-heading">
-
         <div>
           <span class="section-tag">DISCOVER</span>
           <h2>Anime Library</h2>
@@ -252,7 +620,6 @@
         </div>
 
         <span id="animeCount">0 Anime</span>
-
       </div>
 
       <div class="search-filter-area">
@@ -273,6 +640,7 @@
           <option value="Comedy">Comedy</option>
           <option value="Drama">Drama</option>
           <option value="Horror">Horror</option>
+          <option value="Mystery">Mystery</option>
         </select>
 
         <select id="languageFilter">
@@ -294,8 +662,7 @@
 
     </section>
 
-
-    <!-- ================= GENRES ================= -->
+    <!-- GENRES -->
 
     <section class="section" id="genres">
 
@@ -309,44 +676,20 @@
 
       <div class="genre-grid">
 
-        <button class="genre-card" data-genre="Action" type="button">
-          ⚔️ Action
-        </button>
-
-        <button class="genre-card" data-genre="Romance" type="button">
-          💗 Romance
-        </button>
-
-        <button class="genre-card" data-genre="Adventure" type="button">
-          🌍 Adventure
-        </button>
-
-        <button class="genre-card" data-genre="Fantasy" type="button">
-          ✨ Fantasy
-        </button>
-
-        <button class="genre-card" data-genre="Comedy" type="button">
-          😂 Comedy
-        </button>
-
-        <button class="genre-card" data-genre="Drama" type="button">
-          🎭 Drama
-        </button>
-
-        <button class="genre-card" data-genre="Horror" type="button">
-          👻 Horror
-        </button>
-
-        <button class="genre-card" data-genre="Mystery" type="button">
-          🔍 Mystery
-        </button>
+        <button class="genre-card" data-genre="Action" type="button">⚔️ Action</button>
+        <button class="genre-card" data-genre="Romance" type="button">💗 Romance</button>
+        <button class="genre-card" data-genre="Adventure" type="button">🌍 Adventure</button>
+        <button class="genre-card" data-genre="Fantasy" type="button">✨ Fantasy</button>
+        <button class="genre-card" data-genre="Comedy" type="button">😂 Comedy</button>
+        <button class="genre-card" data-genre="Drama" type="button">🎭 Drama</button>
+        <button class="genre-card" data-genre="Horror" type="button">👻 Horror</button>
+        <button class="genre-card" data-genre="Mystery" type="button">🔍 Mystery</button>
 
       </div>
 
     </section>
 
-
-    <!-- ================= CONTINUE WATCHING ================= -->
+    <!-- CONTINUE WATCHING -->
 
     <section class="section" id="continue">
 
@@ -364,8 +707,7 @@
 
     </section>
 
-
-    <!-- ================= WATCHLIST ================= -->
+    <!-- WATCHLIST -->
 
     <section class="section" id="watchlist">
 
@@ -383,8 +725,7 @@
 
     </section>
 
-
-    <!-- ================= ANIME PLAYER ================= -->
+    <!-- ANIME PLAYER -->
 
     <section class="section player-section" id="player">
 
@@ -398,12 +739,7 @@
 
       <div class="player-container">
 
-        <video
-          id="animeVideo"
-          controls
-          playsinline
-          preload="metadata"
-        >
+        <video id="animeVideo" controls playsinline preload="metadata">
           Your browser does not support HTML5 video.
         </video>
 
@@ -418,22 +754,15 @@
         <div class="player-settings">
 
           <div class="setting-group">
-
-            <label for="episodeSelect">
-              🎬 Select Episode
-            </label>
+            <label for="episodeSelect">🎬 Select Episode</label>
 
             <select id="episodeSelect">
               <option value="1">Episode 1</option>
             </select>
-
           </div>
 
           <div class="setting-group">
-
-            <label for="subtitleSelect">
-              💬 Subtitle Language
-            </label>
+            <label for="subtitleSelect">💬 Subtitle Language</label>
 
             <select id="subtitleSelect">
               <option value="">Subtitles Off</option>
@@ -442,7 +771,6 @@
               <option value="Hindi">🇮🇳 Hindi Sub</option>
               <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
             </select>
-
           </div>
 
         </div>
@@ -457,8 +785,7 @@
 
     </section>
 
-
-    <!-- ================= ACCOUNT ================= -->
+    <!-- ACCOUNT -->
 
     <section class="section account-section" id="account">
 
@@ -470,14 +797,13 @@
         </div>
       </div>
 
-      <div class="account-panel">
+      <div class="account-box">
 
         <div id="loginPanel">
 
           <h2>Login / Signup ♡</h2>
 
           <label for="emailInput">Email Address</label>
-
           <input
             type="email"
             id="emailInput"
@@ -486,7 +812,6 @@
           >
 
           <label for="passwordInput">Password</label>
-
           <input
             type="password"
             id="passwordInput"
@@ -496,13 +821,9 @@
 
           <div class="account-buttons">
 
-            <button id="loginBtn" type="button">
-              Login
-            </button>
+            <button id="loginBtn" type="button">Login</button>
 
-            <button id="signupBtn" type="button">
-              Create Account
-            </button>
+            <button id="signupBtn" type="button">Create Account</button>
 
           </div>
 
@@ -512,7 +833,6 @@
 
         </div>
 
-
         <!-- RESET PASSWORD -->
 
         <div id="resetPanel" hidden>
@@ -520,7 +840,6 @@
           <h2>Reset Password</h2>
 
           <label for="newPassword">New Password</label>
-
           <input
             type="password"
             id="newPassword"
@@ -528,7 +847,6 @@
           >
 
           <label for="confirmPassword">Confirm Password</label>
-
           <input
             type="password"
             id="confirmPassword"
@@ -543,14 +861,13 @@
 
         </div>
 
-
         <!-- ACCOUNT INFORMATION -->
 
-        <div id="accountInfo">
+        <div id="accountInfo" hidden>
 
           <h3>Account Information</h3>
 
-          <p id="accountUser">Guest User</p>
+          <p id="accountUser">Signed in</p>
 
         </div>
 
@@ -560,8 +877,7 @@
 
     </section>
 
-
-    <!-- ================= ADMIN DASHBOARD ================= -->
+    <!-- ADMIN DASHBOARD -->
 
     <section class="section admin-section" id="adminDashboard" hidden>
 
@@ -583,14 +899,11 @@
 
         <hr>
 
-        <!-- ANIME UPLOAD -->
-
         <h3>🎬 Upload New Anime</h3>
 
         <form id="uploadForm">
 
           <label for="uploadTitle">Anime Title</label>
-
           <input
             type="text"
             id="uploadTitle"
@@ -599,14 +912,12 @@
           >
 
           <label for="uploadDescription">Description</label>
-
           <textarea
             id="uploadDescription"
             placeholder="Write anime description"
           ></textarea>
 
           <label for="uploadGenre">Genre</label>
-
           <select id="uploadGenre" required>
             <option value="Action">Action</option>
             <option value="Romance">Romance</option>
@@ -619,7 +930,6 @@
           </select>
 
           <label for="uploadLanguage">Audio / Language</label>
-
           <select id="uploadLanguage" required>
             <option value="Japanese">Japanese</option>
             <option value="Hindi Dub">Hindi Dub</option>
@@ -629,7 +939,6 @@
           </select>
 
           <label for="uploadEpisode">Episode Number</label>
-
           <input
             type="number"
             id="uploadEpisode"
@@ -639,7 +948,6 @@
           >
 
           <label for="uploadVideo">Video File</label>
-
           <input
             type="file"
             id="uploadVideo"
@@ -648,7 +956,6 @@
           >
 
           <label for="uploadPoster">Anime Poster</label>
-
           <input
             type="file"
             id="uploadPoster"
@@ -665,41 +972,22 @@
 
         <hr>
 
-
-        <!-- SUBTITLE UPLOAD -->
-
         <h3>💬 Upload Anime Subtitles</h3>
 
-        <label for="subtitleAnimeSelect">
-          Select Anime
-        </label>
-
+        <label for="subtitleAnimeSelect">Select Anime</label>
         <select id="subtitleAnimeSelect">
           <option value="">Select Anime</option>
         </select>
 
-        <label for="subtitleLanguageUpload">
-          Subtitle Language
-        </label>
-
+        <label for="subtitleLanguageUpload">Subtitle Language</label>
         <select id="subtitleLanguageUpload">
-
           <option value="Japanese">🇯🇵 Japanese Sub</option>
-
           <option value="English">🇬🇧 English Sub</option>
-
           <option value="Hindi">🇮🇳 Hindi Sub</option>
-
-          <option value="Hinglish (Roman)">
-            🇮🇳 Hinglish (Roman)
-          </option>
-
+          <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
         </select>
 
-        <label for="subtitleFileUpload">
-          Subtitle File (.vtt)
-        </label>
-
+        <label for="subtitleFileUpload">Subtitle File (.vtt)</label>
         <input
           type="file"
           id="subtitleFileUpload"
@@ -718,8 +1006,7 @@
 
   </main>
 
-
-  <!-- ================= FOOTER ================= -->
+  <!-- FOOTER -->
 
   <footer class="main-footer">
 
@@ -737,8 +1024,7 @@
 
   </footer>
 
-
-  <!-- ================= JAVASCRIPT ================= -->
+  <!-- JAVASCRIPT -->
 
   <script type="module" src="./app.js"></script>
 
