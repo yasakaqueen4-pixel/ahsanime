@@ -5,1011 +5,782 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090711">
-  <meta name="description" content="AnimeNoona - Your Anime Universe. Discover and watch anime.">
-
+  <meta name="description" content="AnimeNoona - Explore your anime universe.">
   <title>AnimeNoona ♡ | Anime Universe</title>
-
-  <link rel="stylesheet" href="./styles.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    [hidden] {
-      display: none !important;
+    :root {
+      --bg: #090711;
+      --panel: #141020;
+      --panel2: #1b152b;
+      --purple: #a855f7;
+      --pink: #ec4899;
+      --text: #f8f5ff;
+      --muted: #aaa2ba;
+      --border: rgba(255,255,255,.09);
+      --gradient: linear-gradient(120deg,#a855f7,#ec4899);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, sans-serif;
+      overflow-x: hidden;
     }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; }
+    .container { width: min(1200px,92%); margin: auto; }
 
-    .main-header {
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9,7,17,.91);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      min-height: 76px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 15px;
-    }
-
-    .logo {
-      font-family: 'Poppins', sans-serif;
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    #user {
-      display: none !important;
-    }
-
-    body:has(#logoutBtn:not([hidden])) #headerLoginBtn {
-      display: none !important;
-    }
-
-    .hero {
-      min-height: 620px;
-      align-items: center;
-    }
-
-    .hero-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .hero-visual {
-      width: min(100%, 420px);
-      height: 540px;
-      flex-shrink: 0;
-      border-radius: 25px;
-      overflow: hidden;
-      background: #171126;
-      border: 1px solid rgba(168,85,247,.3);
-      box-shadow: 0 20px 60px rgba(124,58,237,.25);
-      animation: float 5s ease-in-out infinite;
-    }
-
-    .hero-visual::before,
-    .hero-visual::after {
-      display: none !important;
-    }
-
-    .hero-image {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-      object-position: center;
-    }
-
-    .hero-tag {
-      margin-bottom: 20px;
-    }
-
-    .hero-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin: 25px 0;
-    }
-
-    .hero-buttons button {
-      border: none;
-      padding: 13px 20px;
-      border-radius: 11px;
-      font-weight: 800;
-      color: white;
-      background: linear-gradient(135deg,#a855f7,#7c3aed);
-    }
-
-    .hero-buttons .secondary-btn {
-      background: #241735;
-      border: 1px solid rgba(168,85,247,.4);
-    }
-
-    .hero-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 22px;
-    }
-
-    .hero-stats div {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .hero-stats strong {
-      color: #d8b4fe;
-      font-size: 22px;
-    }
-
-    .hero-stats span {
-      color: #b9adc9;
-      font-size: 12px;
-    }
-
-    .section-heading {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .section-heading h2 {
-      font-family: 'Poppins', sans-serif;
-      font-size: clamp(24px,4vw,35px);
-      font-weight: 800;
-      margin: 8px 0;
-    }
-
-    .section-heading p {
-      color: #aaa0bd;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .section-tag {
-      color: #c084fc;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 2px;
-    }
-
-    .anime-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(175px,1fr));
       gap: 20px;
     }
-
-    .anime-card {
-      min-width: 0;
+    .logo {
+      font-family: Outfit,sans-serif;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      white-space: nowrap;
     }
-
-    .anime-card img,
-    .anime-poster {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 13px;
+    .logo span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      color: transparent;
     }
-
-    .anime-info {
-      padding: 12px 3px;
-    }
-
-    .anime-info h3 {
-      font-size: 15px;
-      margin-bottom: 7px;
-    }
-
-    .anime-info p {
-      color: #aaa0bd;
-      font-size: 12px;
-    }
-
-    .anime-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .save-anime {
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: #241735;
-      border: 1px solid rgba(168,85,247,.3);
-      color: white;
-    }
-
-    .empty-message {
-      grid-column: 1/-1;
-      padding: 25px;
-      text-align: center;
-      color: #aaa0bd;
-      background: #171126;
-      border-radius: 13px;
-    }
-
-    .search-filter-area {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
-
-    #searchInput {
-      flex: 1 1 220px;
-    }
-
-    #genreFilter,
-    #languageFilter {
-      width: auto;
-      min-width: 150px;
-    }
-
-    .genre-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(130px,1fr));
-      gap: 13px;
-    }
-
-    .genre-card {
-      min-height: 75px;
-      border-radius: 13px;
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-      background: linear-gradient(145deg,#281a3e,#171126);
-      border: 1px solid rgba(168,85,247,.25);
-      transition: .25s;
-    }
-
-    .genre-card:hover {
-      transform: translateY(-5px);
-      background: linear-gradient(135deg,#7c3aed,#a855f7);
-    }
-
-    .player-container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-      border-radius: 20px;
-      background: #171126;
-      border: 1px solid rgba(168,85,247,.2);
-    }
-
-    #animeVideo {
-      width: 100%;
-      display: block;
-      aspect-ratio: 16/9;
-      max-height: 580px;
-      background: #000;
-      border-radius: 13px;
-    }
-
-    #playerTitle {
-      font-size: 22px;
-      margin: 20px 0 8px;
-    }
-
-    #nowPlayingTitle {
-      color: #d8b4fe;
-      margin-bottom: 12px;
-    }
-
-    .player-description {
-      color: #aaa0bd;
-      line-height: 1.7;
-      margin-bottom: 18px;
-    }
-
-    .player-settings {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 15px;
-    }
-
-    .setting-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #d8b4fe;
+    nav { display:flex; gap:25px; align-items:center; }
+    nav a {
+      color: var(--muted);
       font-size: 13px;
       font-weight: 700;
+      transition: .2s;
     }
-
-    .account-box {
-      max-width: 520px;
-      margin: auto;
-      padding: 28px;
-      border-radius: 20px;
-      background: #171126;
-      border: 1px solid rgba(168,85,247,.25);
-      box-shadow: 0 15px 40px rgba(0,0,0,.2);
-    }
-
-    .account-box h2 {
-      margin-bottom: 20px;
-    }
-
-    .account-box label {
-      display: block;
-      color: #d8b4fe;
-      font-size: 13px;
-      margin: 13px 0 7px;
-    }
-
-    .account-box input {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .account-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .account-buttons button {
-      flex: 1;
-      min-width: 110px;
-    }
-
-    .text-btn {
-      margin-top: 15px;
-      color: #c084fc;
-      background: transparent;
-      border: none;
-    }
-
-    #accountInfo {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
-      background: #241735;
-    }
-
-    .admin-panel {
-      padding: 25px;
-      border-radius: 18px;
-      background: #171126;
-      border: 1px solid rgba(168,85,247,.25);
-    }
-
-    .admin-panel label {
-      display: block;
-      margin: 14px 0 7px;
-      color: #d8b4fe;
-      font-size: 13px;
-    }
-
-    .admin-panel input,
-    .admin-panel select,
-    .admin-panel textarea {
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    .admin-panel textarea {
-      min-height: 100px;
-    }
-
-    .admin-panel hr {
+    nav a:hover { color: white; }
+    .header-actions { display:flex; align-items:center; gap:10px; }
+    .btn {
       border: 0;
-      border-top: 1px solid rgba(255,255,255,.1);
-      margin: 30px 0;
-    }
-
-    .main-footer {
-      text-align: center;
-      padding: 40px 7%;
-      background: #100c1b;
-      border-top: 1px solid rgba(255,255,255,.08);
-    }
-
-    .main-footer p {
-      color: #aaa0bd;
+      border-radius: 12px;
+      padding: 12px 19px;
+      color: white;
+      font-weight: 800;
       font-size: 13px;
-      line-height: 1.8;
-      margin-top: 10px;
+      background: var(--gradient);
+      transition: .2s;
+    }
+    .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .btn-outline {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+    }
+    #menuBtn {
+      display:none;
+      color:white;
+      border:1px solid var(--border);
+      background:var(--panel);
+      border-radius:10px;
+      padding:10px 13px;
     }
 
-    @media(max-width:650px) {
-      .hero {
-        min-height: auto;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 55px 5%;
-      }
+    /* HERO */
+    .hero {
+      min-height: 490px;
+      display:flex;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(90deg,rgba(9,7,17,.98) 5%,rgba(9,7,17,.76) 48%,rgba(9,7,17,.2)),
+        linear-gradient(0deg,var(--bg),transparent 45%),
+        url("https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1800&q=85") center/cover;
+    }
+    .hero-content { max-width:650px; padding:80px 0; position:relative; }
+    .eyebrow {
+      color:#e6b8ff;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:3px;
+      margin-bottom:18px;
+    }
+    .hero h1 {
+      font-family:Outfit,sans-serif;
+      font-size:clamp(42px,7vw,78px);
+      line-height:1.02;
+      letter-spacing:-3px;
+      margin-bottom:20px;
+    }
+    .hero h1 span {
+      background:var(--gradient);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .hero p {
+      color:#d0c8dc;
+      line-height:1.8;
+      max-width:520px;
+      font-size:15px;
+      margin-bottom:27px;
+    }
+    .hero-buttons { display:flex; gap:12px; flex-wrap:wrap; }
 
-      .hero h1 {
-        font-size: 40px;
-      }
+    /* GENERAL SECTIONS */
+    section { padding:55px 0; }
+    .section-head {
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:15px;
+      margin-bottom:24px;
+    }
+    .section-head h2 {
+      font-family:Outfit,sans-serif;
+      font-size:28px;
+      font-weight:900;
+    }
+    .section-head p { color:var(--muted); font-size:12px; margin-top:7px; }
+    .accent { color:#d69aff; }
 
-      .hero-visual {
-        width: 100%;
-        max-width: 360px;
-        height: 470px;
-        margin: 25px auto 0;
-      }
+    /* GENRES */
+    .genre-grid {
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:12px;
+    }
+    .genre-card {
+      padding:19px 12px;
+      border:1px solid var(--border);
+      border-radius:15px;
+      background:linear-gradient(145deg,#21172f,#120e1d);
+      text-align:center;
+      font-size:13px;
+      font-weight:800;
+      transition:.2s;
+      cursor:pointer;
+    }
+    .genre-card:hover {
+      border-color:var(--purple);
+      transform:translateY(-4px);
+      background:#261638;
+    }
+    .genre-icon { display:block; font-size:25px; margin-bottom:9px; }
 
-      .hero-stats {
-        gap: 14px;
-      }
-
-      .anime-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-        gap: 12px;
-      }
-
-      .anime-card img,
-      .anime-poster {
-        height: 190px;
-      }
-
-      .search-filter-area {
-        flex-direction: column;
-      }
-
-      #genreFilter,
-      #languageFilter {
-        width: 100%;
-      }
-
-      .player-settings {
-        grid-template-columns: 1fr;
-      }
-
-      .player-container {
-        padding: 12px;
-      }
-
-      .account-box {
-        padding: 20px 15px;
-      }
-
-      .section-heading {
-        align-items: flex-start;
-      }
-
-      .genre-grid {
-        grid-template-columns: repeat(2,minmax(0,1fr));
-      }
+    /* LIBRARY */
+    .toolbar {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:23px;
+    }
+    .field {
+      background:var(--panel);
+      color:white;
+      border:1px solid var(--border);
+      outline:none;
+      padding:13px 15px;
+      border-radius:11px;
+      min-width:150px;
+    }
+    .field:focus { border-color:var(--purple); }
+    #searchInput { flex:1; min-width:220px; }
+    .field option { background:#171126; }
+    .anime-grid {
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:20px;
+    }
+    .anime-card {
+      min-width:0;
+      border:1px solid var(--border);
+      background:var(--panel);
+      border-radius:15px;
+      overflow:hidden;
+      transition:.25s;
+    }
+    .anime-card:hover {
+      transform:translateY(-6px);
+      border-color:rgba(168,85,247,.6);
+      box-shadow:0 15px 35px rgba(0,0,0,.25);
+    }
+    .anime-poster {
+      height:220px;
+      position:relative;
+      background:linear-gradient(145deg,#392052,#171126);
+      overflow:hidden;
+    }
+    .anime-poster img {
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:.4s;
+    }
+    .anime-card:hover .anime-poster img { transform:scale(1.06); }
+    .poster-tag {
+      position:absolute;
+      top:10px;
+      left:10px;
+      padding:6px 9px;
+      border-radius:7px;
+      background:rgba(12,8,20,.85);
+      font-size:10px;
+      font-weight:900;
+    }
+    .anime-info { padding:13px; }
+    .anime-info h3 {
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      margin-bottom:8px;
+    }
+    .anime-info p { color:var(--muted); font-size:11px; }
+    .anime-meta {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:13px;
+      gap:5px;
+    }
+    .anime-meta span { font-size:10px; color:#d5b4f9; }
+    .small-btn {
+      border:0;
+      color:white;
+      background:#7c3aed;
+      padding:8px 11px;
+      border-radius:8px;
+      font-size:11px;
+      font-weight:800;
+    }
+    .empty-message {
+      color:var(--muted);
+      padding:25px 0;
+      text-align:center;
+      grid-column:1/-1;
     }
 
-    @media(max-width:360px) {
-      .hero h1 {
-        font-size: 33px;
-      }
+    /* PLAYER */
+    .player-layout {
+      display:grid;
+      grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);
+      gap:20px;
+    }
+    .video-box {
+      background:#000;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+    #animeVideo { width:100%; display:block; aspect-ratio:16/9; background:#000; }
+    .player-details {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:20px;
+    }
+    .player-details h3 { font-size:19px; margin-bottom:10px; }
+    .player-details p { color:var(--muted); font-size:12px; line-height:1.7; }
+    .player-control { margin-top:18px; }
+    .player-control label {
+      display:block;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .player-control select { width:100%; }
+    #subtitleStatus, #playerMessage, #libraryMessage {
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:10px;
+    }
 
-      .hero-visual {
-        height: 400px;
+    /* USER PANELS */
+    .panel {
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:17px;
+      padding:22px;
+      margin-top:20px;
+    }
+    .panel h2 { font-family:Outfit,sans-serif; margin-bottom:18px; }
+    .form-grid {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+    .form-group { display:flex; flex-direction:column; gap:8px; }
+    .form-group.full { grid-column:1/-1; }
+    .form-group label { font-size:12px; font-weight:800; }
+    .form-group input,.form-group select,.form-group textarea {
+      width:100%;
+      background:#0e0b17;
+      color:white;
+      border:1px solid var(--border);
+      padding:13px;
+      border-radius:10px;
+      outline:none;
+    }
+    .form-group textarea { min-height:95px; resize:vertical; }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus {
+      border-color:var(--purple);
+    }
+    .form-message { color:var(--muted); font-size:12px; margin-top:12px; }
+
+    /* FOOTER */
+    footer {
+      border-top:1px solid var(--border);
+      padding:35px 0;
+      background:#0d0a16;
+      margin-top:40px;
+    }
+    .footer-inner {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      flex-wrap:wrap;
+    }
+    footer p { color:var(--muted); font-size:12px; line-height:1.8; }
+
+    [hidden] { display:none !important; }
+
+    /* RESPONSIVE */
+    @media(max-width:950px) {
+      .anime-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .genre-grid { grid-template-columns:repeat(3,1fr); }
+      nav { gap:14px; }
+    }
+    @media(max-width:700px) {
+      .header-inner { min-height:65px; }
+      #menuBtn { display:block; }
+      nav {
+        display:none;
+        position:absolute;
+        top:65px;
+        left:0;
+        width:100%;
+        padding:20px 5%;
+        background:#100c1a;
+        border-bottom:1px solid var(--border);
+        flex-direction:column;
+        align-items:flex-start;
       }
+      nav.active { display:flex; }
+      .header-actions { gap:6px; }
+      .header-actions .btn { padding:10px 12px; font-size:11px; }
+      .logo { font-size:22px; }
+      .hero { min-height:430px; }
+      .hero h1 { letter-spacing:-2px; }
+      .anime-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+      .anime-poster { height:200px; }
+      .player-layout { grid-template-columns:1fr; }
+      .form-grid { grid-template-columns:1fr; }
+      .form-group.full { grid-column:auto; }
+      section { padding:38px 0; }
+      .section-head h2 { font-size:23px; }
+    }
+    @media(max-width:380px) {
+      .genre-grid { grid-template-columns:repeat(2,1fr); }
+      .anime-poster { height:165px; }
+      .header-actions #logoutBtn { display:none; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="main-header">
+<header>
+  <div class="container header-inner">
+    <a class="logo" href="#home">Anime<span>Noona</span> ♡</a>
 
-    <a href="#home" class="logo">
-      Anime<span>Noona</span> ♡
-    </a>
-
-    <button id="menuBtn" type="button" aria-label="Open navigation">
-      ☰
-    </button>
-
-    <nav class="navbar" id="mainNav">
+    <nav id="mainNav">
       <a href="#home">Home</a>
-      <a href="#library">Anime</a>
+      <a href="#library">Anime Library</a>
       <a href="#genres">Genres</a>
       <a href="#continue">Continue</a>
       <a href="#watchlist">Watchlist</a>
-      <a href="#account">Account</a>
+      <a href="#player">Player</a>
     </nav>
 
     <div class="header-actions">
-      <span id="user" hidden></span>
-
-      <a href="#account" id="headerLoginBtn" class="login-header-btn">
-        Login / Signup
-      </a>
-
-      <button id="logoutBtn" type="button" hidden>
-        Logout
-      </button>
+      <span id="user" style="font-size:11px;color:#d5b4f9"></span>
+      <button class="btn btn-outline" id="headerLoginBtn">Login</button>
+      <button class="btn btn-outline" id="logoutBtn" hidden>Logout</button>
+      <button id="menuBtn" aria-label="Open menu">☰</button>
     </div>
+  </div>
+</header>
 
-  </header>
+<main>
 
-  <main>
-
-    <!-- HERO -->
-    <section class="hero" id="home">
-
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="container">
       <div class="hero-content">
-
-        <span class="hero-tag">
-          ✦ YOUR PERSONAL ANIME UNIVERSE ✦
-        </span>
-
-        <h1>
-          Welcome to
-          <br>
-          <span>AnimeNoona</span>
-        </h1>
-
+        <div class="eyebrow">WELCOME TO YOUR ANIME UNIVERSE</div>
+        <h1>Discover Your <span>Anime World.</span></h1>
         <p>
-          Discover your favourite anime, explore amazing stories
-          and enjoy your anime universe in one place.
+          Explore amazing anime adventures, discover your favourite
+          characters and enjoy your anime universe in one place.
         </p>
-
         <div class="hero-buttons">
-
-          <button id="exploreBtn" type="button">
-            Explore Anime →
-          </button>
-
-          <button id="heroWatchBtn" class="secondary-btn" type="button">
-            ▶ Watch Anime
-          </button>
-
+          <button class="btn" id="exploreBtn">Explore Anime →</button>
+          <button class="btn btn-outline" id="heroWatchBtn">Start Watching ▶</button>
         </div>
-
-        <div class="hero-stats">
-
-          <div>
-            <strong>∞</strong>
-            <span>Anime Universe</span>
-          </div>
-
-          <div>
-            <strong>4+</strong>
-            <span>Subtitle Languages</span>
-          </div>
-
-          <div>
-            <strong>♡</strong>
-            <span>Made for Anime Fans</span>
-          </div>
-
-        </div>
-
       </div>
+    </div>
+  </section>
 
-      <div class="hero-visual">
-        <img
-          src="./hero-anime.png"
-          alt="AnimeNoona Anime Characters"
-          class="hero-image"
-          onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;display:grid;place-items:center;height:100%;font-size:50px;color:#d8b4fe&quot;>♡ AnimeNoona</div>';"
-        >
-      </div>
-
-    </section>
-
-    <!-- ANIME LIBRARY -->
-    <section class="section" id="library">
-
-      <div class="section-heading">
+  <!-- GENRES -->
+  <section id="genres">
+    <div class="container">
+      <div class="section-head">
         <div>
-          <span class="section-tag">DISCOVER</span>
-          <h2>Anime Library</h2>
-          <p>Explore your favourite anime collection.</p>
-        </div>
-
-        <span id="animeCount">0 Anime</span>
-      </div>
-
-      <div class="search-filter-area">
-
-        <input
-          type="search"
-          id="searchInput"
-          placeholder="Search anime..."
-          autocomplete="off"
-        >
-
-        <select id="genreFilter">
-          <option value="all">All Genres</option>
-          <option value="Action">Action</option>
-          <option value="Romance">Romance</option>
-          <option value="Adventure">Adventure</option>
-          <option value="Fantasy">Fantasy</option>
-          <option value="Comedy">Comedy</option>
-          <option value="Drama">Drama</option>
-          <option value="Horror">Horror</option>
-          <option value="Mystery">Mystery</option>
-        </select>
-
-        <select id="languageFilter">
-          <option value="all">All Languages</option>
-          <option value="Hindi Dub">Hindi Dub</option>
-          <option value="Hindi Sub">Hindi Sub</option>
-          <option value="Hinglish (Roman)">Hinglish</option>
-          <option value="English Sub">English Sub</option>
-          <option value="Japanese">Japanese</option>
-        </select>
-
-      </div>
-
-      <div id="animeGrid" class="anime-grid">
-        <p class="empty-message">Loading anime...</p>
-      </div>
-
-      <p id="libraryMessage" class="message"></p>
-
-    </section>
-
-    <!-- GENRES -->
-    <section class="section" id="genres">
-
-      <div class="section-heading">
-        <div>
-          <span class="section-tag">EXPLORE BY CATEGORY</span>
-          <h2>Popular Genres</h2>
-          <p>Choose your favourite anime category.</p>
+          <h2>Explore <span class="accent">Genres</span></h2>
+          <p>Find your next favourite anime.</p>
         </div>
       </div>
 
       <div class="genre-grid">
+        <button class="genre-card" data-genre="Action"><span class="genre-icon">⚔️</span>Action</button>
+        <button class="genre-card" data-genre="Romance"><span class="genre-icon">💗</span>Romance</button>
+        <button class="genre-card" data-genre="Adventure"><span class="genre-icon">🌍</span>Adventure</button>
+        <button class="genre-card" data-genre="Fantasy"><span class="genre-icon">✨</span>Fantasy</button>
+        <button class="genre-card" data-genre="Comedy"><span class="genre-icon">😂</span>Comedy</button>
+        <button class="genre-card" data-genre="Horror"><span class="genre-icon">👻</span>Horror</button>
+      </div>
+    </div>
+  </section>
 
-        <button class="genre-card" data-genre="Action" type="button">⚔️ Action</button>
-        <button class="genre-card" data-genre="Romance" type="button">💗 Romance</button>
-        <button class="genre-card" data-genre="Adventure" type="button">🌍 Adventure</button>
-        <button class="genre-card" data-genre="Fantasy" type="button">✨ Fantasy</button>
-        <button class="genre-card" data-genre="Comedy" type="button">😂 Comedy</button>
-        <button class="genre-card" data-genre="Drama" type="button">🎭 Drama</button>
-        <button class="genre-card" data-genre="Horror" type="button">👻 Horror</button>
-        <button class="genre-card" data-genre="Mystery" type="button">🔍 Mystery</button>
-
+  <!-- LIBRARY -->
+  <section id="library">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Anime <span class="accent">Library</span></h2>
+          <p>Discover anime available in your collection.</p>
+        </div>
+        <span id="animeCount" class="accent">0 Anime</span>
       </div>
 
-    </section>
+      <div class="toolbar">
+        <input class="field" id="searchInput" type="search" placeholder="🔍 Search anime...">
+        <select class="field" id="genreFilter">
+          <option value="All">All Genres</option>
+          <option>Action</option>
+          <option>Romance</option>
+          <option>Adventure</option>
+          <option>Fantasy</option>
+          <option>Comedy</option>
+          <option>Horror</option>
+          <option>Drama</option>
+        </select>
+        <select class="field" id="languageFilter">
+          <option value="All">All Languages</option>
+          <option>Hindi Dub</option>
+          <option>Hindi Sub</option>
+          <option>Japanese</option>
+          <option>English</option>
+        </select>
+      </div>
 
-    <!-- CONTINUE WATCHING -->
-    <section class="section" id="continue">
+      <div class="anime-grid" id="animeGrid"></div>
+      <p id="libraryMessage"></p>
+    </div>
+  </section>
 
-      <div class="section-heading">
+  <!-- CONTINUE WATCHING -->
+  <section id="continue">
+    <div class="container">
+      <div class="section-head">
         <div>
-          <span class="section-tag">PICK UP WHERE YOU LEFT OFF</span>
-          <h2>Continue Watching</h2>
-          <p>Your recently watched anime.</p>
+          <h2>Continue <span class="accent">Watching</span></h2>
+          <p>Continue your anime journey.</p>
         </div>
       </div>
-
-      <div id="continueGrid" class="anime-grid">
-        <p class="empty-message">Your watch history will appear here.</p>
+      <div class="anime-grid" id="continueGrid">
+        <p class="empty-message">Your recently watched anime will appear here.</p>
       </div>
+    </div>
+  </section>
 
-    </section>
-
-    <!-- WATCHLIST -->
-    <section class="section" id="watchlist">
-
-      <div class="section-heading">
+  <!-- WATCHLIST -->
+  <section id="watchlist">
+    <div class="container">
+      <div class="section-head">
         <div>
-          <span class="section-tag">YOUR COLLECTION</span>
-          <h2>My Watchlist ♡</h2>
-          <p>Anime saved to your personal list.</p>
+          <h2>My <span class="accent">Watchlist</span></h2>
+          <p>Your saved anime collection.</p>
         </div>
       </div>
-
-      <div id="watchlistGrid" class="anime-grid">
+      <div class="anime-grid" id="watchlistGrid">
         <p class="empty-message">Your watchlist is empty.</p>
       </div>
+    </div>
+  </section>
 
-    </section>
-
-    <!-- ANIME PLAYER -->
-    <section class="section player-section" id="player">
-
-      <div class="section-heading">
+  <!-- PLAYER -->
+  <section id="player">
+    <div class="container">
+      <div class="section-head">
         <div>
-          <span class="section-tag">ENJOY YOUR ANIME</span>
-          <h2>Anime Player</h2>
-          <p>Watch anime with subtitle settings.</p>
+          <h2>Anime <span class="accent">Player</span></h2>
+          <p>Choose an episode and subtitle language.</p>
         </div>
       </div>
 
-      <div class="player-container">
+      <div class="player-layout">
+        <div>
+          <div class="video-box">
+            <video id="animeVideo" controls playsinline preload="metadata"></video>
+          </div>
+          <p id="playerMessage"></p>
+        </div>
 
-        <video id="animeVideo" controls playsinline preload="metadata">
-          Your browser does not support HTML5 video.
-        </video>
-
-        <h3 id="playerTitle">Select an Anime</h3>
-
-        <h4 id="nowPlayingTitle">Nothing Playing</h4>
-
-        <p id="playerDescription" class="player-description">
-          Select an anime from the library to start watching.
-        </p>
-
-        <div class="player-settings">
-
-          <div class="setting-group">
-            <label for="episodeSelect">🎬 Select Episode</label>
-
-            <select id="episodeSelect">
-              <option value="1">Episode 1</option>
+        <div class="player-details">
+          <h3 id="playerTitle">Select an Anime</h3>
+          <p id="playerDescription">Your selected anime information will appear here.</p>
+          <div class="player-control">
+            <label for="episodeSelect">Select Episode</label>
+            <select class="field" id="episodeSelect">
+              <option value="">Choose episode</option>
             </select>
           </div>
-
-          <div class="setting-group">
-            <label for="subtitleSelect">💬 Subtitle Language</label>
-
-            <select id="subtitleSelect">
-              <option value="">Subtitles Off</option>
-              <option value="Japanese">🇯🇵 Japanese Sub</option>
-              <option value="English">🇬🇧 English Sub</option>
-              <option value="Hindi">🇮🇳 Hindi Sub</option>
-              <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
+          <div class="player-control">
+            <label for="subtitleSelect">Subtitle Language (CC)</label>
+            <select class="field" id="subtitleSelect">
+              <option value="">Off</option>
+              <option value="Hindi (Hinglish)">Hindi (Hinglish / Roman)</option>
+              <option value="Hindi (Devanagari)">Hindi (देवनागरी)</option>
+              <option value="English">English</option>
+              <option value="Japanese">Japanese</option>
             </select>
+            <span id="subtitleStatus">Select a subtitle track when available.</span>
           </div>
-
-        </div>
-
-        <p id="subtitleStatus" class="message">
-          Choose a subtitle language.
-        </p>
-
-        <p id="playerMessage" class="message"></p>
-
-      </div>
-
-    </section>
-
-    <!-- ACCOUNT -->
-    <section class="section account-section" id="account">
-
-      <div class="section-heading">
-        <div>
-          <span class="section-tag">YOUR ACCOUNT</span>
-          <h2>Welcome to AnimeNoona</h2>
-          <p>Login or create your account.</p>
+          <h4 id="nowPlayingTitle" style="margin-top:18px;font-size:13px">Not playing</h4>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="account-box">
-
-        <div id="loginPanel">
-
-          <h2>Login / Signup ♡</h2>
-
-          <label for="emailInput">Email Address</label>
-          <input
-            type="email"
-            id="emailInput"
-            placeholder="Enter your email"
-            autocomplete="email"
-          >
-
-          <label for="passwordInput">Password</label>
-          <input
-            type="password"
-            id="passwordInput"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-          >
-
-          <div class="account-buttons">
-
-            <button id="loginBtn" type="button">Login</button>
-
-            <button id="signupBtn" type="button">Create Account</button>
-
+  <!-- LOGIN / SIGNUP -->
+  <section id="account">
+    <div class="container">
+      <div class="panel" id="loginPanel">
+        <h2>Welcome to <span class="accent">AnimeNoona</span></h2>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="emailInput">Email Address</label>
+            <input id="emailInput" type="email" placeholder="Enter your email">
           </div>
-
-          <button id="forgotBtn" class="text-btn" type="button">
-            Forgot Password?
-          </button>
-
+          <div class="form-group full">
+            <label for="passwordInput">Password</label>
+            <input id="passwordInput" type="password" placeholder="Enter your password">
+          </div>
         </div>
-
-        <!-- RESET PASSWORD -->
-        <div id="resetPanel" hidden>
-
-          <h2>Reset Password</h2>
-
-          <label for="newPassword">New Password</label>
-          <input
-            type="password"
-            id="newPassword"
-            placeholder="Enter new password"
-          >
-
-          <label for="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirm new password"
-          >
-
-          <button id="updatePasswordBtn" type="button">
-            Update Password
-          </button>
-
-          <p id="resetMessage" class="message"></p>
-
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:17px">
+          <button class="btn" id="loginBtn">Login</button>
+          <button class="btn btn-outline" id="signupBtn">Create Account</button>
+          <button class="btn btn-outline" id="forgotBtn">Forgot Password?</button>
         </div>
-
-        <!-- ACCOUNT INFORMATION -->
-        <div id="accountInfo" hidden>
-
-          <h3>Account Information</h3>
-
-          <p id="accountUser">Signed in</p>
-
-        </div>
-
-        <p id="accountMessage" class="message"></p>
-
+        <p id="accountMessage" class="form-message"></p>
       </div>
 
-    </section>
+      <div class="panel" id="resetPanel" hidden>
+        <h2>Reset <span class="accent">Password</span></h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input id="newPassword" type="password" placeholder="New password">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" type="password" placeholder="Confirm password">
+          </div>
+        </div>
+        <button class="btn" id="updatePasswordBtn" style="margin-top:15px">Update Password</button>
+        <p id="resetMessage" class="form-message"></p>
+      </div>
 
-    <!-- ADMIN DASHBOARD -->
-    <section class="section admin-section" id="adminDashboard" hidden>
+      <div class="panel" id="accountInfo" hidden>
+        <h2>Your <span class="accent">Account</span></h2>
+        <p id="accountUser" class="form-message"></p>
+      </div>
+    </div>
+  </section>
 
-      <div class="section-heading">
+  <!-- ADMIN DASHBOARD -->
+  <section id="adminDashboard" hidden>
+    <div class="container">
+      <div class="section-head">
         <div>
-          <span class="section-tag">ADMIN CONTROL CENTER</span>
-          <h2>Admin Dashboard</h2>
-          <p>Manage your AnimeNoona anime collection.</p>
+          <h2>Admin <span class="accent">Dashboard</span></h2>
+          <p>Manage your anime library and uploads.</p>
         </div>
       </div>
 
-      <div class="admin-panel">
+      <div class="panel">
+        <h2>Dashboard Status</h2>
+        <p id="adminStatus" class="form-message">Checking admin access...</p>
+      </div>
 
-        <h3>🔐 Admin Status</h3>
-
-        <p id="adminStatus" class="message">
-          Checking admin access...
-        </p>
-
-        <hr>
-
-        <!-- UPLOAD ANIME -->
-        <h3>🎬 Upload New Anime</h3>
-
+      <!-- ANIME UPLOAD -->
+      <div class="panel">
+        <h2>Upload <span class="accent">Anime / Episode</span></h2>
         <form id="uploadForm">
-
-          <label for="uploadTitle">Anime Title</label>
-          <input
-            type="text"
-            id="uploadTitle"
-            placeholder="Enter anime title"
-            required
-          >
-
-          <label for="uploadDescription">Description</label>
-          <textarea
-            id="uploadDescription"
-            placeholder="Write anime description"
-          ></textarea>
-
-          <label for="uploadGenre">Genre</label>
-          <select id="uploadGenre" required>
-            <option value="Action">Action</option>
-            <option value="Romance">Romance</option>
-            <option value="Adventure">Adventure</option>
-            <option value="Fantasy">Fantasy</option>
-            <option value="Comedy">Comedy</option>
-            <option value="Drama">Drama</option>
-            <option value="Horror">Horror</option>
-            <option value="Mystery">Mystery</option>
-          </select>
-
-          <label for="uploadLanguage">Audio / Language</label>
-          <select id="uploadLanguage" required>
-            <option value="Japanese">Japanese</option>
-            <option value="Hindi Dub">Hindi Dub</option>
-            <option value="Hindi Sub">Hindi Sub</option>
-            <option value="Hinglish (Roman)">Hinglish (Roman)</option>
-            <option value="English Sub">English Sub</option>
-          </select>
-
-          <label for="uploadEpisode">Episode Number</label>
-          <input
-            type="number"
-            id="uploadEpisode"
-            min="1"
-            value="1"
-            required
-          >
-
-          <label for="uploadVideo">Video File</label>
-          <input
-            type="file"
-            id="uploadVideo"
-            accept="video/mp4,video/webm,video/ogg"
-            required
-          >
-
-          <label for="uploadPoster">Anime Poster</label>
-          <input
-            type="file"
-            id="uploadPoster"
-            accept="image/*"
-          >
-
-          <button id="uploadButton" type="submit">
-            ⬆ Upload Anime
-          </button>
-
-          <p id="uploadMessage" class="message"></p>
-
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="uploadTitle">Anime Title</label>
+              <input id="uploadTitle" type="text" required placeholder="Anime name">
+            </div>
+            <div class="form-group">
+              <label for="uploadGenre">Genre</label>
+              <select id="uploadGenre" required>
+                <option value="">Choose genre</option>
+                <option>Action</option>
+                <option>Romance</option>
+                <option>Adventure</option>
+                <option>Fantasy</option>
+                <option>Comedy</option>
+                <option>Horror</option>
+                <option>Drama</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="uploadLanguage">Audio Language</label>
+              <select id="uploadLanguage" required>
+                <option value="">Choose language</option>
+                <option>Hindi Dub</option>
+                <option>Hindi Sub</option>
+                <option>Japanese</option>
+                <option>English</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="uploadEpisode">Episode Number</label>
+              <input id="uploadEpisode" type="number" min="1" value="1" required>
+            </div>
+            <div class="form-group full">
+              <label for="uploadDescription">Description</label>
+              <textarea id="uploadDescription" placeholder="Anime description"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="uploadVideo">Video File</label>
+              <input id="uploadVideo" type="file" accept="video/*" required>
+            </div>
+            <div class="form-group">
+              <label for="uploadPoster">Poster Image</label>
+              <input id="uploadPoster" type="file" accept="image/*">
+            </div>
+          </div>
+          <button class="btn" id="uploadButton" type="submit" style="margin-top:17px">Upload Anime</button>
+          <p id="uploadMessage" class="form-message"></p>
         </form>
-
-        <hr>
-
-        <!-- ADVANCED EPISODE-WISE SUBTITLE UPLOAD -->
-        <h3>💬 Upload Anime Subtitles</h3>
-
-        <label for="subtitleAnimeSelect">
-          🎬 Select Anime
-        </label>
-
-        <select id="subtitleAnimeSelect" required>
-          <option value="">Select Anime</option>
-        </select>
-
-        <label for="subtitleEpisodeSelect">
-          📺 Select Episode
-        </label>
-
-        <select id="subtitleEpisodeSelect" required>
-          <option value="">Select Episode</option>
-        </select>
-
-        <label for="subtitleLanguageUpload">
-          💬 Select Subtitle Language
-        </label>
-
-        <select id="subtitleLanguageUpload" required>
-          <option value="Japanese">🇯🇵 Japanese Sub</option>
-          <option value="English">🇬🇧 English Sub</option>
-          <option value="Hindi">🇮🇳 Hindi Sub</option>
-          <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
-        </select>
-
-        <label for="subtitleFileUpload">
-          📄 Upload Subtitle File (.vtt)
-        </label>
-
-        <input
-          type="file"
-          id="subtitleFileUpload"
-          accept=".vtt,text/vtt"
-          required
-        >
-
-        <button
-          id="subtitleUploadButton"
-          type="button"
-        >
-          ⬆ Upload Subtitle
-        </button>
-
-        <p
-          id="subtitleUploadMessage"
-          class="message"
-          role="status"
-          aria-live="polite"
-        ></p>
-
       </div>
 
-    </section>
+      <!-- SUBTITLE UPLOAD -->
+      <div class="panel">
+        <h2>Upload <span class="accent">Subtitles</span></h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="subtitleAnimeSelect">Anime</label>
+            <select id="subtitleAnimeSelect">
+              <option value="">Select anime</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subtitleEpisodeSelect">Episode</label>
+            <select id="subtitleEpisodeSelect">
+              <option value="">Select episode</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subtitleLanguageUpload">Subtitle Language</label>
+            <select id="subtitleLanguageUpload">
+              <option value="Hindi (Hinglish)">Hindi (Hinglish / Roman)</option>
+              <option value="Hindi (Devanagari)">Hindi (देवनागरी)</option>
+              <option value="English">English</option>
+              <option value="Japanese">Japanese</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="subtitleFileUpload">Subtitle File (.vtt)</label>
+            <input id="subtitleFileUpload" type="file" accept=".vtt,text/vtt">
+          </div>
+        </div>
+        <button class="btn" id="subtitleUploadButton" style="margin-top:17px">Upload Subtitle</button>
+        <p id="subtitleUploadMessage" class="form-message"></p>
+      </div>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  <!-- FOOTER -->
-  <footer class="main-footer">
+<footer>
+  <div class="container footer-inner">
+    <div>
+      <a class="logo" href="#home">Anime<span>Noona</span> ♡</a>
+      <p>Your Anime Universe • Made for Anime Fans</p>
+    </div>
+    <p>Only authorized anime streams will be linked here.<br>© 2026 AnimeNoona. All rights reserved.</p>
+  </div>
+</footer>
 
-    <a href="#home" class="logo">
-      Anime<span>Noona</span> ♡
-    </a>
+<script>
+  // Mobile navigation
+  const menuBtn = document.getElementById("menuBtn");
+  const mainNav = document.getElementById("mainNav");
 
-    <p>Your Anime World • Made for Anime Fans</p>
+  menuBtn?.addEventListener("click", () => {
+    mainNav.classList.toggle("active");
+  });
 
-    <p>
-      Discover anime, enjoy your favourite stories and explore your universe.
-    </p>
+  mainNav?.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => mainNav.classList.remove("active"));
+  });
 
-    <p>© 2026 AnimeNoona. All rights reserved.</p>
+  // Page navigation
+  document.getElementById("exploreBtn")?.addEventListener("click", () => {
+    document.getElementById("library").scrollIntoView({ behavior: "smooth" });
+  });
 
-  </footer>
+  document.getElementById("heroWatchBtn")?.addEventListener("click", () => {
+    document.getElementById("player").scrollIntoView({ behavior: "smooth" });
+  });
 
-  <!-- JAVASCRIPT -->
-  <script type="module" src="./app.js"></script>
+  document.getElementById("headerLoginBtn")?.addEventListener("click", () => {
+    document.getElementById("account").scrollIntoView({ behavior: "smooth" });
+  });
 
+  // Genre quick filters
+  document.querySelectorAll(".genre-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const filter = document.getElementById("genreFilter");
+      filter.value = card.dataset.genre;
+      filter.dispatchEvent(new Event("change", { bubbles: true }));
+      document.getElementById("library").scrollIntoView({ behavior: "smooth" });
+    });
+  });
+</script>
+
+<script type="module" src="./app.js"></script>
 </body>
 </html>
