@@ -972,33 +972,76 @@
 
         <hr>
 
-        <h3>💬 Upload Anime Subtitles</h3>
+        
+<!-- =====================================
+     ANIMENOONA — ADVANCED SUBTITLE UPLOAD
+===================================== -->
+
+<hr>
+
+<h3>💬 Upload Anime Subtitles</h3>
+
+<!-- SELECT ANIME -->
+<label for="subtitleAnimeSelect">
+  🎬 Select Anime
+</label>
+
+<select id="subtitleAnimeSelect" required>
+  <option value="">Select Anime</option>
+</select>
+
+<!-- SELECT EPISODE -->
+<label for="subtitleEpisodeSelect">
+  📺 Select Episode
+</label>
+
+<select id="subtitleEpisodeSelect" required>
+  <option value="">Select Episode</option>
+</select>
+
+<!-- SUBTITLE LANGUAGE -->
+<label for="subtitleLanguageUpload">
+  💬 Select Subtitle Language
+</label>
+
+<select id="subtitleLanguageUpload" required>
+  <option value="Japanese">🇯🇵 Japanese Sub</option>
+  <option value="English">🇬🇧 English Sub</option>
+  <option value="Hindi">🇮🇳 Hindi Sub</option>
+  <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
+</select>
+
+<!-- SUBTITLE FILE -->
+<label for="subtitleFileUpload">
+  📄 Upload Subtitle File (.vtt)
+</label>
+
+<input
+  type="file"
+  id="subtitleFileUpload"
+  accept=".vtt,text/vtt"
+  required
+>
+
+<!-- UPLOAD BUTTON -->
+<button
+  id="subtitleUploadButton"
+  type="button"
+>
+  ⬆ Upload Subtitle
+</button>
+
+<!-- STATUS MESSAGE -->
+<p
+  id="subtitleUploadMessage"
+  class="message"
+  role="status"
+  aria-live="polite"
+></p>
+
 
         <label for="subtitleAnimeSelect">Select Anime</label>
-        <select id="subtitleAnimeSelect">
-          <option value="">Select Anime</option>
-        </select>
-
-        <label for="subtitleLanguageUpload">Subtitle Language</label>
-        <select id="subtitleLanguageUpload">
-          <option value="Japanese">🇯🇵 Japanese Sub</option>
-          <option value="English">🇬🇧 English Sub</option>
-          <option value="Hindi">🇮🇳 Hindi Sub</option>
-          <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
-        </select>
-
-        <label for="subtitleFileUpload">Subtitle File (.vtt)</label>
-        <input
-          type="file"
-          id="subtitleFileUpload"
-          accept=".vtt,text/vtt"
-        >
-
-        <button id="subtitleUploadButton" type="button">
-          ⬆ Upload Subtitle
-        </button>
-
-        <p id="subtitleUploadMessage" class="message"></p>
+         class="message"></p>
 
       </div>
 
