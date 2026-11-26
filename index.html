@@ -17,8 +17,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    /* ================= EXTRA DESIGN ================= */
-
     [hidden] {
       display: none !important;
     }
@@ -26,8 +24,6 @@
     body {
       font-family: 'Inter', sans-serif;
     }
-
-    /* HEADER */
 
     .main-header {
       display: flex;
@@ -42,21 +38,13 @@
       white-space: nowrap;
     }
 
-    /* Never show email in public header */
-
     #user {
-      display: none !important;
-    }
-
-    #logoutBtn:not([hidden]) ~ #headerLoginBtn {
       display: none !important;
     }
 
     body:has(#logoutBtn:not([hidden])) #headerLoginBtn {
       display: none !important;
     }
-
-    /* HERO */
 
     .hero {
       min-height: 620px;
@@ -140,8 +128,6 @@
       font-size: 12px;
     }
 
-    /* SECTION HEADINGS */
-
     .section-heading {
       display: flex;
       align-items: flex-end;
@@ -169,8 +155,6 @@
       font-weight: 800;
       letter-spacing: 2px;
     }
-
-    /* ANIME CARDS */
 
     .anime-grid {
       display: grid;
@@ -229,8 +213,6 @@
       border-radius: 13px;
     }
 
-    /* SEARCH */
-
     .search-filter-area {
       display: flex;
       flex-wrap: wrap;
@@ -247,8 +229,6 @@
       width: auto;
       min-width: 150px;
     }
-
-    /* GENRES */
 
     .genre-grid {
       display: grid;
@@ -271,8 +251,6 @@
       transform: translateY(-5px);
       background: linear-gradient(135deg,#7c3aed,#a855f7);
     }
-
-    /* PLAYER */
 
     .player-container {
       max-width: 1000px;
@@ -321,8 +299,6 @@
       font-size: 13px;
       font-weight: 700;
     }
-
-    /* ACCOUNT */
 
     .account-box {
       max-width: 520px;
@@ -376,8 +352,6 @@
       background: #241735;
     }
 
-    /* ADMIN */
-
     .admin-panel {
       padding: 25px;
       border-radius: 18px;
@@ -409,8 +383,6 @@
       margin: 30px 0;
     }
 
-    /* FOOTER */
-
     .main-footer {
       text-align: center;
       padding: 40px 7%;
@@ -424,8 +396,6 @@
       line-height: 1.8;
       margin-top: 10px;
     }
-
-    /* MOBILE */
 
     @media(max-width:650px) {
       .hero {
@@ -505,7 +475,6 @@
 <body>
 
   <!-- HEADER -->
-
   <header class="main-header">
 
     <a href="#home" class="logo">
@@ -542,7 +511,6 @@
   <main>
 
     <!-- HERO -->
-
     <section class="hero" id="home">
 
       <div class="hero-content">
@@ -595,8 +563,6 @@
 
       </div>
 
-      <!-- Uploaded image file must be named hero-anime.png -->
-
       <div class="hero-visual">
         <img
           src="./hero-anime.png"
@@ -609,7 +575,6 @@
     </section>
 
     <!-- ANIME LIBRARY -->
-
     <section class="section" id="library">
 
       <div class="section-heading">
@@ -663,7 +628,6 @@
     </section>
 
     <!-- GENRES -->
-
     <section class="section" id="genres">
 
       <div class="section-heading">
@@ -690,7 +654,6 @@
     </section>
 
     <!-- CONTINUE WATCHING -->
-
     <section class="section" id="continue">
 
       <div class="section-heading">
@@ -708,7 +671,6 @@
     </section>
 
     <!-- WATCHLIST -->
-
     <section class="section" id="watchlist">
 
       <div class="section-heading">
@@ -726,7 +688,6 @@
     </section>
 
     <!-- ANIME PLAYER -->
-
     <section class="section player-section" id="player">
 
       <div class="section-heading">
@@ -786,7 +747,6 @@
     </section>
 
     <!-- ACCOUNT -->
-
     <section class="section account-section" id="account">
 
       <div class="section-heading">
@@ -834,7 +794,6 @@
         </div>
 
         <!-- RESET PASSWORD -->
-
         <div id="resetPanel" hidden>
 
           <h2>Reset Password</h2>
@@ -862,7 +821,6 @@
         </div>
 
         <!-- ACCOUNT INFORMATION -->
-
         <div id="accountInfo" hidden>
 
           <h3>Account Information</h3>
@@ -878,7 +836,6 @@
     </section>
 
     <!-- ADMIN DASHBOARD -->
-
     <section class="section admin-section" id="adminDashboard" hidden>
 
       <div class="section-heading">
@@ -899,6 +856,7 @@
 
         <hr>
 
+        <!-- UPLOAD ANIME -->
         <h3>🎬 Upload New Anime</h3>
 
         <form id="uploadForm">
@@ -972,76 +930,60 @@
 
         <hr>
 
-        
-<!-- =====================================
-     ANIMENOONA — ADVANCED SUBTITLE UPLOAD
-===================================== -->
+        <!-- ADVANCED EPISODE-WISE SUBTITLE UPLOAD -->
+        <h3>💬 Upload Anime Subtitles</h3>
 
-<hr>
+        <label for="subtitleAnimeSelect">
+          🎬 Select Anime
+        </label>
 
-<h3>💬 Upload Anime Subtitles</h3>
+        <select id="subtitleAnimeSelect" required>
+          <option value="">Select Anime</option>
+        </select>
 
-<!-- SELECT ANIME -->
-<label for="subtitleAnimeSelect">
-  🎬 Select Anime
-</label>
+        <label for="subtitleEpisodeSelect">
+          📺 Select Episode
+        </label>
 
-<select id="subtitleAnimeSelect" required>
-  <option value="">Select Anime</option>
-</select>
+        <select id="subtitleEpisodeSelect" required>
+          <option value="">Select Episode</option>
+        </select>
 
-<!-- SELECT EPISODE -->
-<label for="subtitleEpisodeSelect">
-  📺 Select Episode
-</label>
+        <label for="subtitleLanguageUpload">
+          💬 Select Subtitle Language
+        </label>
 
-<select id="subtitleEpisodeSelect" required>
-  <option value="">Select Episode</option>
-</select>
+        <select id="subtitleLanguageUpload" required>
+          <option value="Japanese">🇯🇵 Japanese Sub</option>
+          <option value="English">🇬🇧 English Sub</option>
+          <option value="Hindi">🇮🇳 Hindi Sub</option>
+          <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
+        </select>
 
-<!-- SUBTITLE LANGUAGE -->
-<label for="subtitleLanguageUpload">
-  💬 Select Subtitle Language
-</label>
+        <label for="subtitleFileUpload">
+          📄 Upload Subtitle File (.vtt)
+        </label>
 
-<select id="subtitleLanguageUpload" required>
-  <option value="Japanese">🇯🇵 Japanese Sub</option>
-  <option value="English">🇬🇧 English Sub</option>
-  <option value="Hindi">🇮🇳 Hindi Sub</option>
-  <option value="Hinglish (Roman)">🇮🇳 Hinglish (Roman)</option>
-</select>
+        <input
+          type="file"
+          id="subtitleFileUpload"
+          accept=".vtt,text/vtt"
+          required
+        >
 
-<!-- SUBTITLE FILE -->
-<label for="subtitleFileUpload">
-  📄 Upload Subtitle File (.vtt)
-</label>
+        <button
+          id="subtitleUploadButton"
+          type="button"
+        >
+          ⬆ Upload Subtitle
+        </button>
 
-<input
-  type="file"
-  id="subtitleFileUpload"
-  accept=".vtt,text/vtt"
-  required
->
-
-<!-- UPLOAD BUTTON -->
-<button
-  id="subtitleUploadButton"
-  type="button"
->
-  ⬆ Upload Subtitle
-</button>
-
-<!-- STATUS MESSAGE -->
-<p
-  id="subtitleUploadMessage"
-  class="message"
-  role="status"
-  aria-live="polite"
-></p>
-
-
-        <label for="subtitleAnimeSelect">Select Anime</label>
-         class="message"></p>
+        <p
+          id="subtitleUploadMessage"
+          class="message"
+          role="status"
+          aria-live="polite"
+        ></p>
 
       </div>
 
@@ -1050,7 +992,6 @@
   </main>
 
   <!-- FOOTER -->
-
   <footer class="main-footer">
 
     <a href="#home" class="logo">
@@ -1068,7 +1009,6 @@
   </footer>
 
   <!-- JAVASCRIPT -->
-
   <script type="module" src="./app.js"></script>
 
 </body>
