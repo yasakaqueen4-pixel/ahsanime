@@ -12,7 +12,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ===================================================== */
 
 const SUPABASE_URL = "https://yvfstkkcetyavpzqytde.supabase.co";
-const SUPABASE_KEY = "sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZWY8D";
+const SUPABASE_KEY = "sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D";
 
 const DB_TABLE = "anime_uploads";
 const ADMIN_TABLE = "admin_users";
