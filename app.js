@@ -1,8 +1,8 @@
 
 /* =====================================================
-   ANIMENOONA ♡ — FINAL APP.JS
-   Supabase Auth + Anime Library + Player + Subtitles
-   Admin Dashboard + Anime Upload
+   ANIMENOONA ♡ — COMPLETE APP.JS
+   Supabase Auth + Anime Library + Video Player
+   Episodes + Subtitles + Admin + Upload System
 ===================================================== */
 
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
@@ -12,7 +12,8 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 ===================================================== */
 
 const SUPABASE_URL = "https://yvfstkkcetyavpzqytde.supabase.co";
-const SUPABASE_KEY = sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZwy8D
+const SUPABASE_KEY = "sb_publishable_NgpGgHlXHz_DdJfsRLA6Ug_InIZWY8D";
+
 const DB_TABLE = "anime_uploads";
 const ADMIN_TABLE = "admin_users";
 const STORAGE_BUCKET = "anime-media";
@@ -96,6 +97,22 @@ const el = {
    3. APP STATE
 ===================================================== */
 
+function readJSON(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error("Storage error:", error);
+  }
+}
+
 const state = {
   rows: [],
   anime: [],
@@ -113,23 +130,6 @@ const state = {
 /* =====================================================
    4. GENERAL HELPERS
 ===================================================== */
-
-function readJSON(key, fallback) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key));
-    return value ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveJSON(key, value) {
-  try {
-    localStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.error("Local storage error:", error);
-  }
-}
 
 function say(element, message, error = false) {
   if (!element) return;
@@ -179,33 +179,31 @@ function setButtonLoading(button, loading, loadingText = "Please wait...") {
   if (!button) return;
 
   if (loading) {
-    button.dataset.originalText = button.textContent;
+    if (!button.dataset.originalText) {
+      button.dataset.originalText = button.textContent;
+    }
+
     button.textContent = loadingText;
     button.disabled = true;
   } else {
     button.textContent = button.dataset.originalText || button.textContent;
     button.disabled = false;
+    delete button.dataset.originalText;
   }
 }
 
 /* =====================================================
-   5. LANGUAGE HELPERS
+   5. LANGUAGE SYSTEM
 ===================================================== */
 
 function languageCode(language = "") {
   const value = String(language).toLowerCase().trim();
 
-  if (
-    value.includes("hinglish") ||
-    value.includes("roman")
-  ) {
+  if (value.includes("hinglish") || value.includes("roman")) {
     return "hi-Latn";
   }
 
-  if (
-    value.includes("devanagari") ||
-    value === "hindi"
-  ) {
+  if (value.includes("devanagari") || value === "hindi") {
     return "hi";
   }
 
@@ -233,7 +231,7 @@ function sameLanguage(a, b) {
 }
 
 /* =====================================================
-   6. ANIME DATA NORMALIZATION
+   6. ANIME DATA
 ===================================================== */
 
 function normalizeRow(row) {
@@ -290,16 +288,14 @@ function groupAnime(rows) {
 }
 
 /* =====================================================
-   7. AUTH UI
+   7. AUTH UI + ADMIN
 ===================================================== */
 
 function updateAuthUI() {
   const loggedIn = Boolean(state.user);
 
   if (el.user) {
-    el.user.textContent = loggedIn
-      ? state.user.email
-      : "Guest";
+    el.user.textContent = loggedIn ? state.user.email : "Guest";
   }
 
   el.headerLoginBtn?.classList.toggle("hidden", loggedIn);
@@ -347,24 +343,23 @@ async function checkAdmin(user) {
 
     if (error) throw error;
 
-    state.isAdmin = data?.role?.toLowerCase() === "admin";
+    state.isAdmin = String(data?.role || "").toLowerCase() === "admin";
 
-    if (el.adminStatus) {
-      say(
-        el.adminStatus,
-        state.isAdmin
-          ? "Admin access verified."
-          : "Admin access is not enabled for this account.",
-        !state.isAdmin
-      );
-    }
+    say(
+      el.adminStatus,
+      state.isAdmin
+        ? "Admin access verified."
+        : "Admin access is not enabled for this account.",
+      !state.isAdmin
+    );
+
   } catch (error) {
     console.error("Admin check error:", error);
     state.isAdmin = false;
 
     say(
       el.adminStatus,
-      "Admin verification failed. Check admin_users table permissions.",
+      "Admin verification failed. Check admin_users permissions.",
       true
     );
   }
@@ -416,15 +411,9 @@ async function account(mode) {
     let result;
 
     if (mode === "signup") {
-      result = await db.auth.signUp({
-        email,
-        password
-      });
+      result = await db.auth.signUp({ email, password });
     } else {
-      result = await db.auth.signInWithPassword({
-        email,
-        password
-      });
+      result = await db.auth.signInWithPassword({ email, password });
     }
 
     if (result.error) throw result.error;
@@ -432,7 +421,7 @@ async function account(mode) {
     if (mode === "signup" && !result.data.session) {
       say(
         el.accountMessage,
-        "Account created! Please check your email to confirm your account."
+        "Account created! Please check your email to confirm."
       );
     } else {
       say(
@@ -443,8 +432,8 @@ async function account(mode) {
       await setCurrentUser(result.data.user);
     }
 
-    if (mode === "login") {
-      if (el.passwordInput) el.passwordInput.value = "";
+    if (mode === "login" && el.passwordInput) {
+      el.passwordInput.value = "";
     }
 
   } catch (error) {
@@ -497,10 +486,7 @@ async function sendPasswordReset() {
 
     if (error) throw error;
 
-    say(
-      el.accountMessage,
-      "Password reset link sent! Check your email."
-    );
+    say(el.accountMessage, "Password reset link sent! Check your email.");
 
   } catch (error) {
     console.error("Password reset error:", error);
@@ -527,9 +513,7 @@ async function updatePassword() {
   setButtonLoading(el.updatePasswordBtn, true, "Updating...");
 
   try {
-    const { error } = await db.auth.updateUser({
-      password
-    });
+    const { error } = await db.auth.updateUser({ password });
 
     if (error) throw error;
 
@@ -550,12 +534,13 @@ async function updatePassword() {
 }
 
 /* =====================================================
-   10. LOAD ANIME FROM SUPABASE
+   10. LOAD ANIME
 ===================================================== */
 
 async function loadAnime() {
   if (el.animeGrid) {
-    el.animeGrid.innerHTML = '<div class="loading-state">Loading anime...</div>';
+    el.animeGrid.innerHTML =
+      '<div class="loading-state">Loading anime...</div>';
   }
 
   try {
@@ -586,7 +571,7 @@ async function loadAnime() {
 
     if (el.animeGrid) {
       el.animeGrid.innerHTML =
-        '<div class="empty-state">Could not load anime. Please check your Supabase connection and table permissions.</div>';
+        '<div class="empty-state">Could not load anime. Check Supabase connection and table permissions.</div>';
     }
 
     say(el.libraryMessage, error.message || "Could not load anime.", true);
@@ -594,7 +579,7 @@ async function loadAnime() {
 }
 
 /* =====================================================
-   11. ANIME FILTERS AND CARDS
+   11. SEARCH / FILTERS / CARDS
 ===================================================== */
 
 function getFilteredAnime() {
@@ -665,13 +650,9 @@ function renderAnime() {
     el.animeCount.textContent = `${list.length} Anime`;
   }
 
-  if (!list.length) {
-    el.animeGrid.innerHTML =
-      '<div class="empty-state">No anime found. Try another search or filter.</div>';
-    return;
-  }
-
-  el.animeGrid.innerHTML = list.map(animeCard).join("");
+  el.animeGrid.innerHTML = list.length
+    ? list.map(animeCard).join("")
+    : '<div class="empty-state">No anime found. Try another search or filter.</div>';
 }
 
 function findAnime(key) {
@@ -761,7 +742,10 @@ function renderContinue() {
       <div class="anime-info">
         <h3>${escapeHTML(anime.title)}</h3>
         <p>Continue Episode ${anime.lastEpisode}</p>
-        <button type="button" data-action="continue" data-key="${escapeHTML(anime.key)}" data-episode="${anime.lastEpisode}">
+        <button type="button"
+          data-action="continue"
+          data-key="${escapeHTML(anime.key)}"
+          data-episode="${anime.lastEpisode}">
           ▶ Continue
         </button>
       </div>
@@ -786,10 +770,6 @@ function watchAnime(key, episodeNumber = null) {
 
   if (el.playerDescription) {
     el.playerDescription.textContent = anime.description || "Enjoy your anime.";
-  }
-
-  if (el.nowPlayingTitle) {
-    el.nowPlayingTitle.textContent = "Ready to Play";
   }
 
   const episodes = anime.episodes;
@@ -854,9 +834,11 @@ function playEpisode(index) {
 
   clearVideoTracks();
 
-  el.animeVideo.pause();
-  el.animeVideo.src = episode.video_url;
-  el.animeVideo.load();
+  if (el.animeVideo) {
+    el.animeVideo.pause();
+    el.animeVideo.src = episode.video_url;
+    el.animeVideo.load();
+  }
 
   if (el.nowPlayingTitle) {
     el.nowPlayingTitle.textContent = `Episode ${episode.episode}`;
@@ -876,7 +858,7 @@ function playEpisode(index) {
 }
 
 /* =====================================================
-   15. SUBTITLE STORAGE
+   15. SUBTITLE SYSTEM
 ===================================================== */
 
 function getEpisodeSubtitles(anime, episode) {
@@ -907,7 +889,8 @@ function loadSubtitleOptions() {
 
   if (el.subtitleStatus) {
     el.subtitleStatus.textContent = subtitles.length
-      ? "Available subtitles: " + subtitles.map((s) => languageLabel(s.language)).join(", ")
+      ? "Available subtitles: " +
+        subtitles.map((s) => languageLabel(s.language)).join(", ")
       : "No subtitles uploaded for this episode.";
   }
 }
@@ -944,7 +927,6 @@ function applySubtitle() {
   trackElement.label = languageLabel(subtitle.language);
   trackElement.srclang = languageCode(subtitle.language);
   trackElement.src = subtitle.url;
-  trackElement.default = true;
 
   trackElement.addEventListener("load", () => {
     if (trackElement.track) {
@@ -954,7 +936,9 @@ function applySubtitle() {
 
   el.animeVideo.appendChild(trackElement);
 
-  trackElement.track && (trackElement.track.mode = "showing");
+  if (trackElement.track) {
+    trackElement.track.mode = "showing";
+  }
 
   if (el.subtitleStatus) {
     el.subtitleStatus.textContent =
@@ -963,14 +947,17 @@ function applySubtitle() {
 }
 
 /* =====================================================
-   16. STORAGE UPLOAD HELPER
+   16. STORAGE UPLOAD
 ===================================================== */
 
 async function uploadToStorage(file, folder) {
   if (!file) return null;
 
   const extension = file.name.split(".").pop().toLowerCase();
-  const safeName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${extension}`;
+
+  const safeName =
+    `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
   const path = `${folder}/${safeName}`;
 
   const { error } = await db.storage
@@ -1036,6 +1023,7 @@ async function uploadAnime(event) {
     say(el.uploadMessage, "Uploading video and poster...");
 
     const videoUrl = await uploadToStorage(videoFile, "videos");
+
     const posterUrl = posterFile
       ? await uploadToStorage(posterFile, "posters")
       : null;
@@ -1056,7 +1044,7 @@ async function uploadAnime(event) {
 
     say(el.uploadMessage, "Anime episode uploaded successfully!");
 
-    el.uploadForm.reset();
+    el.uploadForm?.reset();
 
     await loadAnime();
 
@@ -1122,8 +1110,12 @@ async function uploadSubtitle() {
   const language = el.subtitleLanguageUpload?.value;
   const file = el.subtitleFileUpload?.files?.[0];
 
-  if (!anime || !episode || !file) {
-    say(el.subtitleUploadMessage, "Select anime, episode and subtitle file.", true);
+  if (!anime || !episode || !language || !file) {
+    say(
+      el.subtitleUploadMessage,
+      "Select anime, episode, language and subtitle file.",
+      true
+    );
     return;
   }
 
@@ -1144,7 +1136,7 @@ async function uploadSubtitle() {
     const cleanText = text.replace(/^\uFEFF/, "").trimStart();
 
     if (!cleanText.startsWith("WEBVTT")) {
-      throw new Error("Invalid subtitle file. A WebVTT file must start with WEBVTT.");
+      throw new Error("Invalid subtitle file. It must start with WEBVTT.");
     }
 
     say(el.subtitleUploadMessage, "Uploading subtitle...");
@@ -1170,10 +1162,7 @@ async function uploadSubtitle() {
 
     state.subtitles.push(record);
 
-    saveJSON(
-      "animenoona_episode_subtitles",
-      state.subtitles
-    );
+    saveJSON("animenoona_episode_subtitles", state.subtitles);
 
     say(
       el.subtitleUploadMessage,
@@ -1193,6 +1182,7 @@ async function uploadSubtitle() {
 
   } catch (error) {
     console.error("Subtitle upload error:", error);
+
     say(
       el.subtitleUploadMessage,
       error.message || "Subtitle upload failed.",
@@ -1207,10 +1197,11 @@ async function uploadSubtitle() {
    19. EVENT LISTENERS
 ===================================================== */
 
-// Login and account
+// Account
 
 el.loginBtn?.addEventListener("click", () => account("login"));
 el.signupBtn?.addEventListener("click", () => account("signup"));
+
 el.logoutBtn?.addEventListener("click", logout);
 el.logoutAccountBtn?.addEventListener("click", logout);
 
@@ -1225,7 +1216,7 @@ el.headerLoginBtn?.addEventListener("click", () => {
   scrollToSection("account");
 });
 
-// Search and filters
+// Search
 
 el.searchInput?.addEventListener("input", renderAnime);
 el.genreFilter?.addEventListener("change", renderAnime);
@@ -1290,7 +1281,7 @@ document.querySelectorAll(".genre-card").forEach((button) => {
   });
 });
 
-// Anime card buttons
+// Anime card actions
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
@@ -1318,17 +1309,17 @@ document.addEventListener("click", (event) => {
 ===================================================== */
 
 function detectRecoveryMode() {
-  const hash = window.location.hash || "";
-  const params = new URLSearchParams(hash.replace(/^#/, ""));
+  const hashParams = new URLSearchParams(
+    window.location.hash.replace(/^#/, "")
+  );
 
-  return params.get("type") === "recovery";
+  return hashParams.get("type") === "recovery";
 }
 
 async function initAuth() {
   state.recoveryMode = detectRecoveryMode();
   updateAuthUI();
 
-  // Load the current session once.
   const { data, error } = await db.auth.getSession();
 
   if (error) {
@@ -1337,7 +1328,6 @@ async function initAuth() {
 
   await setCurrentUser(data?.session?.user || null);
 
-  // Listen for future login, logout and password recovery events.
   db.auth.onAuthStateChange((event, session) => {
     if (event === "PASSWORD_RECOVERY") {
       state.recoveryMode = true;
@@ -1345,20 +1335,22 @@ async function initAuth() {
       return;
     }
 
-    if (event === "SIGNED_OUT") {
-      state.recoveryMode = false;
-      setCurrentUser(null);
-      return;
-    }
+    setTimeout(() => {
+      if (event === "SIGNED_OUT") {
+        state.recoveryMode = false;
+        void setCurrentUser(null);
+        return;
+      }
 
-    if (event === "SIGNED_IN" || event === "USER_UPDATED") {
-      setCurrentUser(session?.user || null);
-    }
+      if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+        void setCurrentUser(session?.user || null);
+      }
+    }, 0);
   });
 }
 
 /* =====================================================
-   21. INITIALIZE APP
+   21. APP INITIALIZATION
 ===================================================== */
 
 async function init() {
@@ -1367,12 +1359,15 @@ async function init() {
   renderWatchlist();
   renderContinue();
 
-  await initAuth();
+  try {
+    await initAuth();
+    await loadAnime();
 
-  // Load anime only once during startup.
-  await loadAnime();
+    console.log("AnimeNoona ♡ ready!");
 
-  console.log("AnimeNoona ♡ ready!");
+  } catch (error) {
+    console.error("App initialization error:", error);
+  }
 }
 
 init();
